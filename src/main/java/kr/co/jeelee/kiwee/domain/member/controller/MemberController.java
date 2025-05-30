@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
-import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateEmailRequest;
-import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateNicknameRequest;
+import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateMemberRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
@@ -58,20 +57,12 @@ public class MemberController {
 		return memberService.getMemberById(id);
 	}
 
-	@PatchMapping(value = "/{id}/nickname")
-	public MemberDetailResponse changeNickname(
-		@PathVariable UUID id,
-		@Valid @RequestBody UpdateNicknameRequest request
-	) {
-		return memberService.changeNickname(id, request);
-	}
-
-	@PatchMapping(value = "/{id}/email")
+	@PatchMapping(value = "/{id}")
 	public MemberDetailResponse changeEmail(
 		@PathVariable UUID id,
-		@Valid @RequestBody UpdateEmailRequest request
+		@Valid @RequestBody UpdateMemberRequest request
 	) {
-		return memberService.changeEmail(id, request);
+		return memberService.updateMember(id, request);
 	}
 
 	@PatchMapping(value = "/{id}/exp")

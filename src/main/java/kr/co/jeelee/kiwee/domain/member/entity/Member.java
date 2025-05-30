@@ -74,6 +74,16 @@ public class Member extends BaseTimeEntity {
 		return new Member(name, nickname, email, avatarUrl);
 	}
 
+	public void updateName(String name) {
+		if (name == null || name.isBlank()) {
+			throw new FieldValidationException("name", "이름은 비어있을 수 없습니다.");
+		}
+		if (name.length() > 20) {
+			throw new FieldValidationException("name", "이름은 최대 40자까지 가능합니다.");
+		}
+		this.name = name;
+	}
+
 	public void updateNickname(String nickname) {
 		if (nickname == null || nickname.isBlank()) {
 			throw new FieldValidationException("nickname", "닉네임은 비어있을 수 없습니다.");

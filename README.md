@@ -21,6 +21,7 @@
   + keyword: string
   + page: number
   + size: number
+
 - GET `/{id}` - 맴버 상세조회
 
 ##### 생성
@@ -31,10 +32,12 @@
   + imageUrl: string
 
 ##### 수정
-- PATCH `/{id}/nickname` - 맴버 닉네임 수정
-  + nickname(Required): string
-- PATCH `/{id}/email` - 맴버 이메일 수정
-  + email(Required): string
+- PATCH `/{id}` - 맴버 수정
+  + name: string
+  + nickname: string
+  + email: string
+  + imageUrl: string
+
 - PATCH `/{id}/exp` - 맴버 경험치 획득
   + exp(Required): number
 
