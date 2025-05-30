@@ -9,9 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.jeelee.kiwee.domain.member.dao.MemberRepository;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
-import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateAvatarRequest;
-import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateEmailRequest;
-import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateNicknameRequest;
+import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateMemberRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
@@ -70,40 +68,16 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public MemberDetailResponse changeNickname(UUID id, UpdateNicknameRequest request) {
+	public MemberDetailResponse updateMember(UUID id, UpdateMemberRequest request) {
 		Member member = memberRepository.findById(id)
 			.orElseThrow(MemberNotFoundException::new);
 
-		if (memberRepository.existsByNickname(request.nickname())) {
-			throw new FieldValidationException("nickname", "닉네임이 중복되었습니다.");
-		}
+		updateNameIfChanged(member, request.name());
+		updateNicknameIfChanged(member, request.nickname());
+		updateEmailIfChanged(member, request.email());
+		updateAvatarUrlIfChanged(member, request.avatarUrl());
 
-		member.updateNickname(request.nickname());
-		return MemberDetailResponse.from(memberRepository.save(member));
-	}
-
-	@Override
-	@Transactional
-	public MemberDetailResponse changeEmail(UUID id, UpdateEmailRequest request) {
-		Member member = memberRepository.findById(id)
-			.orElseThrow(MemberNotFoundException::new);
-
-		if (memberRepository.existsByEmail(request.email())) {
-			throw new FieldValidationException("email", "이메일이 중복되었습니다.");
-		}
-
-		member.updateEmail(request.email());
-		return MemberDetailResponse.from(memberRepository.save(member));
-	}
-
-	@Override
-	@Transactional
-	public MemberDetailResponse changeAvatarUrl(UUID id, UpdateAvatarRequest request) {
-		Member member = memberRepository.findById(id)
-			.orElseThrow(MemberNotFoundException::new);
-
-		member.updateAvatarUrl(request.avatarUrl());
-		return MemberDetailResponse.from(memberRepository.save(member));
+		return MemberDetailResponse.from(member);
 	}
 
 	@Override
@@ -120,5 +94,35 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public void deleteMemberById(UUID id) {
 		memberRepository.deleteById(id);
+	}
+
+	private void updateNameIfChanged(Member member, String name) {
+		if (name != null && !name.equals(member.getNickname())) {
+			member.updateName(name);
+		}
+	}
+
+	private void updateNicknameIfChanged(Member member, String nickname) {
+		if (nickname != null && !nickname.equals(member.getNickname())) {
+			if (memberRepository.existsByNickname(nickname)) {
+				throw new FieldValidationException("nickname", "닉네임이 중복되었습니다.");
+			}
+			member.updateNickname(nickname);
+		}
+	}
+
+	private void updateEmailIfChanged(Member member, String email) {
+		if (email != null && !email.equals(member.getEmail())) {
+			if (memberRepository.existsByEmail(email)) {
+				throw new FieldValidationException("email", "이메일이 중복되었습니다.");
+			}
+			member.updateEmail(email);
+		}
+	}
+
+	private void updateAvatarUrlIfChanged(Member member, String avatarUrl) {
+		if (avatarUrl != null && !avatarUrl.equals(member.getAvatarUrl())) {
+			member.updateAvatarUrl(avatarUrl);
+		}
 	}
 }
