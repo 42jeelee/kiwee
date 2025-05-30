@@ -5,9 +5,9 @@
 ### 공통 응답 객체
 ```json
 {
-  isSuccess: boolean,
-  message: string,
-  data: object
+  "isSuccess": boolean,
+  "message": string,
+  "data": object
 }
 ```
 ----
@@ -17,14 +17,14 @@
 - Common `/members`
 
 ##### 조회
-- GET `/` - 맴버 검색
+- GET - 맴버 검색
   + keyword: string
   + page: number
   + size: number
 - GET `/{id}` - 맴버 상세조회
 
 ##### 생성
-- POST `/` - 맴버 생성
+- POST - 맴버 생성
   + name(Required): string
   + nickname(Required): string
   + email: string
