@@ -14,7 +14,7 @@
 ### API EndPoints
 
 #### 맴버 (MEMBER)
-- Common `/members`
+- Common `/api/v1/members`
 
 ##### 조회
 - GET - 맴버 검색

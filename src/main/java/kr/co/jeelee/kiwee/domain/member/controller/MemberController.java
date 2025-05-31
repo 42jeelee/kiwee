@@ -26,7 +26,7 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/members")
+@RequestMapping(value = "/api/v1/members")
 @RequiredArgsConstructor
 @Validated
 public class MemberController {
