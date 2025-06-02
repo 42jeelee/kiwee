@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
-import kr.co.jeelee.kiwee.domain.reputations.dao.ReputationsRepository;
+import kr.co.jeelee.kiwee.domain.reputations.repository.ReputationsRepository;
 import kr.co.jeelee.kiwee.domain.reputations.dto.request.ReputationsCreateRequest;
 import kr.co.jeelee.kiwee.domain.reputations.dto.response.ReputationsStatResponse;
 import kr.co.jeelee.kiwee.domain.reputations.dto.response.ReputationsVoteResponse;

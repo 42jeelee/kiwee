@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.reputations.dao;
+package kr.co.jeelee.kiwee.domain.reputations.repository;
 
 import java.time.YearMonth;
 import java.util.Optional;

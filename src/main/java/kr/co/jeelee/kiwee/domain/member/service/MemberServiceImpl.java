@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.member.dao.MemberRepository;
+import kr.co.jeelee.kiwee.domain.member.repository.MemberRepository;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateMemberRequest;

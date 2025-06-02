@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.member.dao;
+package kr.co.jeelee.kiwee.domain.member.repository;
 
 import java.util.UUID;
 
