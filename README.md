@@ -65,3 +65,33 @@
   + giverId(Required): UUID
   + receiverId(Required): UUID
   + isUp: boolean
+
+#### 플랫폼 (Platform)
+- Common `/api/v1/platforms`
+
+##### 조회
+- GET - 모든 플랫폼 조회
+  + keyword: string
+  + page: number
+  + size: number
+
+- GET `/{id}` - 플랫폼 상세 조회
+
+##### 생성
+- POST - 플랫폼 생성
+  + name(Required): string
+  + icon(Required): string
+  + banner(Required): string
+  + description: string
+  + page: string
+
+##### 수정
+- PATCH `/{id}` - 플랫폼 수정
+  + name: string
+  + icon: string
+  + banner: string
+  + description: string
+  + page: string
+
+##### 삭제
+- DELETE `/{id}` - 플랫폼 삭제
