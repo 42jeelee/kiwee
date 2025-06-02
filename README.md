@@ -43,3 +43,25 @@
 
 ##### 삭제
 - DELETE `/{id}` - 맴버 삭제
+
+#### 인기도 (Reputation)
+- Common `/api/v1/reputations`
+
+##### 조회
+- GET `/ranking` - 월 랭킹 조회
+  + yearMonth: 'yyyy-MM'
+  + page: number
+  + size: number
+
+- GET `/{id}` - 월 맴버 투표현황
+  + yearMonth: 'yyyy-MM'
+
+- GET `/{id}/logs` - 맴버 투표기록
+  + page: number
+  + size: number
+
+##### 생성
+- POST - 인기도 투표
+  + giverId(Required): UUID
+  + receiverId(Required): UUID
+  + isUp: boolean
