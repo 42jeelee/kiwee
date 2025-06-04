@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.platform.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -13,5 +14,7 @@ public interface PlatformRepository extends JpaRepository<Platform, UUID> {
 	boolean existsByName(String name);
 
 	Page<Platform> findByNameContaining(String name, Pageable pageable);
+
+	Optional<Platform> findByProvider(String provider);
 
 }

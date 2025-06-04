@@ -10,6 +10,6 @@ public record PlatformCreateRequest(
 	@NotBlank(message = "icon can't be Blank.") String icon,
 	@URL(message = "This is not in URL format.")
 	@NotBlank(message = "banner can't be Blank.") String banner,
-	String description, String page
+	String description, String page, String provider, boolean isToken
 ) {
 }

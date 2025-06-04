@@ -39,16 +39,24 @@ public class Platform extends BaseTimeEntity {
 	@Column(length = 500)
 	private String page;
 
-	private Platform(String name, String icon, String banner, String description, String page) {
+	@Column(length = 50)
+	private String provider;
+
+	@Column(nullable = false)
+	private boolean isToken;
+
+	private Platform(String name, String icon, String banner, String description, String page, String provider, boolean isToken) {
 		this.name = name;
 		this.icon = icon;
 		this.banner = banner;
 		this.description = description;
 		this.page = page;
+		this.provider = provider;
+		this.isToken = isToken;
 	}
 
-	public static Platform of(String name, String icon, String banner, String description, String page) {
-		return new Platform(name, icon, banner, description, page);
+	public static Platform of(String name, String icon, String banner, String description, String page, String provider, boolean isToken) {
+		return new Platform(name, icon, banner, description, page, provider, isToken);
 	}
 
 	public void updateName(String name) {
@@ -96,6 +104,14 @@ public class Platform extends BaseTimeEntity {
 
 	public void updatePage(String page) {
 		this.page = page != null ? page.trim() : null;
+	}
+
+	public void updateProvider(String provider) {
+		this.provider = provider != null ? provider.trim() : null;
+	}
+
+	public void updateToken(boolean isToken) {
+		this.isToken = isToken;
 	}
 
 }

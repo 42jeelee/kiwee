@@ -22,6 +22,7 @@ public enum ErrorCode {
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER-001", "해당 유저를 찾을 수 없습니다."),
 
 	PLATFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "PLATFORM-001", "해당 플랫폼을 찾을 수 없습니다."),
+	MEMBER_PLATFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "PLATFORM-002", "해당 가입 정보를 찾을 수 없습니다."),
 	;
 
 	private final HttpStatus status;

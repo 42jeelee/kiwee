@@ -31,7 +31,9 @@ public class PlatformServiceImpl implements PlatformService {
 			request.icon(),
 			request.banner(),
 			request.description(),
-			request.page()
+			request.page(),
+			request.provider(),
+			request.isToken()
 		);
 
 		if (platformRepository.existsByName(platform.getName())) {
@@ -72,6 +74,8 @@ public class PlatformServiceImpl implements PlatformService {
 		updateBannerIfChanged(platform, request.banner());
 		updateDescriptionIfChanged(platform, request.description());
 		updatePageIfChanged(platform, request.page());
+		updateProviderIfChanged(platform, request.provider());
+		updateIsTokenIfChanged(platform, request.isToken());
 
 		return PlatformDetailResponse.from(platform);
 	}
@@ -80,6 +84,12 @@ public class PlatformServiceImpl implements PlatformService {
 	@Transactional
 	public void deletePlatformById(UUID id) {
 		platformRepository.deleteById(id);
+	}
+
+	@Override
+	public Platform getEntityByProvider(String provider) {
+		return platformRepository.findByProvider(provider)
+			.orElseThrow(PlatformNotFoundException::new);
 	}
 
 	private void updateNameIfChanged(Platform platform, String name) {
@@ -113,6 +123,18 @@ public class PlatformServiceImpl implements PlatformService {
 	private void updatePageIfChanged(Platform platform, String page) {
 		if (page != null && !page.equals(platform.getPage())) {
 			platform.updatePage(page);
+		}
+	}
+
+	private void updateProviderIfChanged(Platform platform, String provider) {
+		if (provider != null && !provider.equals(platform.getProvider())) {
+			platform.updateProvider(provider);
+		}
+	}
+
+	private void updateIsTokenIfChanged(Platform platform, Boolean isToken) {
+		if (isToken != null && !isToken.equals(platform.isToken())) {
+			platform.updateToken(isToken);
 		}
 	}
 }

@@ -7,6 +7,8 @@ public record PlatformUpdateRequest(
 	@URL(message = "This is not in URL format.") String icon,
 	@URL(message = "This is not in URL format.") String banner,
 	String description,
-	@URL(message = "This is not in URL format.") String page
+	@URL(message = "This is not in URL format.") String page,
+	String provider,
+	Boolean isToken
 ) {
 }

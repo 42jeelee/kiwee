@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
+import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.reputations.repository.ReputationsRepository;
 import kr.co.jeelee.kiwee.domain.reputations.dto.request.ReputationsCreateRequest;
 import kr.co.jeelee.kiwee.domain.reputations.dto.response.ReputationsStatResponse;
@@ -18,7 +19,6 @@ import kr.co.jeelee.kiwee.domain.reputations.exception.DuplicateVoteException;
 import kr.co.jeelee.kiwee.domain.reputations.exception.SelfVoteNotAllowedException;
 import kr.co.jeelee.kiwee.domain.reputations.projection.ReputationStatProjection;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
-import kr.co.jeelee.kiwee.global.validator.MemberValidator;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -27,13 +27,14 @@ import lombok.RequiredArgsConstructor;
 public class ReputationServiceImpl implements ReputationService {
 
 	private final ReputationsRepository reputationsRepository;
-	private final MemberValidator memberValidator;
+
+	private final MemberService memberService;
 
 	@Override
 	@Transactional
 	public void vote(ReputationsCreateRequest reputationsCreateRequest) {
-		Member giver = memberValidator.getMember(reputationsCreateRequest.giverId());
-		Member receiver = memberValidator.getMember(reputationsCreateRequest.receiverId());
+		Member giver = memberService.getById(reputationsCreateRequest.giverId());
+		Member receiver = memberService.getById(reputationsCreateRequest.receiverId());
 
 		if (giver.equals(receiver)) {
 			throw new SelfVoteNotAllowedException();
@@ -96,7 +97,7 @@ public class ReputationServiceImpl implements ReputationService {
 
 	@Override
 	public PagedResponse<ReputationsVoteResponse> getVotesByMemberId(UUID id, Pageable pageable) {
-		Member member = memberValidator.getMember(id);
+		Member member = memberService.getById(id);
 
 		return PagedResponse.of(
 			reputationsRepository.getByGiver(member, pageable),
