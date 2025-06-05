@@ -24,6 +24,8 @@
 
 - GET `/{id}` - 맴버 상세조회
 
+- GET `/me` - 내 정보 조회
+
 ##### 생성
 - POST - 맴버 생성
   + name(Required): string
@@ -95,3 +97,13 @@
 
 ##### 삭제
 - DELETE `/{id}` - 플랫폼 삭제
+
+#### 인증 (AUTHORIZATION)
+- Common `/api/v1/auth`
+
+##### 재발급
+- POST `/refresh` - 재발급
+  + refreshToken(Required): string
+
+##### 로그아웃
+- POST `/logout` - 로그아웃
