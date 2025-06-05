@@ -3,6 +3,7 @@ package kr.co.jeelee.kiwee.domain.member.service;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuth2UserInfo;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
@@ -31,6 +32,6 @@ public interface MemberService {
 
 	Member getById(UUID id);
 
-	Member getMe();
+	Authentication toAuthentication(UUID id);
 
 }

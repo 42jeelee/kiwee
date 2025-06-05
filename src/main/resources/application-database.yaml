@@ -14,3 +14,9 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         show_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      connect-timeout: 2s

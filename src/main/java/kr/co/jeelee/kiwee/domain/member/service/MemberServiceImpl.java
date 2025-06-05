@@ -5,10 +5,13 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuth2UserInfo;
+import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.member.repository.MemberRepository;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
@@ -129,8 +132,11 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member getMe() {
-		return null;
+	public Authentication toAuthentication(UUID id) {
+		Member member = getById(id);
+
+		CustomOAuth2User oAuth2User = CustomOAuth2User.from(member, null);
+		return new UsernamePasswordAuthenticationToken(oAuth2User, "", oAuth2User.getAuthorities());
 	}
 
 	private String getNotDuplicateNickname() {
