@@ -34,7 +34,7 @@ public interface MemberService {
 	void deleteMemberById(UUID id);
 	void deleteRole(UUID id, String RoleName);
 
-	Member createByOAuth(OAuth2UserInfo oAuth2UserInfo);
+	Member createOrUpdateByOAuth(OAuth2UserInfo oAuth2UserInfo);
 
 	Member getById(UUID id);
 

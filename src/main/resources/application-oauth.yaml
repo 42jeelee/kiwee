@@ -10,11 +10,27 @@ spring:
             scope:
               - profile
               - email
+
+          discord:
+            client-id: ${DISCORD_CLIENT_ID}
+            client-secret: ${DISCORD_CLIENT_SECRET}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - identify
+              - email
+            authorization-grant-type: authorization_code
+
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+
+          discord:
+            authorization-uri: https://discord.com/api/v10/oauth2/authorize
+            token-uri: https://discord.com/api/v10/oauth2/token
+            user-info-uri: https://discord.com/api/v10/users/@me
+            user-name-attribute: id
 
 jwt:
   secret: ${JWT_SECRET}

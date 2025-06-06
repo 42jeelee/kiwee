@@ -2,7 +2,6 @@ package kr.co.jeelee.kiwee.domain.auth.oauth.dto;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.exception.ProviderNotFoundException;
@@ -12,9 +11,20 @@ import lombok.RequiredArgsConstructor;
 public enum OAuthAttributes {
 	GOOGLE("google", (userNameAttributeName, attributes) -> OAuth2UserInfo.of(
 		"google",
-		attributes.get(userNameAttributeName).toString(),
-		attributes.get("name").toString(),
-		Optional.ofNullable(attributes.get("picture")).map(Object::toString).orElse(null),
+		userNameAttributeName,
+		"name",
+		"picture",
+		"email",
+		"email_verified",
+		attributes
+	)),
+	DISCORD("discord", (userNameAttributeName, attributes) -> OAuth2UserInfo.of(
+		"discord",
+		userNameAttributeName,
+		"global_name",
+		"avatar",
+		"email",
+		"verified",
 		attributes
 	)),
 
