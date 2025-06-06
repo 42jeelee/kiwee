@@ -8,8 +8,10 @@ import org.springframework.security.core.Authentication;
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuth2UserInfo;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
+import kr.co.jeelee.kiwee.domain.member.dto.request.MemberRolesRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateMemberRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberDetailResponse;
+import kr.co.jeelee.kiwee.domain.member.dto.response.MemberRolesResponse;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
@@ -22,11 +24,15 @@ public interface MemberService {
 	PagedResponse<MemberSimpleResponse> searchMembers(String keyword, Pageable pageable);
 
 	MemberDetailResponse getMemberById(UUID id);
+	MemberRolesResponse getMemberRoles(UUID id);
 
 	MemberDetailResponse updateMember(UUID id, UpdateMemberRequest updateMemberRequest);
 	MemberDetailResponse gainExp(UUID id, GainExpRequest request);
 
+	MemberRolesResponse addRoles(UUID id, MemberRolesRequest request);
+
 	void deleteMemberById(UUID id);
+	void deleteRole(UUID id, String RoleName);
 
 	Member createByOAuth(OAuth2UserInfo oAuth2UserInfo);
 

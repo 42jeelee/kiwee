@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
-import kr.co.jeelee.kiwee.domain.auth.dto.TokenType;
+import kr.co.jeelee.kiwee.domain.auth.model.TokenType;
 import kr.co.jeelee.kiwee.domain.auth.dto.response.TokenResponse;
 import kr.co.jeelee.kiwee.domain.auth.exception.InvalidTokenException;
 import kr.co.jeelee.kiwee.domain.auth.exception.UnauthorizationException;

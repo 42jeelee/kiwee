@@ -35,8 +35,8 @@ public class MemberPlatformServiceImpl implements MemberPlatformService {
 		String email = Optional.ofNullable(oAuth2UserInfo.attributes().get("email"))
 			.map(Object::toString).orElse(null);
 
-		Optional<MemberPlatform> existingMemberPlatform = memberPlatformRepository
-			.getWithMemberByPlatformAndPlatformUserId(platform, oAuth2UserInfo.id());
+		Optional<MemberPlatform> existingMemberPlatform =
+			memberPlatformRepository.getWithAll(platform, oAuth2UserInfo.id());
 
 		if (existingMemberPlatform.isPresent()) {
 			MemberPlatform mp = existingMemberPlatform.get();

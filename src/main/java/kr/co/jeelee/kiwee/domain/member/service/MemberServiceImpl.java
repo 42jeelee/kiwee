@@ -1,7 +1,9 @@
 package kr.co.jeelee.kiwee.domain.member.service;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuth2UserInfo;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
+import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
+import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
+import kr.co.jeelee.kiwee.domain.authorization.service.RoleService;
+import kr.co.jeelee.kiwee.domain.member.dto.request.MemberRolesRequest;
+import kr.co.jeelee.kiwee.domain.member.dto.response.MemberRolesResponse;
+import kr.co.jeelee.kiwee.domain.member.exception.MemberNotHaveRoleException;
 import kr.co.jeelee.kiwee.domain.member.repository.MemberRepository;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
@@ -32,6 +40,8 @@ public class MemberServiceImpl implements MemberService {
 
 	private final MemberRepository memberRepository;
 	private final NicknameCreator nicknameCreator;
+
+	private final RoleService roleService;
 
 	@Override
 	@Transactional
@@ -80,6 +90,13 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public MemberRolesResponse getMemberRoles(UUID id) {
+		return memberRepository.findById(id)
+			.map(MemberRolesResponse::from)
+			.orElseThrow(MemberNotFoundException::new);
+	}
+
+	@Override
 	@Transactional
 	public MemberDetailResponse updateMember(UUID id, UpdateMemberRequest request) {
 		Member member = memberRepository.findById(id)
@@ -105,8 +122,34 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
+	public MemberRolesResponse addRoles(UUID id, MemberRolesRequest request) {
+		Member member = getById(id);
+
+		Set<Role> roles = request.roles().stream()
+				.map(roleService::findByName)
+			.collect(Collectors.toSet());
+
+		member.addRole(roles);
+		return MemberRolesResponse.from(memberRepository.save(member));
+	}
+
+	@Override
+	@Transactional
 	public void deleteMemberById(UUID id) {
 		memberRepository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public void deleteRole(UUID id, String RoleName) {
+		Member member = getById(id);
+		Role role = roleService.findByName(RoleName);
+
+		if (!member.getRoles().contains(role)) {
+			throw new MemberNotHaveRoleException();
+		}
+
+		member.removeRole(role);
 	}
 
 	@Override
@@ -122,12 +165,17 @@ public class MemberServiceImpl implements MemberService {
 			oAuth2UserInfo.avatarUrl()
 		);
 
+		Role role = roleService.findByName(RoleType.MEMBER.name());
+		member.addRole(Set.of(role));
+
+		System.out.println("Permission Size: " + role.getPermissions().size());
+
 		return memberRepository.save(member);
 	}
 
 	@Override
 	public Member getById(UUID id) {
-		return memberRepository.findById(id)
+		return memberRepository.getWithRolesAndPermissionsById(id)
 			.orElseThrow(MemberNotFoundException::new);
 	}
 

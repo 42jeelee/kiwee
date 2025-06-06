@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
+import kr.co.jeelee.kiwee.domain.reputations.exception.ReputationNotFoundException;
 import kr.co.jeelee.kiwee.domain.reputations.repository.ReputationsRepository;
 import kr.co.jeelee.kiwee.domain.reputations.dto.request.ReputationsCreateRequest;
 import kr.co.jeelee.kiwee.domain.reputations.dto.response.ReputationsStatResponse;
@@ -75,6 +76,7 @@ public class ReputationServiceImpl implements ReputationService {
 	@Override
 	public ReputationsStatResponse getStatByMemberId(UUID id, YearMonth yearMonth) {
 		return reputationsRepository.getStatByMemberIdAndYearMonth(id, yearMonth.toString()).stream()
+			.findFirst()
 			.map(p -> {
 				MemberSimpleResponse memberResponse = new MemberSimpleResponse(
 					p.getId(),
@@ -92,7 +94,7 @@ public class ReputationServiceImpl implements ReputationService {
 					p.getDownVotes(),
 					p.getRank()
 				);
-			}).toList().get(0);
+			}).orElseThrow(ReputationNotFoundException::new);
 	}
 
 	@Override

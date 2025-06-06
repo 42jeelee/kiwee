@@ -21,13 +21,8 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
 	@Override
 	public AbstractAuthenticationToken convert(Jwt jwt) {
-		System.out.println("jwt token : " + jwt.getSubject());
-
 		UUID memberId = UUID.fromString(jwt.getSubject());
 		Member member = memberService.getById(memberId);
-
-		System.out.println("member id : " + memberId);
-		System.out.println("member name : " + member.getName());
 
 		CustomOAuth2User oAuth2User = CustomOAuth2User.from(member, null);
 
