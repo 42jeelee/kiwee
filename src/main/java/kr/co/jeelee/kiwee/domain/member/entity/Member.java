@@ -1,5 +1,7 @@
 package kr.co.jeelee.kiwee.domain.member.entity;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -8,8 +10,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -52,8 +58,13 @@ public class Member extends BaseTimeEntity {
 	@Column
 	private String avatarUrl;
 
-	@Column(nullable = false)
-	private boolean isBot;
+	@ManyToMany
+	@JoinTable(
+		name = "member_roles",
+		joinColumns = @JoinColumn(name = "member_id"),
+		inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+	private Set<Role> roles;
 
 	@Column(nullable = false)
 	private boolean isActive;
@@ -66,7 +77,7 @@ public class Member extends BaseTimeEntity {
 		this.exp = 0;
 		this.totalExp = 0;
 		this.avatarUrl = avatarUrl;
-		this.isBot = false;
+		this.roles = new HashSet<>();
 		this.isActive = true;
 	}
 
@@ -132,6 +143,14 @@ public class Member extends BaseTimeEntity {
 			this.exp -= levelExp;
 			this.gainExp(0);
 		}
+	}
+
+	public void addRole(Set<Role> role) {
+		this.roles.addAll(role);
+	}
+
+	public void removeRole(Role role) {
+		this.roles.remove(role);
 	}
 
 	private long getLevelExp() {

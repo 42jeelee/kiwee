@@ -1,8 +1,8 @@
 package kr.co.jeelee.kiwee.domain.auth.oauth.user;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +24,10 @@ public record CustomOAuth2User(
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		return member.getRoles().stream()
+			.flatMap(role -> role.getPermissions().stream())
+			.map(permission -> new SimpleGrantedAuthority(permission.getName().name()))
+			.collect(Collectors.toSet());
 	}
 
 	@Override
