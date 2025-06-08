@@ -21,11 +21,19 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
 	Boolean existsByEmail(String email);
 
 	@Query("""
-		select m from Member m
-		join fetch m.roles r
-		join fetch r.permissions
-		where m.id = :id
+		SELECT m FROM Member m
+		JOIN FETCH m.roles r
+		JOIN FETCH r.permissions
+		WHERE m.id = :id
 	""")
 	Optional<Member> getWithRolesAndPermissionsById(@Param("id") UUID id);
+
+	@Query("""
+		SELECT m FROM Member m
+		JOIN FETCH m.roles r
+		JOIN FETCH r.permissions
+		WHERE m.email = :email
+	""")
+	Optional<Member> getWithRolesAndPermissionsByEmail(@Param("email") String email);
 
 }

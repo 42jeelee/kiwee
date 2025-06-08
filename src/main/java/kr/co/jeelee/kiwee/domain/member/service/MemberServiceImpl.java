@@ -32,10 +32,12 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.util.NicknameCreator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class MemberServiceImpl implements MemberService {
 
 	private final MemberRepository memberRepository;
@@ -126,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
 		Member member = getById(id);
 
 		Set<Role> roles = request.roles().stream()
-				.map(roleService::findByName)
+				.map(roleService::findByRoleType)
 			.collect(Collectors.toSet());
 
 		member.addRole(roles);
@@ -141,9 +143,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public void deleteRole(UUID id, String RoleName) {
+	public void deleteRole(UUID id, RoleType RoleType) {
 		Member member = getById(id);
-		Role role = roleService.findByName(RoleName);
+		Role role = roleService.findByRoleType(RoleType);
 
 		if (!member.getRoles().contains(role)) {
 			throw new MemberNotHaveRoleException();
@@ -154,21 +156,35 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public Member createByOAuth(OAuth2UserInfo oAuth2UserInfo) {
-		String email = Optional.ofNullable(oAuth2UserInfo.attributes().get("email"))
-			.map(Object::toString).orElse(null);
+	public Member createOrUpdateByOAuth(OAuth2UserInfo oAuth2UserInfo) {
+
+		if (oAuth2UserInfo.email() != null) {
+			Optional<Member> existedEmailMember =
+				memberRepository.getWithRolesAndPermissionsByEmail(oAuth2UserInfo.email());
+
+			if (existedEmailMember.isPresent()) {
+				Member member = existedEmailMember.get();
+
+				try {
+					if (member.getAvatarUrl() == null && oAuth2UserInfo.avatarUrl() != null) {
+						updateAvatarUrlIfChanged(member, oAuth2UserInfo.avatarUrl());
+					}
+				} catch (Exception e) {
+					log.warn("Update member avatar url failed: {}", e.getMessage());
+				}
+				return member;
+			}
+		}
 
 		Member member = Member.of(
 			oAuth2UserInfo.name(),
 			getNotDuplicateNickname(),
-			email,
+			oAuth2UserInfo.email(),
 			oAuth2UserInfo.avatarUrl()
 		);
 
-		Role role = roleService.findByName(RoleType.MEMBER.name());
+		Role role = roleService.findByRoleType(RoleType.MEMBER);
 		member.addRole(Set.of(role));
-
-		System.out.println("Permission Size: " + role.getPermissions().size());
 
 		return memberRepository.save(member);
 	}

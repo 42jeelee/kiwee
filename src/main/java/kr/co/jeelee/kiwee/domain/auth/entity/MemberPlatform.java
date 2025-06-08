@@ -99,10 +99,10 @@ public class MemberPlatform extends BaseTimeEntity {
 		if (platformUserName != null && platformUserName.isEmpty() && !platformUserName.equals(this.platformUserName)) {
 			this.platformUserName = platformUserName;
 		}
-		if (avatarUrl.equals(this.avatarUrl)) {
+		if (avatarUrl != null && avatarUrl.equals(this.avatarUrl)) {
 			this.avatarUrl = avatarUrl;
 		}
-		if (!email.equals(this.email)) {
+		if (email != null && !email.equals(this.email)) {
 			this.email = email;
 		}
 	}

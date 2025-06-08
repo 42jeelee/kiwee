@@ -26,10 +26,10 @@ public class RoleInitializer implements ApplicationRunner {
 	@Transactional
 	public void run(ApplicationArguments args) throws Exception {
 		for (RoleType roleType : RoleType.values()) {
-			Role role = roleRepository.findByName(roleType.name())
+			Role role = roleRepository.findByName(roleType)
 				.orElseGet(() -> roleRepository.save(
 					Role.of(
-						roleType.name(),
+						roleType,
 						roleType.getDomain(),
 						roleType.getColor(),
 						roleType.getDescription()

@@ -32,9 +32,6 @@ public class MemberPlatformServiceImpl implements MemberPlatformService {
 	@Transactional
 	public Member getOrCreateMemberByOAuth(OAuth2UserInfo oAuth2UserInfo) {
 		Platform platform = platformService.getEntityByProvider(oAuth2UserInfo.provider());
-		String email = Optional.ofNullable(oAuth2UserInfo.attributes().get("email"))
-			.map(Object::toString).orElse(null);
-
 		Optional<MemberPlatform> existingMemberPlatform =
 			memberPlatformRepository.getWithAll(platform, oAuth2UserInfo.id());
 
@@ -44,16 +41,16 @@ public class MemberPlatformServiceImpl implements MemberPlatformService {
 			mp.changeProvideData(
 				oAuth2UserInfo.name(),
 				oAuth2UserInfo.avatarUrl(),
-				email
+				oAuth2UserInfo.email()
 			);
 			return mp.getMember();
 		}
 
-		Member member = memberService.createByOAuth(oAuth2UserInfo);
+		Member member = memberService.createOrUpdateByOAuth(oAuth2UserInfo);
 
 		MemberPlatform mp = MemberPlatform.of(
 			member, platform, oAuth2UserInfo.id(), oAuth2UserInfo.name(), oAuth2UserInfo.avatarUrl(),
-			email, false, null, null, null
+			oAuth2UserInfo.email(), false, null, null, null
 		);
 
 		memberPlatformRepository.save(mp);

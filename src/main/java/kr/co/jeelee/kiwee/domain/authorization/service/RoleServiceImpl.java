@@ -6,14 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.authorization.dto.request.RoleCreateRequest;
 import kr.co.jeelee.kiwee.domain.authorization.dto.response.RoleResponse;
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
 import kr.co.jeelee.kiwee.domain.authorization.exception.RoleNotFoundException;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
 import kr.co.jeelee.kiwee.domain.authorization.repository.RoleRepository;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
-import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,23 +29,6 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public RoleResponse createRole(RoleCreateRequest request) {
-
-		Role role = Role.of(
-			request.name(),
-			request.domain(),
-			request.color(),
-			request.description()
-		);
-
-		if (roleRepository.existsByName(request.name())) {
-			throw new FieldValidationException("name", "이미 있는 역할입니다.");
-		}
-
-		return RoleResponse.from(roleRepository.save(role));
-	}
-
-	@Override
 	public RoleResponse getById(UUID id) {
 		return roleRepository.findById(id)
 			.map(RoleResponse::from)
@@ -53,8 +36,8 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public Role findByName(String name) {
-		return roleRepository.getWithPermissionsByName(name)
+	public Role findByRoleType(RoleType roleType) {
+		return roleRepository.findByName(roleType)
 			.orElseThrow(RoleNotFoundException::new);
 	}
 }

@@ -14,6 +14,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -35,7 +36,7 @@ public class Role extends BaseTimeEntity {
 	private DomainType domain;
 
 	@Column(length = 30, unique = true, nullable = false)
-	private String name;
+	private RoleType name;
 
 	@Column(length = 8, nullable = false)
 	private String color;
@@ -51,7 +52,7 @@ public class Role extends BaseTimeEntity {
 	)
 	private Set<Permission> permissions;
 
-	private Role(String name, DomainType domain, String color, String description) {
+	private Role(RoleType name, DomainType domain, String color, String description) {
 		this.name = name;
 		this.domain = domain;
 		this.color = color;
@@ -59,7 +60,7 @@ public class Role extends BaseTimeEntity {
 		this.permissions = new HashSet<>();
 	}
 
-	public static Role of(String name, DomainType domain, String color, String description) {
+	public static Role of(RoleType name, DomainType domain, String color, String description) {
 		return new Role(name, domain, color, description);
 	}
 

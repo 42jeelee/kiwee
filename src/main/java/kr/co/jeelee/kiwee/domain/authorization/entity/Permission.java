@@ -28,7 +28,7 @@ public class Permission extends BaseTimeEntity {
 	@Column(length = 30, nullable = false)
 	private DomainType domain;
 
-	@Column(length = 30, unique = true, nullable = false)
+	@Column(length = 100, unique = true, nullable = false)
 	private PermissionType name;
 
 	@Column

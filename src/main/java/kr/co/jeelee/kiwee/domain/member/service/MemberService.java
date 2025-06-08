@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuth2UserInfo;
+import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
 import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberRolesRequest;
@@ -32,9 +33,9 @@ public interface MemberService {
 	MemberRolesResponse addRoles(UUID id, MemberRolesRequest request);
 
 	void deleteMemberById(UUID id);
-	void deleteRole(UUID id, String RoleName);
+	void deleteRole(UUID id, RoleType RoleName);
 
-	Member createByOAuth(OAuth2UserInfo oAuth2UserInfo);
+	Member createOrUpdateByOAuth(OAuth2UserInfo oAuth2UserInfo);
 
 	Member getById(UUID id);
 
