@@ -89,7 +89,7 @@ public class Member extends BaseTimeEntity {
 		if (name == null || name.isBlank()) {
 			throw new FieldValidationException("name", "이름은 비어있을 수 없습니다.");
 		}
-		if (name.length() > 20) {
+		if (name.length() > 40) {
 			throw new FieldValidationException("name", "이름은 최대 40자까지 가능합니다.");
 		}
 		this.name = name;

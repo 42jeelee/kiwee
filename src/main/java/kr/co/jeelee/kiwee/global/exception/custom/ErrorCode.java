@@ -27,9 +27,16 @@ public enum ErrorCode {
 	PLATFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "PLATFORM-001", "해당 플랫폼을 찾을 수 없습니다."),
 	MEMBER_PLATFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "PLATFORM-002", "해당 가입 정보를 찾을 수 없습니다."),
 
+	DOMAIN_NOT_FOUND(HttpStatus.NOT_FOUND, "DOMAIN-001", "해당 도메인은 존재하지 않습니다."),
+
 	PERMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "PERMISSION-001", "해당 권한은 찾을 수 없습니다."),
 
 	ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ROLE-001", "해당 역할은 찾을 수 없습니다."),
+
+	CHANNEL_NOT_FOUND(HttpStatus.NOT_FOUND, "CHANNEL-001", "해당 채널은 찾을 수 없습니다."),
+	CHANNEL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHANNEL-002", "이미 존재하는 채널입니다."),
+
+	INVITE_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITE-001", "유효하지 않는 초대코드입니다."),
 	;
 
 	private final HttpStatus status;

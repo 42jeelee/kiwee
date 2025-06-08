@@ -128,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
 		Member member = getById(id);
 
 		Set<Role> roles = request.roles().stream()
-				.map(roleService::findByName)
+				.map(roleService::findByRoleType)
 			.collect(Collectors.toSet());
 
 		member.addRole(roles);
@@ -143,9 +143,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public void deleteRole(UUID id, String RoleName) {
+	public void deleteRole(UUID id, RoleType RoleType) {
 		Member member = getById(id);
-		Role role = roleService.findByName(RoleName);
+		Role role = roleService.findByRoleType(RoleType);
 
 		if (!member.getRoles().contains(role)) {
 			throw new MemberNotHaveRoleException();
@@ -183,7 +183,7 @@ public class MemberServiceImpl implements MemberService {
 			oAuth2UserInfo.avatarUrl()
 		);
 
-		Role role = roleService.findByName(RoleType.MEMBER.name());
+		Role role = roleService.findByRoleType(RoleType.MEMBER);
 		member.addRole(Set.of(role));
 
 		return memberRepository.save(member);

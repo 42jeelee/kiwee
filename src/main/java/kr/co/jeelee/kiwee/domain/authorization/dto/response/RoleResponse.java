@@ -5,9 +5,10 @@ import java.util.UUID;
 
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
 
 public record RoleResponse(
-	UUID id, DomainType domain, String name, String color,
+	UUID id, DomainType domain, RoleType name, String color,
 	String description, List<PermissionResponse> permissions
 ) {
 	public static RoleResponse from(Role role) {

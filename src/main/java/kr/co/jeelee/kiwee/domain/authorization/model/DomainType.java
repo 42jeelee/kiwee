@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public enum DomainType {
 	GLOBAL("글로벌"),
 	PLATFORM("플랫폼"),
+	CHANNEL("채널"),
 	;
 
 	private final String label;

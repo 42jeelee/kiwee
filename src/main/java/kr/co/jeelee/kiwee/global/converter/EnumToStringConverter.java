@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Converter
 @RequiredArgsConstructor
-public class EnumToStringConverter<T extends Enum<T>> implements AttributeConverter<T, String> {
+public abstract class EnumToStringConverter<T extends Enum<T>> implements AttributeConverter<T, String> {
 
 	private final Class<T> enumClass;
 
