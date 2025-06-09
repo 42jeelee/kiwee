@@ -168,6 +168,20 @@ public class InviteServiceImpl implements InviteService {
 	}
 
 	@Override
+	@Transactional
+	public void expiredMyInvite(CustomOAuth2User principal, String code) {
+		Invite invite = inviteRepository.findByCode(code)
+			.orElseThrow(InviteNotFoundException::new);
+
+		if (!invite.getInviter().equals(principal.member())) {
+			throw new AccessDeniedException("초대권 발행인이 아닙니다.");
+		}
+
+		invite.expire();
+		inviteRepository.save(invite);
+	}
+
+	@Override
 	public boolean validateCode(String code) {
 		Invite invite = inviteRepository.findByCode(code)
 			.orElseThrow(InviteNotFoundException::new);
@@ -182,7 +196,7 @@ public class InviteServiceImpl implements InviteService {
 				Channel channel = channelService.getById(invite.getTargetId());
 
 				invite.accept();
-				channelMemberService.invitedChannel(member, channel);
+				channelMemberService.invitedChannel(member, channel, Set.of());
 				inviteRepository.save(invite);
 				break;
 		}

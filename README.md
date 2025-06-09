@@ -208,3 +208,6 @@
 
 - POST `/{code}/expired` - 초대권 무효화
   + code: string
+
+- POST `/{code}/expired/force` - 초대권 강제 무효화
+  + code: string
