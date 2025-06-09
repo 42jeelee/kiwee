@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
+import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
 import kr.co.jeelee.kiwee.domain.channel.dto.request.ChannelCreateRequest;
 import kr.co.jeelee.kiwee.domain.channel.dto.request.ChannelUpdateRequest;
 import kr.co.jeelee.kiwee.domain.channel.dto.response.ChannelDetailResponse;
@@ -52,7 +53,7 @@ public class ChannelServiceImpl implements ChannelService {
 			)
 		);
 
-		channelMemberService.invitedChannel(principal.member(), channel);
+		channelMemberService.invitedChannel(principal.member(), channel, Set.of(RoleType.CHANNEL_MANAGER));
 		return ChannelDetailResponse.from(channel);
 	}
 

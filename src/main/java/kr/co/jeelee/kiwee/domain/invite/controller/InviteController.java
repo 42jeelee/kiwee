@@ -90,11 +90,20 @@ public class InviteController {
 	}
 
 	@PreAuthorize(value = "hasRole('INVITE_EXPIRED')")
-	@PostMapping(value = "/{code}/expired")
+	@PostMapping(value = "/{code}/expired/force")
 	public ResponseEntity<Void> expireInvite(
 		@PathVariable String code
 	) {
 		inviteService.expired(code);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping(value = "/{code}/expired")
+	public ResponseEntity<Void> expiredMyInvite(
+		@AuthenticationPrincipal CustomOAuth2User principal,
+		@PathVariable String code
+	) {
+		inviteService.expiredMyInvite(principal, code);
 		return ResponseEntity.noContent().build();
 	}
 

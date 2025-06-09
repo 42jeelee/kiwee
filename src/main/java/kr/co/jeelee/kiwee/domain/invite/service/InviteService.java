@@ -24,6 +24,8 @@ public interface InviteService {
 	void reject(CustomOAuth2User principal, String code);
 	void expired(String code);
 
+	void expiredMyInvite(CustomOAuth2User principal, String code);
+
 	boolean validateCode(String code);
 
 }

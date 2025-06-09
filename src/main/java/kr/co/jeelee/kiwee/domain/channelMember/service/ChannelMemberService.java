@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.channelMember.service;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,6 @@ public interface ChannelMemberService {
 	boolean hasRole(Channel channel, Member member, RoleType roleType);
 	boolean hasPermission(Channel channel, Member member, PermissionType permissionType);
 
-	void invitedChannel(Member member, Channel channel);
+	void invitedChannel(Member member, Channel channel, Set<RoleType> roles);
 
 }

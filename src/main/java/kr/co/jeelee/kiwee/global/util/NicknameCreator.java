@@ -42,7 +42,7 @@ public class NicknameCreator {
 		String animal = animals.get(ThreadLocalRandom.current().nextInt(animals.size()));
 		String number = String.format("%04d", ThreadLocalRandom.current().nextInt(10000));
 
-		return adjective + animal + number;
+		return String.format("%s %s%s", adjective, animal, number);
 	}
 
 }

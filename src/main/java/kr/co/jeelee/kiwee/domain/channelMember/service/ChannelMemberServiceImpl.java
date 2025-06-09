@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.channelMember.service;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -173,15 +174,26 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 	}
 
 	@Override
-	public void invitedChannel(Member member, Channel channel) {
+	public void invitedChannel(Member member, Channel channel, Set<RoleType> roles) {
 		if (isJoined(channel, member)) {
 			throw new FieldValidationException("member", "이미 가입되어 있습니다.");
 		}
 
 		ChannelMember cm = ChannelMember.of(channel, member);
 
-		Role defaultRole = roleService.findByRoleType(RoleType.CHANNEL_MEMBER);
-		cm.addRole(ChannelMemberRole.of(cm, defaultRole));
+		Set<Role> getRoles = roles.stream()
+			.map(roleService::findByRoleType)
+			.collect(Collectors.toSet());
+
+		if (getRoles.isEmpty()) {
+			Role defaultRole = roleService.findByRoleType(RoleType.CHANNEL_MEMBER);
+			getRoles.add(defaultRole);
+		}
+
+		cm.addRoles(getRoles.stream()
+			.map(r -> ChannelMemberRole.of(cm, r))
+			.collect(Collectors.toSet())
+		);
 
 		channelMemberRepository.save(cm);
 	}
