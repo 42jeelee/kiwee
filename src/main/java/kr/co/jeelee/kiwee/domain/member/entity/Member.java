@@ -19,6 +19,7 @@ import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,8 +33,10 @@ import lombok.NoArgsConstructor;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class Member extends BaseTimeEntity {
 
+	@EqualsAndHashCode.Include
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 

@@ -25,6 +25,8 @@ public enum PermissionType {
 
 	ROLE_INVITE_EXPIRED(DomainType.GLOBAL, "초대 만료 권한"),
 
+	ROLE_OTHER_NOTIFICATION(DomainType.GLOBAL, "다른 유저 알림 읽기"),
+
 	// Platform
 	ROLE_CREATE_PLATFORM(DomainType.PLATFORM, "플랫폼 생성"),
 	ROLE_EDIT_PLATFORM(DomainType.PLATFORM, "플랫폼 수정"),

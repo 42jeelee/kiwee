@@ -10,4 +10,8 @@ public class InvalidParameterException extends CustomException {
 	public InvalidParameterException(String parameterName) {
 		super(ErrorCode.REQUEST_INVALID, Map.of(parameterName, "잘못된 인자값 입니다."));
 	}
+
+	public InvalidParameterException(String fieldName, String message) {
+		super(ErrorCode.REQUEST_INVALID, Map.of(fieldName, message));
+	}
 }
