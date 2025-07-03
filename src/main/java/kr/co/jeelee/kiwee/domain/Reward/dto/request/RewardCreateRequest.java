@@ -17,7 +17,7 @@ public record RewardCreateRequest(
 	@NotNull(message = "triggerCount can't be Null.") Integer triggerCount,
 	@NotBlank(message = "title can't be Blank.") String title,
 	@NotBlank(message = "description can't be Blank.") String description,
-	@NotNull(message = "exp can't be Null.") Integer exp,
+	Integer exp,
 	@NotNull(message = "isPublic can't be Null.") Boolean isPublic
 ) {
 }

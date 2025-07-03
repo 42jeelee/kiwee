@@ -52,6 +52,11 @@ public enum PermissionType {
 	ROLE_EDIT_QUEST(DomainType.QUEST, "퀘스트 수정"),
 	ROLE_DELETE_QUEST(DomainType.QUEST, "퀘스트 삭제"),
 
+	// Badge
+	ROLE_CREATE_BADGE(DomainType.BADGE, "배지 생성"),
+	ROLE_EDIT_BADGE(DomainType.BADGE, "배지 수정"),
+	ROLE_DELETE_BADGE(DomainType.BADGE, "배지 삭제"),
+
 	;
 
 	private final DomainType domainType;

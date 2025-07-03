@@ -1,0 +1,17 @@
+package kr.co.jeelee.kiwee.domain.badge.service;
+
+import java.util.UUID;
+
+import kr.co.jeelee.kiwee.domain.badge.dto.request.BadgeLevelCreateRequest;
+import kr.co.jeelee.kiwee.domain.badge.dto.request.BadgeLevelUpdateRequest;
+import kr.co.jeelee.kiwee.domain.badge.dto.response.BadgeLevelResponse;
+
+public interface BadgeLevelService {
+
+	BadgeLevelResponse addLevel(UUID badgeId, BadgeLevelCreateRequest request);
+
+	BadgeLevelResponse updateLevel(Long id, BadgeLevelUpdateRequest request);
+
+	void deleteLevel(Long id);
+
+}
