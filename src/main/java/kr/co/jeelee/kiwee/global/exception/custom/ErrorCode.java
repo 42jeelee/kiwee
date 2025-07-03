@@ -38,6 +38,15 @@ public enum ErrorCode {
 
 	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION-001", "해당 알림을 찾을 수 없습니다."),
 
+	QUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-001", "해당 퀘스트를 찾을 수 없습니다."),
+	QUEST_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-002", "해당 퀘스트에 가입된 맴버가 아닙니다."),
+	QUEST_VERIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-003", "해당 퀘스트 인증이 없습니다."),
+
+	REWARD_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-001", "해당 보상을 찾을 수 없습니다."),
+	REWARD_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-002", "해당 보상을 획득한 맴버가 아닙니다."),
+
+	ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "ACTIVITY-001", "해당 활동을 찾을 수 없습니다."),
+
 	UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER-001", "알 수 없는 오류가 발생했습니다."),
 	KNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER-002", "내부적으로 오류가 발생했습니다."),
 	;

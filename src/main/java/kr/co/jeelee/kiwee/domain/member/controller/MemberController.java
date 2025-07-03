@@ -91,15 +91,6 @@ public class MemberController {
 		return memberService.updateMember(id, request);
 	}
 
-	@PreAuthorize(value = "hasRole('EDIT_MEMBER')")
-	@PatchMapping(value = "/{id}/exp")
-	public MemberDetailResponse gainExp(
-		@PathVariable UUID id,
-		@Valid @RequestBody GainExpRequest request
-	) {
-		return memberService.gainExp(id, request);
-	}
-
 	@PreAuthorize(value = "hasRole('PERMISSION_GRANTER')")
 	@DeleteMapping(value = "/{id}/roles/{roleType}")
 	public ResponseEntity<Void> deleteMemberRoles(

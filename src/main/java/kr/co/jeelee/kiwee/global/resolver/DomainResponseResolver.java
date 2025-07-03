@@ -5,12 +5,15 @@ import java.util.function.Function;
 
 import kr.co.jeelee.kiwee.domain.channel.dto.response.ChannelSimpleResponse;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
+import kr.co.jeelee.kiwee.domain.quest.dto.response.QuestSimpleResponse;
+import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
 import kr.co.jeelee.kiwee.global.exception.common.CastErrorException;
 
 public class DomainResponseResolver {
 
 	private final static Map<Class<?>, Function<Object, ?>> responseConverter = Map.of(
-		Channel.class, obj -> ChannelSimpleResponse.from((Channel) obj)
+		Channel.class, obj -> ChannelSimpleResponse.from((Channel) obj),
+		Quest.class, obj -> QuestSimpleResponse.from((Quest) obj)
 	);
 
 	@SuppressWarnings("unchecked")

@@ -134,7 +134,7 @@ public class Member extends BaseTimeEntity {
 		this.avatarUrl = avatarUrl;
 	}
 
-	public void gainExp(long exp) {
+	public void gainExp(int exp) {
 		if (exp < 0) {
 			throw new FieldValidationException("exp", "받는 경험치는 음수가 될 수 없습니다.");
 		}
