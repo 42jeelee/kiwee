@@ -17,8 +17,6 @@ public enum ErrorCode {
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "REQUEST-005", "접근 권한이 없습니다."),
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "REQUEST-006", "인증이 필요합니다."),
 
-	UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "REQUEST-004", "알 수 없는 오류가 발생했습니다."),
-
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER-001", "해당 유저를 찾을 수 없습니다."),
 	MEMBER_NOT_HAVE(HttpStatus.NOT_FOUND, "MEMBER-002", "해당 맴버가 소유하지 않은 자원입니다."),
 
@@ -37,6 +35,20 @@ public enum ErrorCode {
 	CHANNEL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHANNEL-002", "이미 존재하는 채널입니다."),
 
 	INVITE_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITE-001", "유효하지 않는 초대코드입니다."),
+
+	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION-001", "해당 알림을 찾을 수 없습니다."),
+
+	QUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-001", "해당 퀘스트를 찾을 수 없습니다."),
+	QUEST_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-002", "해당 퀘스트에 가입된 맴버가 아닙니다."),
+	QUEST_VERIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-003", "해당 퀘스트 인증이 없습니다."),
+
+	REWARD_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-001", "해당 보상을 찾을 수 없습니다."),
+	REWARD_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-002", "해당 보상을 획득한 맴버가 아닙니다."),
+
+	ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "ACTIVITY-001", "해당 활동을 찾을 수 없습니다."),
+
+	UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER-001", "알 수 없는 오류가 발생했습니다."),
+	KNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER-002", "내부적으로 오류가 발생했습니다."),
 	;
 
 	private final HttpStatus status;

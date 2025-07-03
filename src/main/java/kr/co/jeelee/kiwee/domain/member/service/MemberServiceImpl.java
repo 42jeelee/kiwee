@@ -114,11 +114,11 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public MemberDetailResponse gainExp(UUID id, GainExpRequest request) {
+	public MemberDetailResponse gainExp(UUID id, int exp) {
 		Member member = memberRepository.findById(id)
 			.orElseThrow(MemberNotFoundException::new);
 
-		member.gainExp(request.exp());
+		member.gainExp(exp);
 		return MemberDetailResponse.from(memberRepository.save(member));
 	}
 

@@ -211,3 +211,24 @@
 
 - POST `/{code}/expired/force` - 초대권 강제 무효화
   + code: string
+
+#### 알림 (Notification)
+- Common `/api/v1/notifications`
+
+##### 조회
+- GET `/me` - 알림 목록 조회
+  + includeRead: boolean
+  + page: number
+  + size: number
+
+##### 수정
+
+- GET `/me/{id}/read` - 알림 읽기
+  + id: UUID
+
+- GET `/me/{id}/unread` - 알림 안읽음 처리
+  + id: UUID
+
+##### 삭제
+- DELETE `/me/{id}` - 알림 삭제
+  + id: UUID

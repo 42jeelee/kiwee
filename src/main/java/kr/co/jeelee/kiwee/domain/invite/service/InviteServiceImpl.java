@@ -4,14 +4,15 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
+import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
-import kr.co.jeelee.kiwee.domain.channel.dto.response.ChannelSimpleResponse;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.channel.service.ChannelService;
 import kr.co.jeelee.kiwee.domain.channelMember.service.ChannelMemberService;
@@ -25,9 +26,16 @@ import kr.co.jeelee.kiwee.domain.invite.model.InviteStatus;
 import kr.co.jeelee.kiwee.domain.invite.repository.InviteRepository;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
+import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
+import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
+import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.exception.common.DomainNotFoundException;
+import kr.co.jeelee.kiwee.global.exception.common.InvalidParameterException;
+import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
+import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 import kr.co.jeelee.kiwee.global.util.Base62Encoder;
 import lombok.RequiredArgsConstructor;
 
@@ -41,17 +49,38 @@ public class InviteServiceImpl implements InviteService {
 	private final MemberService memberService;
 	private final ChannelService channelService;
 	private final ChannelMemberService channelMemberService;
+	private final MemberActivityService memberActivityService;
+
+	private final ApplicationEventPublisher eventPublisher;
+
+	private final DomainObjectResolver domainObjectResolver;
 
 	@Override
 	@Transactional
 	public InviteDetailResponse invite(CustomOAuth2User principal, InviteCreateRequest request) {
-		Object targetResponse = ValidateOrGetDomainObjectResponse(
-			principal.member(), request.domain(), request.targetId(), Set.of(PermissionType.ROLE_CHANNEL_INVITE_MEMBER)
-		);
+		Object target = domainObjectResolver.resolve(request.domain(), request.targetId());
+
+		if (target instanceof Channel) {
+			if (
+				!channelMemberService.hasPermission(
+					(Channel) target,
+					principal.member(),
+					PermissionType.ROLE_CHANNEL_INVITE_MEMBER
+				)
+			) {
+				throw new AccessDeniedException("해당 채널 권한이 없습니다.");
+			}
+		}
+
+		Object targetResponse = DomainResponseResolver.toResponse(target);
 
 		Member invitee = request.inviteeId() != null
 			? memberService.getById(request.inviteeId())
 			: null;
+
+		if (principal.member().equals(invitee)) {
+			throw new InvalidParameterException("invitee", "자신을 초대할 수는 없습니다.");
+		}
 
 		String code = Base62Encoder.encode(UUID.randomUUID());
 
@@ -60,8 +89,32 @@ public class InviteServiceImpl implements InviteService {
 			code, InviteStatus.PENDING, request.message(), request.condition(),
 			request.maxUses(), 0
 		);
+		Invite savedInvite = inviteRepository.save(invite);
 
-		return InviteDetailResponse.from(inviteRepository.save(invite), targetResponse);
+		UUID activityId = memberActivityService.log(
+			principal.member(),
+			ActivityType.INVITE,
+			request.domain(),
+			request.targetId(),
+			String.format("'%s' 초대코드 발행", request.domain().name())
+		);
+
+		RewardEvent rewardEvent = RewardEvent.of(
+			principal.member().getId(),
+			request.domain(),
+			request.targetId(),
+			TriggerType.INVITE,
+			1,
+			activityId
+		);
+
+		eventPublisher.publishEvent(rewardEvent);
+
+		if (invitee != null) {
+			eventPublisher.publishEvent(getNotificationEvent(invite, target));
+		}
+
+		return InviteDetailResponse.from(savedInvite, targetResponse);
 	}
 
 	@Override
@@ -69,15 +122,7 @@ public class InviteServiceImpl implements InviteService {
 		Invite invite = inviteRepository.findById(id)
 			.orElseThrow(InviteNotFoundException::new);
 
-		if (invite.getInvitee() != null && !invite.getInvitee().equals(principal.member())) {
-			throw new AccessDeniedException("초대 받은 맴버가 아닙니다.");
-		}
-
-		Object targetResponse = ValidateOrGetDomainObjectResponse(
-			principal.member(), invite.getDomain(), invite.getTargetId(), Set.of()
-		);
-
-		return InviteDetailResponse.from(invite, targetResponse);
+		return inviteDetailResponse(principal.member(), invite);
 	}
 
 	@Override
@@ -85,25 +130,15 @@ public class InviteServiceImpl implements InviteService {
 		Invite invite = inviteRepository.findByCode(code)
 			.orElseThrow(InviteNotFoundException::new);
 
-		if (invite.getInvitee() != null && !invite.getInvitee().equals(principal.member())) {
-			throw new AccessDeniedException("초대 받은 맴버가 아닙니다.");
-		}
-
-		Object targetResponse = ValidateOrGetDomainObjectResponse(
-			principal.member(), invite.getDomain(), invite.getTargetId(), Set.of()
-		);
-
-		return InviteDetailResponse.from(invite, targetResponse);
+		return inviteDetailResponse(principal.member(), invite);
 	}
 
 	@Override
 	public PagedResponse<InviteSimpleResponse> getAllPublicInvite(Pageable pageable) {
 		return PagedResponse.of(inviteRepository.findByInviteeNull(pageable), invite -> {
-			Object targetResponse = ValidateOrGetDomainObjectResponse(
-				null, invite.getDomain(), invite.getTargetId(), Set.of()
-			);
+			Object target = domainObjectResolver.resolve(invite.getDomain(), invite.getTargetId());
 
-			return InviteSimpleResponse.from(invite, targetResponse);
+			return InviteSimpleResponse.from(invite, DomainResponseResolver.toResponse(target));
 		});
 	}
 
@@ -112,12 +147,11 @@ public class InviteServiceImpl implements InviteService {
 		return PagedResponse.of(
 			inviteRepository.findByInviteeId(principal.member().getId(), pageable),
 			invite -> {
-				Object targetResponse = ValidateOrGetDomainObjectResponse(
-					principal.member(), invite.getDomain(), invite.getTargetId(), Set.of()
-			);
+				Object target = domainObjectResolver.resolve(invite.getDomain(), invite.getTargetId());
 
-			return InviteSimpleResponse.from(invite, targetResponse);
-		});
+				return InviteSimpleResponse.from(invite, DomainResponseResolver.toResponse(target));
+			}
+		);
 	}
 
 	@Override
@@ -190,6 +224,17 @@ public class InviteServiceImpl implements InviteService {
 			&& invite.getExpiredAt().isAfter(LocalDateTime.now());
 	}
 
+	private InviteDetailResponse inviteDetailResponse(Member member, Invite invite) {
+		if (invite.getInvitee() != null && !invite.getInvitee().equals(member)) {
+			throw new AccessDeniedException("초대 받은 맴버가 아닙니다.");
+		}
+
+		Object target = domainObjectResolver.resolve(invite.getDomain(), invite.getTargetId());
+		Object targetResponse = DomainResponseResolver.toResponse(target);
+
+		return InviteDetailResponse.from(invite, targetResponse);
+	}
+
 	private void joinObject(Member member, Invite invite) {
 		switch (invite.getDomain()) {
 			case CHANNEL:
@@ -202,26 +247,26 @@ public class InviteServiceImpl implements InviteService {
 		}
 	}
 
-	private Object ValidateOrGetDomainObjectResponse(
-		Member loggedMember, DomainType domainType, UUID targetId, Set<PermissionType> permissionTypes
-	) {
-		switch (domainType) {
-			case CHANNEL:
-				Channel channel = channelService.getById(targetId);
+	private NotificationEvent getNotificationEvent(Invite invite, Object target) {
+		String title;
+		String message;
 
-				boolean hasPermission = permissionTypes.stream()
-					.anyMatch(permissionType ->
-						channelMemberService.hasPermission(channel, loggedMember, permissionType)
-					);
-
-				if (!permissionTypes.isEmpty() && !hasPermission) {
-					throw new AccessDeniedException("해당 채널 권한이 없습니다.");
-				}
-
-				return ChannelSimpleResponse.from(channel);
+		switch (invite.getDomain()) {
+			case CHANNEL -> {
+				Channel channel = (Channel) target;
+				title = String.format("채널 '%s'에 초대 받았어요!", channel.getName());
+				message = String.format("%s님이 '%s' 채널에 당신을 초대하였습니다:)", invite.getInviter().getNickname(), channel.getName());
+			}
+			default -> throw new DomainNotFoundException();
 		}
 
-		throw new DomainNotFoundException();
+		return new NotificationEvent(
+			invite.getInvitee().getId(),
+			NotificationType.INVITE,
+			title,
+			message,
+			invite.getDomain(),
+			invite.getTargetId()
+		);
 	}
-
 }

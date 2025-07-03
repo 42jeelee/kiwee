@@ -25,6 +25,9 @@ public enum PermissionType {
 
 	ROLE_INVITE_EXPIRED(DomainType.GLOBAL, "초대 만료 권한"),
 
+	ROLE_OTHER_NOTIFICATION(DomainType.GLOBAL, "다른 유저 알림 읽기"),
+	ROLE_OTHER_ACTIVITY(DomainType.GLOBAL, "다른 유저 활동 읽기"),
+
 	// Platform
 	ROLE_CREATE_PLATFORM(DomainType.PLATFORM, "플랫폼 생성"),
 	ROLE_EDIT_PLATFORM(DomainType.PLATFORM, "플랫폼 수정"),
@@ -37,6 +40,17 @@ public enum PermissionType {
 	ROLE_CHANNEL_BEN_GRANTER(DomainType.CHANNEL, "상대 벤 가능."),
 	ROLE_CHANNEL_INVITE_MEMBER(DomainType.CHANNEL, "채널에 맴버 초대 가능."),
 	ROLE_CHANNEL_KICK_MEMBER(DomainType.CHANNEL, "채널에서 맴버 강퇴 가능."),
+	ROLE_CHANNEL_CREATE_QUEST(DomainType.CHANNEL, "채널 퀘스트 생성 가능."),
+	ROLE_CHANNEL_MAKE_REWARD(DomainType.CHANNEL, "채널 보상 생성 가능"),
+
+	// Reward
+	ROLE_CREATE_REWARD(DomainType.REWARD, "보상 생성"),
+	ROLE_DELETE_REWARD(DomainType.REWARD, "보상 삭제"),
+
+	// Quest
+	ROLE_CREATE_QUEST(DomainType.QUEST, "퀘스트 생성"),
+	ROLE_EDIT_QUEST(DomainType.QUEST, "퀘스트 수정"),
+	ROLE_DELETE_QUEST(DomainType.QUEST, "퀘스트 삭제"),
 
 	;
 

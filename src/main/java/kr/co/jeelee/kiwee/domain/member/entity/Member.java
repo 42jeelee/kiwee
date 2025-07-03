@@ -19,6 +19,7 @@ import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,8 +33,10 @@ import lombok.NoArgsConstructor;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class Member extends BaseTimeEntity {
 
+	@EqualsAndHashCode.Include
 	@Id @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
@@ -131,7 +134,7 @@ public class Member extends BaseTimeEntity {
 		this.avatarUrl = avatarUrl;
 	}
 
-	public void gainExp(long exp) {
+	public void gainExp(int exp) {
 		if (exp < 0) {
 			throw new FieldValidationException("exp", "받는 경험치는 음수가 될 수 없습니다.");
 		}

@@ -28,7 +28,7 @@ public interface MemberService {
 	MemberRolesResponse getMemberRoles(UUID id);
 
 	MemberDetailResponse updateMember(UUID id, UpdateMemberRequest updateMemberRequest);
-	MemberDetailResponse gainExp(UUID id, GainExpRequest request);
+	MemberDetailResponse gainExp(UUID id, int exp);
 
 	MemberRolesResponse addRoles(UUID id, MemberRolesRequest request);
 

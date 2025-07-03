@@ -112,7 +112,7 @@ public class Invite extends BaseTimeEntity {
 
 		useCount += 1;
 
-		if (useCount == maxUses) {
+		if (useCount >= maxUses) {
 			status = InviteStatus.ACCEPTED;
 		}
 

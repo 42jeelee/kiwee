@@ -4,13 +4,17 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
+import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.dto.request.RolesRequest;
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
+import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
 import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
 import kr.co.jeelee.kiwee.domain.authorization.service.RoleService;
@@ -23,6 +27,10 @@ import kr.co.jeelee.kiwee.domain.channelMember.entity.ChannelMemberRole;
 import kr.co.jeelee.kiwee.domain.channelMember.repository.ChannelMemberRepository;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
+import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
+import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
+import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
@@ -39,6 +47,9 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 
 	private final MemberService memberService;
 	private final RoleService roleService;
+	private final MemberActivityService memberActivityService;
+
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
 	@Transactional
@@ -61,7 +72,11 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 		Role defaultRole = roleService.findByRoleType(RoleType.CHANNEL_MEMBER);
 		cm.addRole(ChannelMemberRole.of(cm, defaultRole));
 
-		return ChannelMemberResponse.from(channelMemberRepository.save(cm));
+		ChannelMember savedChannelMember = channelMemberRepository.save(cm);
+
+		joinEventPublish(channel, member);
+
+		return ChannelMemberResponse.from(savedChannelMember);
 	}
 
 	@Override
@@ -174,6 +189,7 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 	}
 
 	@Override
+	@Transactional
 	public void invitedChannel(Member member, Channel channel, Set<RoleType> roles) {
 		if (isJoined(channel, member)) {
 			throw new FieldValidationException("member", "이미 가입되어 있습니다.");
@@ -196,6 +212,8 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 		);
 
 		channelMemberRepository.save(cm);
+
+		joinEventPublish(channel, member);
 	}
 
 	private void validatePermission(
@@ -208,6 +226,35 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 		if (hasRole(channel, member, RoleType.CHANNEL_MANAGER)) {
 			throw new AccessDeniedException("대상이 해당 체널 메니저 권한이 있습니다.");
 		}
+	}
+
+	private void joinEventPublish(Channel channel, Member member) {
+		RewardEvent rewardEvent = RewardEvent.of(
+			member.getId(),
+			DomainType.CHANNEL,
+			channel.getId(),
+			TriggerType.JOIN,
+			1,
+			memberActivityService.log(
+				member,
+				ActivityType.JOIN,
+				DomainType.CHANNEL,
+				channel.getId(),
+				String.format("'%s' 채널 가입", channel.getName())
+			)
+		);
+
+		NotificationEvent notificationEvent = NotificationEvent.of(
+			member.getId(),
+			NotificationType.CHANNEL,
+			"채널 가입 완료!",
+			String.format("'%s' 채널에 가입되었습니다:)", channel.getName()),
+			DomainType.CHANNEL,
+			channel.getId()
+		);
+
+		eventPublisher.publishEvent(rewardEvent);
+		eventPublisher.publishEvent(notificationEvent);
 	}
 
 }
