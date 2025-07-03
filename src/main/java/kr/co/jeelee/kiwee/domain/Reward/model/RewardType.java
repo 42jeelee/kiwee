@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RewardType {
 	NONE("없음"),
+	BADGE("배지"),
 	;
 
 	private final String label;

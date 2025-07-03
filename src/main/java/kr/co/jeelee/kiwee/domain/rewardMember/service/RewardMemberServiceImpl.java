@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.jeelee.kiwee.domain.BadgeMember.service.BadgeMemberService;
+import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardObjectResolver;
 import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardResponseResolver;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
@@ -30,6 +32,7 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 	private final RewardMemberRepository rewardMemberRepository;
 
 	private final MemberService memberService;
+	private final BadgeMemberService badgeMemberService;
 
 	private final DomainObjectResolver domainObjectResolver;
 	private final RewardObjectResolver rewardObjectResolver;
@@ -70,6 +73,13 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 	public RewardMember createRewardMember(RewardMember rewardMember) {
 		RewardMember savedRewardMember = rewardMemberRepository.save(rewardMember);
 		memberService.gainExp(rewardMember.getAwardee().getId(), savedRewardMember.getReward().getExp());
+
+		if (rewardMember.getReward().getRewardType().equals(RewardType.BADGE)) {
+			badgeMemberService.earnBadge(
+				rewardMember.getAwardee().getId(),
+				rewardMember.getReward().getRewardId()
+			);
+		}
 
 		NotificationEvent notificationEvent = NotificationEvent.of(
 			savedRewardMember.getAwardee().getId(),

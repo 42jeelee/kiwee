@@ -21,7 +21,6 @@ import kr.co.jeelee.kiwee.domain.member.dto.request.MemberRolesRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberRolesResponse;
 import kr.co.jeelee.kiwee.domain.member.exception.MemberNotHaveRoleException;
 import kr.co.jeelee.kiwee.domain.member.repository.MemberRepository;
-import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateMemberRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberDetailResponse;

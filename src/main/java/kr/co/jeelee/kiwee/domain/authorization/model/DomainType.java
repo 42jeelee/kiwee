@@ -17,6 +17,7 @@ public enum DomainType {
 	CHANNEL("채널", "channels"),
 	REWARD("보상", "rewards"),
 	QUEST("퀘스트", "quests"),
+	BADGE("배지", "badges"),
 	;
 
 	private final String label;

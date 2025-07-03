@@ -12,6 +12,7 @@ import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardDetailResponse;
 import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
 import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.Reward.exception.RewardNotFoundException;
+import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
 import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardObjectResolver;
@@ -19,11 +20,13 @@ import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardResponseResolver;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
+import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.channelMember.service.ChannelMemberService;
 import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
+import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
 import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +59,13 @@ public class RewardServiceImpl implements RewardService {
 		}
 
 		Object rewardObj = rewardObjectResolver.resolve(request.rewardType(), request.rewardId());
+		int exp = request.exp() != null? request.exp() : 0;
+
+		if (request.rewardType().equals(RewardType.NONE) && exp <= 0) {
+			throw new FieldValidationException("exp", "경험치 보상은 경험치가 있어야 합니다.");
+		} else if (rewardObj instanceof Badge) {
+			exp = ((Badge)rewardObj).getExp();
+		}
 
 		Reward reward = Reward.of(
 			principal.member(),
@@ -67,7 +77,7 @@ public class RewardServiceImpl implements RewardService {
 			request.triggerCount(),
 			request.title(),
 			request.description(),
-			request.exp(),
+			exp,
 			request.isPublic()
 		);
 

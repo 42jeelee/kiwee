@@ -42,6 +42,13 @@ public enum ErrorCode {
 	QUEST_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-002", "해당 퀘스트에 가입된 맴버가 아닙니다."),
 	QUEST_VERIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-003", "해당 퀘스트 인증이 없습니다."),
 
+	BADGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BADGE-001", "해당 배지를 찾을 수 없습니다."),
+	BADGE_LEVEL_NOT_FOUND(HttpStatus.NOT_FOUND, "BADGE-002", "해당 배지의 레벨을 찾을 수 없습니다."),
+	BADGE_LEVEL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "BADGE-003", "이미 해당 레벨이 있습니다."),
+	BADGE_LEVEL_CANT_REMOVE(HttpStatus.BAD_REQUEST, "BADGE-004", "해당 레벨은 지울 수 없습니다."),
+	BADGE_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "BADGE-005", "해당 배지를 가진 맴버가 아닙니다."),
+	BADGE_MAX_LEVEL(HttpStatus.BAD_REQUEST, "BADGE-006", "해당 배지는 더이상 레벨을 올릴 수 없습니다."),
+
 	REWARD_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-001", "해당 보상을 찾을 수 없습니다."),
 	REWARD_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-002", "해당 보상을 획득한 맴버가 아닙니다."),
 
