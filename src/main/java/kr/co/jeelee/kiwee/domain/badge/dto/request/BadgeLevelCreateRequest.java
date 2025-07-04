@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotNull;
 import kr.co.jeelee.kiwee.domain.badge.model.BadgeGrade;
 
 public record BadgeLevelCreateRequest(
-	@NotNull(message = "badgeId can't be Null.") UUID badgeId,
 	@URL(message = "This is not a URL format.")
 	@NotNull(message = "icon can't be Null.")
 	String icon,

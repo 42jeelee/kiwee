@@ -36,7 +36,7 @@ public class QuestMemberController {
 	private final QuestMemberService questMemberService;
 	private final QuestMemberVerificationService questMemberVerificationService;
 
-	@PostMapping(value = "/me/quests/{questId}")
+	@PostMapping(value = "/members/me/quests/{questId}")
 	public QuestMemberDetailResponse join(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID questId,
@@ -45,7 +45,7 @@ public class QuestMemberController {
 		return questMemberService.joinQuest(principal, questId, request);
 	}
 
-	@GetMapping(value = "/me/quests/{questId}")
+	@GetMapping(value = "/members/me/quests/{questId}")
 	public QuestMemberDetailResponse joinedQuest(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID questId
@@ -53,7 +53,7 @@ public class QuestMemberController {
 		return questMemberService.getQuestMember(principal, questId);
 	}
 
-	@GetMapping(value = "/me/quests")
+	@GetMapping(value = "/members/me/quests")
 	public PagedResponse<QuestMemberSimpleResponse> joinedQuests(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PageableDefault Pageable pageable
@@ -70,7 +70,7 @@ public class QuestMemberController {
 		return questMemberService.findMembersByQuestId(principal, questId, pageable);
 	}
 
-	@DeleteMapping(value = "/me/quests/{questId}")
+	@DeleteMapping(value = "/members/me/quests/{questId}")
 	public ResponseEntity<Void> giveUp(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID questId
@@ -80,7 +80,7 @@ public class QuestMemberController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping(value = "/me/quests/{questId}/verify")
+	@PostMapping(value = "/members/me/quests/{questId}/verify")
 	public QuestMemberVerificationResponse verify(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID questId,
@@ -89,7 +89,7 @@ public class QuestMemberController {
 		return questMemberVerificationService.verify(principal, questId, request);
 	}
 
-	@GetMapping(value = "/me/quests/verifications")
+	@GetMapping(value = "/members/me/quests/verifications")
 	public PagedResponse<QuestMemberVerificationResponse> myVerifications(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PageableDefault Pageable pageable

@@ -12,6 +12,7 @@ import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.badge.entity.BadgeLevel;
 import kr.co.jeelee.kiwee.domain.badge.exception.BadgeLevelAlreadyExistException;
 import kr.co.jeelee.kiwee.domain.badge.exception.BadgeLevelCantRemoveException;
+import kr.co.jeelee.kiwee.domain.badge.exception.BadgeLevelNotFoundException;
 import kr.co.jeelee.kiwee.domain.badge.exception.BadgeNotFoundException;
 import kr.co.jeelee.kiwee.domain.badge.model.BadgeGrade;
 import kr.co.jeelee.kiwee.domain.badge.repository.BadgeLevelRepository;
@@ -50,9 +51,13 @@ public class BadgeLevelServiceImpl implements BadgeLevelService {
 
 	@Override
 	@Transactional
-	public BadgeLevelResponse updateLevel(Long id, BadgeLevelUpdateRequest request) {
+	public BadgeLevelResponse updateLevel(UUID badgeId, Long id, BadgeLevelUpdateRequest request) {
 		BadgeLevel level = badgeLevelRepository.findById(id)
 			.orElseThrow(BadgeNotFoundException::new);
+
+		if (!level.getBadge().getId().equals(badgeId)) {
+			throw new BadgeLevelNotFoundException();
+		}
 
 		updateIconIfChanged(level, request.icon());
 		updateColorIfChanged(level, request.color());
@@ -65,9 +70,13 @@ public class BadgeLevelServiceImpl implements BadgeLevelService {
 
 	@Override
 	@Transactional
-	public void deleteLevel(Long id) {
+	public void deleteLevel(UUID badgeId, Long id) {
 		BadgeLevel level = badgeLevelRepository.findById(id)
 			.orElseThrow(BadgeNotFoundException::new);
+
+		if (!level.getBadge().getId().equals(badgeId)) {
+			throw new BadgeLevelNotFoundException();
+		}
 
 		if (level.getLevel() == 1) {
 			throw new BadgeLevelCantRemoveException();

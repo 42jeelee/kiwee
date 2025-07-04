@@ -19,7 +19,7 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/api/v1/me/rewards")
+@RequestMapping(value = "/api/v1/members/me/rewards")
 @RequiredArgsConstructor
 @Validated
 public class RewardMemberController {

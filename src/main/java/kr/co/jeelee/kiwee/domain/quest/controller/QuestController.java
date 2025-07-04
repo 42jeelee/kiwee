@@ -29,7 +29,7 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/api/v1/quests")
+@RequestMapping(value = "/api/v1")
 @RequiredArgsConstructor
 @Validated
 public class QuestController {
@@ -37,7 +37,7 @@ public class QuestController {
 	private final QuestService questService;
 
 	@PreAuthorize(value = "hasRole('CREATE_QUEST')")
-	@PostMapping
+	@PostMapping(value = "/quests")
 	public QuestDetailResponse createQuest(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@Valid @RequestBody QuestCreateRequest request
@@ -45,7 +45,7 @@ public class QuestController {
 		return questService.createQuest(principal, request);
 	}
 
-	@GetMapping(value = "/all/channels/{channelId}")
+	@GetMapping(value = "/channels/{channelId}/quests")
 	public PagedResponse<QuestSimpleResponse> getQuestsByChannel(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID channelId,
@@ -54,7 +54,7 @@ public class QuestController {
 		return questService.getAllQuestsByChannel(principal, channelId, pageable);
 	}
 
-	@GetMapping(value = "/{id}")
+	@GetMapping(value = "quests/{id}")
 	public QuestDetailResponse questDetail(
 		@PathVariable UUID id
 	) {
@@ -62,7 +62,7 @@ public class QuestController {
 	}
 
 	@PreAuthorize(value = "hasRole('EDIT_QUEST')")
-	@PatchMapping(value = "/{id}")
+	@PatchMapping(value = "quests/{id}")
 	public QuestDetailResponse updateQuest(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID id,
@@ -72,7 +72,7 @@ public class QuestController {
 	}
 
 	@PreAuthorize(value = "hasRole('EDIT_QUEST')")
-	@PatchMapping(value = "/{id}/activate")
+	@PatchMapping(value = "quests/{id}/activate")
 	public ResponseEntity<Void> switchActivate(
 		@PathVariable UUID id,
 		@RequestParam Boolean active
@@ -86,7 +86,7 @@ public class QuestController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@DeleteMapping(value = "/{id}")
+	@DeleteMapping(value = "quests/{id}")
 	public ResponseEntity<Void> deleteQuest(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID id
@@ -97,7 +97,7 @@ public class QuestController {
 	}
 
 	@PreAuthorize(value = "hasRole('DELETE_QUEST')")
-	@DeleteMapping(value = "/{id}/force")
+	@DeleteMapping(value = "quests/{id}/force")
 	public ResponseEntity<Void> deleteQuestForce(
 		@PathVariable UUID id
 	) {

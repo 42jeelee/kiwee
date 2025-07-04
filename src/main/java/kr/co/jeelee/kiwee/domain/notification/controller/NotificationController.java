@@ -22,14 +22,14 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/api/v1/notifications/me")
+@RequestMapping(value = "/api/v1/members")
 @RequiredArgsConstructor
 @Validated
 public class NotificationController {
 
 	private final NotificationService notificationService;
 
-	@GetMapping
+	@GetMapping(value = "/me/notifications")
 	public PagedResponse<NotificationResponse> getMyNotifications(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@RequestParam(defaultValue = "false") boolean includeRead,
@@ -40,7 +40,7 @@ public class NotificationController {
 			: notificationService.getUnReadNotifications(principal.member().getId(), pageable);
 	}
 
-	@PostMapping(value = "/{id}/read")
+	@PostMapping(value = "/me/notifications/{id}/read")
 	public ResponseEntity<Void> readNotification(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID id
@@ -49,7 +49,7 @@ public class NotificationController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping(value = "/{id}/unread")
+	@PostMapping(value = "/me/notifications/{id}/unread")
 	public ResponseEntity<Void> unReadNotification(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID id
@@ -58,7 +58,7 @@ public class NotificationController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@DeleteMapping(value = "/{id}")
+	@DeleteMapping(value = "/me/notifications/{id}")
 	public ResponseEntity<Void> deleteNotification(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable UUID id
