@@ -1,6 +1,5 @@
 package kr.co.jeelee.kiwee.domain.quest.service;
 
-import java.time.Duration;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -21,6 +20,8 @@ import kr.co.jeelee.kiwee.domain.quest.exception.QuestNotFoundException;
 import kr.co.jeelee.kiwee.domain.quest.repository.QuestRepository;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
+import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
+import kr.co.jeelee.kiwee.global.model.TermType;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -56,16 +57,12 @@ public class QuestServiceImpl implements QuestService {
 			request.verifiableFrom(),
 			request.verifiableUntil(),
 			request.isThisInstant(),
-			request.completedLimit(),
+			request.isRepeatable(),
 			request.maxSuccess() == null ? 0 : request.maxSuccess(),
-			request.maxProgressCount() == null ? 0 : request.maxProgressCount(),
 			request.maxRetryAllowed() == null ? 0 : request.maxRetryAllowed(),
 			true,
-			request.termType(),
-			request.activeDays(),
-			request.minPerTerm(),
-			request.maxSkipTerm(),
-			request.maxAllowedFails()
+			request.autoReschedule(),
+			request.rescheduleTerm()
 		);
 
 		return QuestDetailResponse.from(questRepository.save(quest));
@@ -109,13 +106,11 @@ public class QuestServiceImpl implements QuestService {
 		updateDescriptionIfChanged(quest, request.description());
 		quest.updateVerifiableTerm(request.verifiableFrom(), request.verifiableUntil());
 		updateIsThisInstantIfChanged(quest, request.isThisInstant());
-		updateCompletedLimitIfChanged(quest, request.completedLimit());
+		updateIsRepeatableIfChanged(quest, request.isRepeatable());
 		quest.updateMaxSuccess(quest.getMaxSuccess());
-		quest.updateMaxProgressCount(quest.getMaxProgressCount());
 		quest.updateMaxRetryAllowed(quest.getMaxRetryAllowed());
 		updateIsActiveIfChanged(quest, request.isActive());
-		quest.updateMinPerTerm(quest.getMinPerTerm());
-		quest.updateSchedule(request.termType(), request.activeDays(), request.minPerTerm());
+		updateAutoRescheduleIfChanged(quest, request.autoReschedule(), request.rescheduleTerm());
 
 		return QuestDetailResponse.from(quest);
 	}
@@ -183,15 +178,30 @@ public class QuestServiceImpl implements QuestService {
 		}
 	}
 
-	private void updateCompletedLimitIfChanged(Quest quest, Duration completedLimit) {
-		if (completedLimit != null && !completedLimit.equals(quest.getCompletedLimit())) {
-			quest.updateCompletedLimit(completedLimit);
+	private void updateIsRepeatableIfChanged(Quest quest, Boolean isRepeatable) {
+		if (isRepeatable != null && !isRepeatable.equals(quest.getIsRepeatable())) {
+			quest.isRepeatable(isRepeatable);
 		}
 	}
 
 	private void updateIsActiveIfChanged(Quest quest, Boolean isActive) {
 		if (isActive != null && !isActive.equals(quest.getIsActive())) {
 			quest.isActive(isActive);
+		}
+	}
+
+	private void updateAutoRescheduleIfChanged(Quest quest, Boolean isAutoReschedule, TermType rescheduleTerm) {
+		if (isAutoReschedule != null) {
+			if (isAutoReschedule && rescheduleTerm != null) {
+				quest.isAutoReschedule(rescheduleTerm);
+				return;
+			}
+			if (!isAutoReschedule) {
+				quest.isNotAutoReschedule();
+				return;
+			}
+
+			throw new FieldValidationException("rescheduleTerm", "autoReschedule을 등록하기 위해서는 있어야 합니다.");
 		}
 	}
 

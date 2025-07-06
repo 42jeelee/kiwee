@@ -31,7 +31,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.GET, "/api/v1/platforms").permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/v1/tokens/refresh").permitAll()
 				.anyRequest().authenticated()
 			)
 			.headers(headers -> headers

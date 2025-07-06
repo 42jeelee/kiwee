@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ActivityType {
 	JOIN("가입"),
-	VERIFY("인증"),
+	COMPLETE("완료"),
 	LINK("연동"),
 	INVITE("초대"),
 	EVENT("이벤트"),

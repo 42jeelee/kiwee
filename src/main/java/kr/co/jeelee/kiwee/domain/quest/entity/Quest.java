@@ -1,17 +1,11 @@
 package kr.co.jeelee.kiwee.domain.quest.entity;
 
-import java.time.Duration;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +16,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
-import kr.co.jeelee.kiwee.global.converter.IntegerListToStringConverter;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.model.TermType;
@@ -68,47 +61,29 @@ public class Quest extends BaseTimeEntity {
 	@Column(nullable = false)
 	private Boolean isThisInstant;
 
-	@JdbcTypeCode(SqlTypes.BIGINT)
-	@Column
-	private Duration completedLimit;
+	@Column(nullable = false)
+	private Boolean isRepeatable;
 
 	@Column(nullable = false)
 	private Integer maxSuccess;
 
 	@Column(nullable = false)
-	private Integer maxProgressCount;
-
-	@Column
 	private Integer maxRetryAllowed;
 
 	@Column(nullable = false)
 	private Boolean isActive;
 
 	@Column(nullable = false)
-	private TermType termType;
-
-	@Column
-	@Convert(converter = IntegerListToStringConverter.class)
-	private List<Integer> activeDays;
+	private Boolean autoReschedule;
 
 	@Column(nullable = false)
-	private Integer minPerTerm;
-
-	@Column(nullable = false)
-	private Integer skipTerm;
-
-	@Column(nullable = false)
-	private Integer maxSkipTerm;
-
-	@Column
-	private Integer maxAllowedFails;
+	private TermType rescheduleTerm;
 
 	private Quest(
-		String icon, String banner, String title, String description,
-		Channel channel, Member proposer, LocalTime verifiableFrom, LocalTime verifiableUntil,
-		Boolean isThisInstant, Duration completedLimit, Integer maxSuccess, Integer maxProgressCount,
-		Integer maxRetryAllowed, Boolean isActive, TermType termType, List<Integer> activeDays,
-		Integer minPerTerm, Integer maxSkipTerm, Integer maxAllowedFails
+		String icon, String banner, String title, String description, Channel channel,
+		Member proposer, LocalTime verifiableFrom, LocalTime verifiableUntil, Boolean isThisInstant,
+		Boolean isRepeatable, Integer maxSuccess, Integer maxRetryAllowed, Boolean isActive,
+		Boolean autoReschedule, TermType rescheduleTerm
 	) {
 		this.icon = icon;
 		this.banner = banner;
@@ -119,30 +94,23 @@ public class Quest extends BaseTimeEntity {
 		this.verifiableFrom = verifiableFrom;
 		this.verifiableUntil = verifiableUntil;
 		this.isThisInstant = isThisInstant;
-		this.completedLimit = completedLimit;
+		this.isRepeatable = isRepeatable;
 		this.maxSuccess = maxSuccess;
-		this.maxProgressCount = maxProgressCount;
 		this.maxRetryAllowed = maxRetryAllowed;
 		this.isActive = isActive;
-		this.termType = termType;
-		this.activeDays = activeDays;
-		this.minPerTerm = minPerTerm;
-		this.skipTerm = maxSkipTerm;
-		this.maxSkipTerm = maxSkipTerm;
-		this.maxAllowedFails = maxAllowedFails;
+		this.autoReschedule = autoReschedule;
+		this.rescheduleTerm = rescheduleTerm;
 	}
 
 	public static Quest of(
-		String icon, String banner, String title, String description,
-		Channel channel, Member proposer, LocalTime verifiableFrom, LocalTime verifiableUntil,
-		Boolean isThisInstant, Duration completedLimit, Integer maxSuccess, Integer maxProgressCount,
-		Integer maxRetryAllowed, Boolean isActive, TermType termType, List<Integer> activeDays,
-		Integer minPerTerm, Integer maxSkipTerm, Integer maxAllowedFails
+		String icon, String banner, String title, String description, Channel channel,
+		Member proposer, LocalTime verifiableFrom, LocalTime verifiableUntil, Boolean isThisInstant,
+		Boolean isRepeatable, Integer maxSuccess, Integer maxRetryAllowed, Boolean isActive,
+		Boolean autoReschedule, TermType rescheduleTerm
 	) {
 		return new Quest(
-			icon, banner, title, description, channel, proposer, verifiableFrom, verifiableUntil,
-			isThisInstant, completedLimit, maxSuccess, maxProgressCount, maxRetryAllowed, isActive,
-			termType, activeDays, minPerTerm, maxSkipTerm, maxAllowedFails
+			icon, banner, title, description, channel, proposer, verifiableFrom, verifiableUntil, isThisInstant,
+			isRepeatable, maxSuccess, maxRetryAllowed, isActive, autoReschedule, rescheduleTerm
 		);
 	}
 
@@ -174,6 +142,10 @@ public class Quest extends BaseTimeEntity {
 		this.isThisInstant = isThisInstant;
 	}
 
+	public void isRepeatable(Boolean isRepeatable) {
+		this.isRepeatable = isRepeatable;
+	}
+
 	public void updateVerifiableTerm(LocalTime verifiableFrom, LocalTime verifiableUntil) {
 		if (Objects.equals(verifiableFrom == null, verifiableUntil == null)) {
 			if (verifiableFrom != null && verifiableFrom.isAfter(verifiableUntil)) {
@@ -187,22 +159,11 @@ public class Quest extends BaseTimeEntity {
 		throw new FieldValidationException("verifiableFrom", "verifiableFrom, verifiableUntil 값은 둘 다 있거나 없어야 합니다.");
 	}
 
-	public void updateCompletedLimit(Duration completedLimit) {
-		this.completedLimit = completedLimit;
-	}
-
 	public void updateMaxSuccess(Integer maxSuccess) {
 		if (maxSuccess == null || maxSuccess < 0) {
 			throw new FieldValidationException("maxSuccess", "빈 값 이거나 0보다 작을 수 없습니다.");
 		}
 		this.maxSuccess = maxSuccess;
-	}
-
-	public void updateMaxProgressCount(Integer maxProgressCount) {
-		if (maxProgressCount == null || maxProgressCount < 0) {
-			throw new FieldValidationException("maxProgressCount", "빈 값 이거나 0보다 작을 수 없습니다.");
-		}
-		this.maxProgressCount = maxProgressCount;
 	}
 
 	public void updateMaxRetryAllowed(Integer maxRetryAllowed) {
@@ -216,43 +177,14 @@ public class Quest extends BaseTimeEntity {
 		this.isActive = isActive;
 	}
 
-	public void updateMinPerTerm(Integer minPerTerm) {
-		if (minPerTerm == null || minPerTerm < 0) {
-			throw new FieldValidationException("minPerTerm", "빈 값 이거나 0보다 작을 수 없습니다.");
-		}
-		this.minPerTerm = minPerTerm;
+	public void isAutoReschedule(TermType rescheduleTerm) {
+		this.autoReschedule = true;
+		this.rescheduleTerm = rescheduleTerm;
 	}
 
-	public void updateSchedule(
-		TermType termType,
-		List<Integer> activeDays,
-		Integer maxSkipTerm
-	) {
-		if (termType == null) {
-			throw new FieldValidationException("termType", "빈 값이거나 잘못된 값이 들어갔습니다.");
-		}
-
-		this.termType = termType;
-		if (termType.equals(TermType.NONE)) {
-			this.activeDays = null;
-			this.maxSkipTerm = 0;
-		} else {
-			if (maxSkipTerm == null || maxSkipTerm < 0) {
-				throw new FieldValidationException("maxSkipTerm", "빈 값 이거나 0보다 작을 수 없습니다.");
-			}
-			this.activeDays = activeDays;
-			this.maxSkipTerm = maxSkipTerm;
-		}
-
-	}
-
-	public boolean shouldSkipThisTerm() {
-		if (this.skipTerm > 0) {
-			this.skipTerm--;
-			return true;
-		}
-		this.skipTerm = this.maxSkipTerm;
-		return false;
+	public void isNotAutoReschedule() {
+		this.autoReschedule = false;
+		this.rescheduleTerm = TermType.NONE;
 	}
 
 	private void validateImageUrl(String fieldName, String url) {

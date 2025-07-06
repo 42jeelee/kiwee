@@ -1,7 +1,6 @@
 package kr.co.jeelee.kiwee.domain.questMember.entity;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -15,8 +14,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
+import kr.co.jeelee.kiwee.domain.questMember.exception.QuestAlreadyEvaluatedException;
+import kr.co.jeelee.kiwee.domain.questMember.exception.QuestCantStartException;
 import kr.co.jeelee.kiwee.domain.questMember.model.QuestMemberStatus;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
+import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
+import kr.co.jeelee.kiwee.global.model.MediaType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,65 +45,98 @@ public class QuestMember extends BaseTimeEntity {
 	private QuestMemberStatus status;
 
 	@Column(nullable = false)
-	private Integer failCount;
+	private LocalDateTime startDateTime;
+
+	@Column
+	private LocalDateTime endDateTime;
+
+	@Column
+	private LocalDateTime completedAt;
+
+	@Column
+	private MediaType mediaType;
+
+	@Column
+	private String mediaUrl;
+
+	@Column
+	private String message;
 
 	@Column(nullable = false)
-	private LocalDateTime startDate;
-
-	@Column
-	private LocalDateTime endDate;
-
-	@Column
-	private LocalTime verifiableFrom;
-
-	@Column
-	private LocalTime verifiableUntil;
-
-	@Column
-	private LocalDateTime deadDate;
+	private Boolean autoReschedule;
 
 	private QuestMember(
-		Quest quest, Member member, QuestMemberStatus status, LocalDateTime startDate,
-		LocalDateTime endDate, LocalTime verifiableFrom, LocalTime verifiableUntil
+		Quest quest, Member member, QuestMemberStatus status,
+		LocalDateTime startDateTime, LocalDateTime endDateTime,
+		MediaType mediaType, String mediaUrl, String message, Boolean autoReschedule
 	) {
 		this.quest = quest;
 		this.member = member;
 		this.status = status;
-		this.failCount = 0;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.verifiableFrom = verifiableFrom;
-		this.verifiableUntil = verifiableUntil;
-		this.deadDate = null;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.completedAt = null;
+		this.mediaType = mediaType;
+		this.mediaUrl = mediaUrl;
+		this.message = message;
+		this.autoReschedule = autoReschedule;
 	}
 
 	public static QuestMember of(
-		Quest quest, Member member, LocalDateTime startDate,
-		LocalTime verifiableFrom, LocalTime verifiableUntil
+		Quest quest, Member member, LocalDateTime startDateTime, LocalDateTime endDateTime, Boolean autoReschedule
 	) {
-		QuestMemberStatus status = QuestMemberStatus.PLANNED;
-		if (!startDate.isAfter(LocalDateTime.now())) {
-			status = QuestMemberStatus.IN_PROGRESS;
-		}
-
-		LocalDateTime endDate = null;
-		if (quest.getCompletedLimit() != null) {
-			endDate = startDate.plus(quest.getCompletedLimit());
-		}
-
 		return new QuestMember(
-			quest, member, status, startDate, endDate, verifiableFrom, verifiableUntil
+			quest, member, QuestMemberStatus.PLANNED, startDateTime, endDateTime,
+			null, null, null, autoReschedule
 		);
 	}
 
-	public void failure() {
-		this.status = QuestMemberStatus.FAILED;
-		this.deadDate = LocalDateTime.now();
+	public static QuestMember of(
+		Quest quest, Member member, QuestMemberStatus status,
+		MediaType mediaType, String mediaUrl, String message
+	) {
+		return new QuestMember(
+			quest, member, status, LocalDateTime.now(), null,
+			mediaType, mediaUrl, message, false
+		);
 	}
 
-	public Integer addFailCount() {
-		this.failCount++;
-		return this.failCount;
+	public void updatePeriod(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+		if (startDateTime == null) {
+			throw new FieldValidationException("startDateTime", "시작 시간은 비어있을 수 없습니다.");
+		}
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+	}
+
+	public void start() {
+		if (startDateTime.isAfter(LocalDateTime.now())) {
+			throw new QuestCantStartException();
+		}
+		this.status = QuestMemberStatus.IN_PROGRESS;
+	}
+
+	public void complete(MediaType mediaType, String mediaUrl, String message) {
+		if (this.status != QuestMemberStatus.PLANNED) {
+			throw new QuestAlreadyEvaluatedException();
+		}
+		this.status = QuestMemberStatus.SUCCEEDED;
+		this.mediaType = mediaType;
+		this.mediaUrl = mediaUrl;
+		this.message = message;
+		this.completedAt = LocalDateTime.now();
+	}
+
+	public void failed() {
+		if (this.status != QuestMemberStatus.PLANNED) {
+			throw new QuestAlreadyEvaluatedException();
+		}
+		this.status = QuestMemberStatus.FAILED;
+		this.completedAt = LocalDateTime.now();
+	}
+
+	public void switchAutoReschedule(Boolean autoReschedule) {
+		this.autoReschedule = autoReschedule;
 	}
 
 }

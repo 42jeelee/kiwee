@@ -9,13 +9,14 @@ import kr.co.jeelee.kiwee.domain.questMember.model.QuestMemberStatus;
 
 public record QuestMemberSimpleResponse(
 	QuestSimpleResponse quest, MemberSimpleResponse member,
-	QuestMemberStatus status, LocalDateTime updatedAt, LocalDateTime createdAt
+	QuestMemberStatus status, String message, LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
 	public static QuestMemberSimpleResponse from(QuestMember questMember) {
 		return new QuestMemberSimpleResponse(
 			QuestSimpleResponse.from(questMember.getQuest()),
 			MemberSimpleResponse.from(questMember.getMember()),
 			questMember.getStatus(),
+			questMember.getMessage(),
 			questMember.getUpdatedAt(),
 			questMember.getCreatedAt()
 		);

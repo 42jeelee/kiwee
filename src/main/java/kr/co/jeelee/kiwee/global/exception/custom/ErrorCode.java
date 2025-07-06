@@ -39,8 +39,11 @@ public enum ErrorCode {
 	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION-001", "해당 알림을 찾을 수 없습니다."),
 
 	QUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-001", "해당 퀘스트를 찾을 수 없습니다."),
-	QUEST_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-002", "해당 퀘스트에 가입된 맴버가 아닙니다."),
-	QUEST_VERIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-003", "해당 퀘스트 인증이 없습니다."),
+	QUEST_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "QUEST-002", "해당 퀘스트의 가입 정보를 찾을 수 없습니다."),
+	QUEST_ALREADY_EVALUATED(HttpStatus.BAD_REQUEST, "QUEST-003", "해당 퀘스트는 이미 수행된 퀘스트입니다."),
+	QUEST_CANT_START(HttpStatus.BAD_REQUEST, "QUEST-004", "해당 퀘스트는 아직 시작할 수 없습니다."),
+	QUEST_CANT_IN_TIME(HttpStatus.BAD_REQUEST, "QUEST-005", "해당 퀘스트의 수행 시간이 아닙니다."),
+	QUEST_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "QUEST-006", "해당 퀘스트는 이미 존재합니다."),
 
 	BADGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BADGE-001", "해당 배지를 찾을 수 없습니다."),
 	BADGE_LEVEL_NOT_FOUND(HttpStatus.NOT_FOUND, "BADGE-002", "해당 배지의 레벨을 찾을 수 없습니다."),
