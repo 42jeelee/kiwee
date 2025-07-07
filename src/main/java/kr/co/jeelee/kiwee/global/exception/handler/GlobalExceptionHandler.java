@@ -187,7 +187,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		WebRequest request
 	) {
 		ErrorCode errorCode = ErrorCode.UNKNOWN;
-		ErrorResponse errorResponse = ErrorResponse.of(errorCode.getCode(), errorCode.getMessage(), null);
+		ErrorResponse errorResponse = ErrorResponse.of(
+			errorCode.getCode(),
+			errorCode.getMessage(),
+			Map.of("message", ex.getMessage())
+		);
 		GlobalResponse<ErrorResponse> globalResponse = GlobalResponse.error(errorResponse);
 
 		return ResponseEntity.status(errorCode.getStatus()).body(globalResponse);
@@ -196,7 +200,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(value = { Exception.class })
 	protected ResponseEntity<Object> handleUnknownException(Exception ex) {
 		ErrorCode errorCode = ErrorCode.UNKNOWN;
-		ErrorResponse errorResponse = ErrorResponse.of(errorCode.getCode(), errorCode.getMessage(), null);
+		ErrorResponse errorResponse = ErrorResponse.of(
+			errorCode.getCode(),
+			errorCode.getMessage(),
+			Map.of("message", ex.getMessage())
+		);
 		GlobalResponse<ErrorResponse> globalResponse = GlobalResponse.error(errorResponse);
 
 		return ResponseEntity.status(errorCode.getStatus()).body(globalResponse);

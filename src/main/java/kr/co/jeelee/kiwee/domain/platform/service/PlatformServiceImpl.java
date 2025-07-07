@@ -14,6 +14,7 @@ import kr.co.jeelee.kiwee.domain.platform.exception.PlatformNotFoundException;
 import kr.co.jeelee.kiwee.domain.platform.repository.PlatformRepository;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
+import kr.co.jeelee.kiwee.global.model.DataProvider;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,12 +27,19 @@ public class PlatformServiceImpl implements PlatformService {
 	@Override
 	@Transactional
 	public PlatformDetailResponse createPlatform(PlatformCreateRequest request) {
+
+		if (platformRepository.existsBySourceProviderAndSourceId(request.sourceProvider(), request.sourceId())) {
+			throw new FieldValidationException("sourceId", "이미 존재하는 플랫폼입니다.");
+		}
+
 		Platform platform = Platform.of(
 			request.name(),
 			request.icon(),
 			request.banner(),
+			request.sourceProvider(),
+			request.sourceId(),
 			request.description(),
-			request.page(),
+			request.homePage(),
 			request.provider(),
 			request.isToken()
 		);
@@ -41,6 +49,15 @@ public class PlatformServiceImpl implements PlatformService {
 		}
 
 		return PlatformDetailResponse.from(platformRepository.save(platform));
+	}
+
+	@Override
+	public PlatformDetailResponse createOrGetPlatform(PlatformCreateRequest request) {
+		return platformRepository.findBySourceProviderAndSourceId(
+			request.sourceProvider(), request.sourceId()
+		)
+			.map(PlatformDetailResponse::from)
+			.orElseGet(() -> createPlatform(request));
 	}
 
 	@Override
@@ -92,6 +109,18 @@ public class PlatformServiceImpl implements PlatformService {
 			.orElseThrow(PlatformNotFoundException::new);
 	}
 
+	@Override
+	public Platform getBySourceId(DataProvider sourceProvider, String sourceId) {
+		return platformRepository.findBySourceProviderAndSourceId(sourceProvider, sourceId)
+			.orElseThrow(PlatformNotFoundException::new);
+	}
+
+	@Override
+	public Platform getById(UUID id) {
+		return platformRepository.findById(id)
+			.orElseThrow(PlatformNotFoundException::new);
+	}
+
 	private void updateNameIfChanged(Platform platform, String name) {
 		if (name != null && !name.equals(platform.getName())) {
 			if (platformRepository.existsByName(name)) {
@@ -121,7 +150,7 @@ public class PlatformServiceImpl implements PlatformService {
 	}
 
 	private void updatePageIfChanged(Platform platform, String page) {
-		if (page != null && !page.equals(platform.getPage())) {
+		if (page != null && !page.equals(platform.getHomePage())) {
 			platform.updatePage(page);
 		}
 	}

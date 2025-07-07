@@ -55,6 +55,10 @@ public enum ErrorCode {
 	REWARD_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-001", "해당 보상을 찾을 수 없습니다."),
 	REWARD_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "REWARD-002", "해당 보상을 획득한 맴버가 아닙니다."),
 
+	GENRE_NOT_FOUND(HttpStatus.NOT_FOUND, "GENRE-001", "해당 장르는 존재하지 않습니다."),
+
+	CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CONTENT-001", "해당 컨텐츠는 존재하지 않습니다."),
+
 	ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "ACTIVITY-001", "해당 활동을 찾을 수 없습니다."),
 
 	UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER-001", "알 수 없는 오류가 발생했습니다."),

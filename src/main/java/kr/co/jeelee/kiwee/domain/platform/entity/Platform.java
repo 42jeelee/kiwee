@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
+import kr.co.jeelee.kiwee.global.model.DataProvider;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,17 +28,23 @@ public class Platform extends BaseTimeEntity {
 	@Column(length = 30, nullable = false, unique = true)
 	private String name;
 
-	@Column(length = 255, nullable = false)
+	@Column
 	private String icon;
 
-	@Column(length = 255, nullable = false)
+	@Column
 	private String banner;
+
+	@Column(nullable = false)
+	private DataProvider sourceProvider;
+
+	@Column
+	private String sourceId;
 
 	@Column
 	private String description;
 
 	@Column(length = 500)
-	private String page;
+	private String homePage;
 
 	@Column(length = 50)
 	private String provider;
@@ -45,18 +52,26 @@ public class Platform extends BaseTimeEntity {
 	@Column(nullable = false)
 	private boolean isToken;
 
-	private Platform(String name, String icon, String banner, String description, String page, String provider, boolean isToken) {
+	private Platform(
+		String name, String icon, String banner, DataProvider sourceProvider, String sourceId,
+		String description, String homePage, String provider, boolean isToken
+	) {
 		this.name = name;
 		this.icon = icon;
 		this.banner = banner;
+		this.sourceProvider = sourceProvider;
+		this.sourceId = sourceId;
 		this.description = description;
-		this.page = page;
+		this.homePage = homePage;
 		this.provider = provider;
 		this.isToken = isToken;
 	}
 
-	public static Platform of(String name, String icon, String banner, String description, String page, String provider, boolean isToken) {
-		return new Platform(name, icon, banner, description, page, provider, isToken);
+	public static Platform of(
+		String name, String icon, String banner, DataProvider sourceProvider, String sourceId,
+		String description, String homePage, String provider, boolean isToken
+	) {
+		return new Platform(name, icon, banner, sourceProvider, sourceId, description, homePage, provider, isToken);
 	}
 
 	public void updateName(String name) {
@@ -102,8 +117,8 @@ public class Platform extends BaseTimeEntity {
 		this.description = description != null ? description.trim() : null;
 	}
 
-	public void updatePage(String page) {
-		this.page = page != null ? page.trim() : null;
+	public void updatePage(String homePage) {
+		this.homePage = homePage != null ? homePage.trim() : null;
 	}
 
 	public void updateProvider(String provider) {

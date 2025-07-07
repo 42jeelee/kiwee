@@ -15,7 +15,7 @@ public record PlatformDetailResponse(
 			platform.getIcon(),
 			platform.getBanner(),
 			platform.getDescription(),
-			platform.getPage()
+			platform.getHomePage()
 		);
 	}
 }
