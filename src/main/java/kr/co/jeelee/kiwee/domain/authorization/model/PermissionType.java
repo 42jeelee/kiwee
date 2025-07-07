@@ -57,6 +57,14 @@ public enum PermissionType {
 	ROLE_EDIT_BADGE(DomainType.BADGE, "배지 수정"),
 	ROLE_DELETE_BADGE(DomainType.BADGE, "배지 삭제"),
 
+	// Content
+	ROLE_CREATE_CONTENT(DomainType.CONTENT, "컨텐츠 생성"),
+	ROLE_EDIT_CONTENT(DomainType.CONTENT, "컨텐츠 수정"),
+	ROLE_DELETE_CONTENT(DomainType.CONTENT, "컨텐츠 삭제"),
+	ROLE_CREATE_GENRE(DomainType.CONTENT, "장르 생성"),
+	ROLE_EDIT_GENRE(DomainType.CONTENT, "장르 수정"),
+	ROLE_DELETE_GENRE(DomainType.CONTENT, "장르 삭제"),
+
 	;
 
 	private final DomainType domainType;

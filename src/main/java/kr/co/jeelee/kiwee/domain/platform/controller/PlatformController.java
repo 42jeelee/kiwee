@@ -36,9 +36,12 @@ public class PlatformController {
 	@PreAuthorize(value = "hasRole('CREATE_PLATFORM')")
 	@PostMapping
 	public PlatformDetailResponse createPlatform(
+		@RequestParam(defaultValue = "false") boolean skipLookUp,
 		@Valid @RequestBody PlatformCreateRequest request
 	) {
-		return platformService.createPlatform(request);
+		return skipLookUp
+			? platformService.createPlatform(request)
+			: platformService.createOrGetPlatform(request);
 	}
 
 	@GetMapping

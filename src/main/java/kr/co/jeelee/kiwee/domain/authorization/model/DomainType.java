@@ -18,6 +18,7 @@ public enum DomainType {
 	REWARD("보상", "rewards"),
 	QUEST("퀘스트", "quests"),
 	BADGE("배지", "badges"),
+	CONTENT("컨텐츠", "contents"),
 	;
 
 	private final String label;
