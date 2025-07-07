@@ -1,8 +1,13 @@
 package kr.co.jeelee.kiwee.domain.questMember.service;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,23 +21,25 @@ import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
 import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
 import kr.co.jeelee.kiwee.domain.quest.service.QuestService;
-import kr.co.jeelee.kiwee.domain.questMember.dto.request.QuestMemberCreateRequest;
+import kr.co.jeelee.kiwee.domain.questMember.dto.request.QuestMemberSuccessRequest;
+import kr.co.jeelee.kiwee.domain.questMember.dto.request.QuestMemberPlannedRequest;
 import kr.co.jeelee.kiwee.domain.questMember.dto.response.QuestMemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.questMember.dto.response.QuestMemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.questMember.entity.QuestMember;
-import kr.co.jeelee.kiwee.domain.questMember.entity.QuestMemberVerification;
+import kr.co.jeelee.kiwee.domain.questMember.exception.QuestCantInTimeException;
+import kr.co.jeelee.kiwee.domain.questMember.exception.QuestMemberAlreadyExistException;
 import kr.co.jeelee.kiwee.domain.questMember.exception.QuestMemberNotFoundException;
 import kr.co.jeelee.kiwee.domain.questMember.model.QuestMemberStatus;
 import kr.co.jeelee.kiwee.domain.questMember.repository.QuestMemberRepository;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
-import kr.co.jeelee.kiwee.global.exception.common.InvalidParameterException;
 import kr.co.jeelee.kiwee.global.model.TermType;
 import lombok.RequiredArgsConstructor;
 
@@ -44,61 +51,66 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 	private final QuestMemberRepository questMemberRepository;
 
 	private final QuestService questService;
-	private final QuestMemberVerificationService questMemberVerificationService;
 	private final MemberActivityService memberActivityService;
 
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
 	@Transactional
-	public QuestMemberDetailResponse joinQuest(CustomOAuth2User principal, UUID questId, QuestMemberCreateRequest request) {
-
+	public QuestMemberDetailResponse plannedQuest(CustomOAuth2User principal, UUID questId,
+		QuestMemberPlannedRequest request) {
 		Quest quest = questService.getById(questId);
+
+		if (request.startDateTime().isAfter(request.endDateTime())) {
+			throw new FieldValidationException("endDateTime", "종료 시간은 시작 시간 전일 수 없습니다.");
+		}
+
 		if (
-			request.startDate().isBefore(LocalDateTime.now()) ||
-			(!quest.getIsThisInstant() && request.startDate().toLocalDate().isEqual(LocalDate.now()))
+			request.startDateTime().isBefore(
+				getAvailableStartDateTime(quest.getRescheduleTerm())
+			)
 		) {
-			throw new FieldValidationException("startDate", "startDate 필드가 잘못되었습니다.");
+			throw new FieldValidationException("startDateTime", "시작 시간이 너무 일찍입니다.");
 		}
 
 		QuestMember questMember = QuestMember.of(
 			quest,
 			principal.member(),
-			request.startDate(),
-			request.verifiableFrom() != null ? request.verifiableFrom() : quest.getVerifiableFrom(),
-			request.verifiableUntil() != null ? request.verifiableUntil() : quest.getVerifiableUntil()
+			request.startDateTime(),
+			request.endDateTime(),
+			request.autoReschedule() != null? request.autoReschedule() : false
 		);
 
-		QuestMember savedQuestMember = questMemberRepository.save(questMember);
+		return saveQuestMemberAndTrigger(questMember, TriggerType.JOIN);
+	}
 
-		RewardEvent rewardEvent = RewardEvent.of(
-			principal.member().getId(),
-			DomainType.QUEST,
-			quest.getId(),
-			TriggerType.JOIN,
-			1,
-			memberActivityService.log(
-				principal.member(),
-				ActivityType.JOIN,
-				DomainType.QUEST,
-				quest.getId(),
-				String.format("'%s' 퀘스트 수락", quest.getTitle())
-			)
-		);
+	@Override
+	@Transactional
+	public QuestMemberDetailResponse successQuest(CustomOAuth2User principal, UUID questId,
+		QuestMemberSuccessRequest request) {
 
-		NotificationEvent notificationEvent = NotificationEvent.of(
-			principal.member().getId(),
-			NotificationType.QUEST,
-			"퀘스트 수락",
-			String.format("'%s' 퀘스트를 수락하였습니다.", quest.getTitle()),
-			DomainType.QUEST,
-			quest.getId()
-		);
+		Quest quest = questService.getById(questId);
 
-		eventPublisher.publishEvent(rewardEvent);
-		eventPublisher.publishEvent(notificationEvent);
+		if (!withinTimeRange(LocalTime.now(), quest.getVerifiableFrom(), quest.getVerifiableUntil())) {
+			throw new QuestCantInTimeException();
+		}
 
-		return QuestMemberDetailResponse.from(savedQuestMember);
+		QuestMember questMember = questMemberRepository.findByQuestAndMemberAndStatus(
+			quest, principal.member(), QuestMemberStatus.PLANNED
+		).map(qm -> {
+			qm.complete(request.mediaType(), request.contentUrl(), request.message());
+			return qm;
+		})
+		.orElseGet(() -> QuestMember.of(
+			quest,
+			principal.member(),
+			QuestMemberStatus.SUCCEEDED,
+			request.mediaType(),
+			request.contentUrl(),
+			request.message()
+		));
+
+		return saveQuestMemberAndTrigger(questMember, TriggerType.SUCCESS);
 	}
 
 	@Override
@@ -111,9 +123,13 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 	}
 
 	@Override
-	public PagedResponse<QuestMemberSimpleResponse> getQuestMembers(CustomOAuth2User principal, Pageable pageable) {
+	public PagedResponse<QuestMemberSimpleResponse> getQuestMembers(
+		CustomOAuth2User principal,
+		QuestMemberStatus status,
+		Pageable pageable
+	) {
 		return PagedResponse.of(
-			questMemberRepository.findByMember(principal.member(), pageable),
+			questMemberRepository.findByMemberAndStatus(principal.member(), status, pageable),
 			QuestMemberSimpleResponse::from
 		);
 	}
@@ -132,20 +148,45 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 
 	@Override
 	@Transactional
+	public QuestMemberDetailResponse updatePlannedQuest(CustomOAuth2User principal, UUID questId, UUID id,
+		QuestMemberPlannedRequest request) {
+		Quest quest = questService.getById(questId);
+
+		QuestMember questMember = questMemberRepository.findById(id)
+				.orElseThrow(QuestMemberNotFoundException::new);
+
+		if (!questMember.getQuest().getId().equals(quest.getId())) {
+			throw new QuestMemberNotFoundException("해당 퀘스트의 정보가 아닙니다.");
+		}
+
+		if (!questMember.getMember().getId().equals(principal.member().getId())) {
+			throw new QuestMemberNotFoundException("다른 유저의 정보입니다.");
+		}
+
+		questMember.updatePeriod(request.startDateTime(), request.endDateTime());
+		questMember.switchAutoReschedule(
+			request.autoReschedule() != null? request.autoReschedule() : false
+		);
+
+		return QuestMemberDetailResponse.from(questMember);
+	}
+
+	@Override
+	@Transactional
 	public void giveUpQuest(CustomOAuth2User principal, UUID questId) {
 		Quest quest = questService.getById(questId);
 		QuestMember questMember = questMemberRepository.findByQuestAndMember(quest, principal.member())
 			.orElseThrow(QuestMemberNotFoundException::new);
 
-		questMember.failure();
+		questMember.failed();
 		questMemberRepository.save(questMember);
 	}
 
 	@Override
 	@Transactional
-	@Scheduled(cron = "0 0 0 * * *")
-	public void autoFailOverdueQuest() {
-		List<QuestMember> expiredQuestMember = questMemberRepository.findByStatusAndEndDateBefore(
+	@Scheduled(cron = "0 0 * * * *")
+	public void autoSetStatus() {
+		List<QuestMember> expiredQuestMember = questMemberRepository.findByStatusAndEndDateTimeBefore(
 			QuestMemberStatus.IN_PROGRESS,
 			LocalDateTime.now()
 		);
@@ -156,84 +197,21 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 				String.format("'%s' 퀘스트를 기한 내에 성공하지 못하였습니다:(", questMember.getQuest().getTitle()),
 				questMember
 			));
-			questMember.failure();
+			questMember.failed();
+			if (questMember.getAutoReschedule() != null && questMember.getAutoReschedule()) {
+				rescheduleQuest(questMember);
+			}
 		});
 
-	}
+		List<QuestMember> plannedQuestMember = questMemberRepository.findByStatus(QuestMemberStatus.PLANNED);
 
-	@Override
-	@Transactional
-	@Scheduled(cron = "0 0 0 * * *")
-	public void autoEvaluateProgressPerDay() {
-		autoEvaluateProgressPerTerm(TermType.DAILY);
-	}
-
-	@Override
-	@Transactional
-	@Scheduled(cron = "0 0 0 * * Mon")
-	public void autoEvaluateProgressPerWeekly() {
-		autoEvaluateProgressPerTerm(TermType.WEEKLY);
-	}
-
-	@Override
-	@Transactional
-	@Scheduled(cron = "0 0 0 1 * *")
-	public void autoEvaluateProgressPerMonthly() {
-		autoEvaluateProgressPerTerm(TermType.MONTHLY);
-	}
-
-	@Override
-	@Transactional
-	@Scheduled(cron = "0 0 0 1 1 *")
-	public void autoEvaluateProgressPerYearly() {
-		autoEvaluateProgressPerTerm(TermType.YEARLY);
-	}
-
-	private void autoEvaluateProgressPerTerm(TermType termType) {
-		LocalDate now = LocalDate.now();
-
-		LocalDate startTerm = getStartDateOfTerm(termType, now);
-		LocalDate endTerm = getEndDateOfTerm(termType, now);
-
-		List<QuestMember> targets = questMemberRepository.findByStatusAndQuestTermType(
-			QuestMemberStatus.IN_PROGRESS,
-			termType
-		);
-
-		targets.forEach(questMember -> {
-			if (questMember.getQuest().shouldSkipThisTerm()) return;
-
-			List<QuestMemberVerification> verifications = questMemberVerificationService.getVerificationsByTerm(
-				questMember,
-				startTerm,
-				endTerm
-			);
-
-			if (isTermFailed(termType, questMember.getQuest(), verifications)) {
-				Integer failCount = questMember.addFailCount();
-				String title = "퀘스트 조건 미달성";
-				String message = String.format(
-					"이번 '%s' 퀘스트 조건을 달성하지 못했어..",
-					questMember.getQuest().getTitle()
-				);
-
-				if (failCount > questMember.getQuest().getMaxAllowedFails()) {
-					questMember.failure();
-					title = "퀘스트 실패 ..";
-					message = String.format(
-						"이번 '%s' 퀘스트 누적 %d회 달성하지 못해 실패했어 ..",
-						questMember.getQuest().getTitle(),
-						failCount
-					);
-				}
-				questMemberRepository.save(questMember);
-
-				eventPublisher.publishEvent(getNotificationEvent(
-					title,
-					message,
-					questMember
-				));
-			}
+		plannedQuestMember.forEach(questMember -> {
+			eventPublisher.publishEvent(getNotificationEvent(
+				"퀘스트가 시작되었습니다 !!",
+				String.format("'%s' 퀘스트가 시작되었습니다:)!", questMember.getQuest().getTitle()),
+				questMember
+			));
+			questMember.start();
 		});
 
 	}
@@ -249,61 +227,111 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 		);
 	}
 
-	private LocalDate getStartDateOfTerm(TermType termType, LocalDate now) {
-		return switch (termType) {
-			case DAILY -> now;
-			case WEEKLY -> now.with(DayOfWeek.MONDAY);
-			case MONTHLY -> now.withDayOfMonth(1);
-			case YEARLY -> now.withDayOfYear(1);
-			case NONE -> throw new InvalidParameterException("termType", "NONE 타입은 반복주기가 아닙니다.");
-		};
-	}
+	private QuestMemberDetailResponse saveQuestMemberAndTrigger(QuestMember questMember, TriggerType triggerType) {
+		Member member = questMember.getMember();
+		Quest quest = questMember.getQuest();
 
-	private LocalDate getEndDateOfTerm(TermType termType, LocalDate now) {
-		return switch (termType) {
-			case DAILY -> now;
-			case WEEKLY -> now.with(DayOfWeek.SUNDAY);
-			case MONTHLY -> now.withDayOfMonth(now.lengthOfMonth());
-			case YEARLY -> now.withDayOfYear(now.lengthOfYear());
-			case NONE -> throw new InvalidParameterException("termType", "NONE 타입은 반복주기가 아닙니다.");
-		};
-	}
-
-	private boolean isTermFailed(TermType termType, Quest quest, List<QuestMemberVerification> verifications) {
-		List<Integer> activeDays = quest.getActiveDays();
-		int minPerTerm = quest.getMinPerTerm() != null ? quest.getMinPerTerm() : 0;
-
-		if (activeDays != null && !activeDays.isEmpty()) {
-			switch (termType) {
-				case DAILY -> {
-					int day = LocalDate.now().minusDays(1).getDayOfWeek().getValue() % 7;
-					if (!activeDays.contains(day)) {
-						return false;
-					}
-				}
-				case WEEKLY -> {
-					for (int day : activeDays) {
-						boolean hasVerificationOnDay = verifications.stream()
-							.anyMatch(v -> {
-								int d = v.getVerifiedDate().getDayOfWeek().getValue() % 7;
-								return d == day;
-							});
-
-						if (!hasVerificationOnDay) return true;
-					}
-				}
-				case MONTHLY -> {
-					for (int day : activeDays) {
-						boolean hasVerificationOnDay = verifications.stream()
-							.anyMatch(v -> v.getVerifiedDate().getDayOfMonth() == day);
-
-						if (!hasVerificationOnDay) return true;
-					}
-				}
-			}
+		if (questMemberRepository.existsByQuestAndMemberAndStatus(quest, member, QuestMemberStatus.PLANNED)) {
+			throw new QuestMemberAlreadyExistException();
 		}
 
-		return verifications.size() < minPerTerm;
+		QuestMember savedQuestMember = questMemberRepository.save(questMember);
+
+		String action = triggerType == TriggerType.JOIN
+			? "수락"
+			: "성공";
+
+		String title = String.format("'%s' 퀘스트 %s.", quest.getTitle(), action);
+
+		RewardEvent rewardEvent = RewardEvent.of(
+			member.getId(),
+			DomainType.QUEST,
+			quest.getId(),
+			triggerType,
+			1,
+			memberActivityService.log(
+				member,
+				triggerType == TriggerType.JOIN ? ActivityType.JOIN : ActivityType.COMPLETE,
+				DomainType.QUEST,
+				quest.getId(),
+				title
+			)
+		);
+
+		NotificationEvent notificationEvent = NotificationEvent.of(
+			member.getId(),
+			NotificationType.QUEST,
+			String.format("퀘스트 %s", action),
+			String.format("'%s' 퀘스트를 %s 하였습니다.", quest.getTitle(), action),
+			DomainType.QUEST,
+			quest.getId()
+		);
+
+		eventPublisher.publishEvent(rewardEvent);
+		eventPublisher.publishEvent(notificationEvent);
+
+		if (
+			triggerType.equals(TriggerType.SUCCESS)
+				&& questMember.getAutoReschedule() != null && questMember.getAutoReschedule()
+		) {
+			rescheduleQuest(questMember);
+		}
+
+		return QuestMemberDetailResponse.from(savedQuestMember);
+	}
+
+	private TemporalAmount getRescheduleDuration(TermType termType) {
+		return switch (termType) {
+			case NONE -> Duration.ZERO;
+			case DAILY -> Duration.ofDays(1);
+			case WEEKLY -> Duration.ofDays(7);
+			case MONTHLY -> Period.ofMonths(1);
+			case YEARLY -> Period.ofYears(1);
+		};
+	}
+
+	private boolean withinTimeRange(LocalTime now, LocalTime start, LocalTime end) {
+		if (start.isBefore(end)) {
+			return !now.isBefore(start) && !now.isAfter(end);
+		}
+
+		return !now.isBefore(start) || !now.isAfter(end);
+	}
+
+	private void rescheduleQuest(QuestMember questMember) {
+		TemporalAmount rescheduleDuration = getRescheduleDuration(questMember.getQuest().getRescheduleTerm());
+		boolean isZero = questMember.getQuest().getRescheduleTerm().equals(TermType.NONE);
+		LocalDateTime now = LocalDateTime.now();
+
+		LocalDateTime startDateTime = isZero
+			? now
+			: questMember.getStartDateTime().plus(rescheduleDuration);
+
+		LocalDateTime endDateTime = questMember.getEndDateTime() != null
+			? isZero
+				? now.plus(Duration.between(questMember.getStartDateTime(), questMember.getEndDateTime()))
+				: questMember.getEndDateTime().plus(rescheduleDuration)
+			: null;
+
+		QuestMember newQuestMember = QuestMember.of(
+			questMember.getQuest(),
+			questMember.getMember(),
+			startDateTime,
+			endDateTime,
+			true
+		);
+
+		saveQuestMemberAndTrigger(newQuestMember, TriggerType.JOIN);
+	}
+
+	private LocalDateTime getAvailableStartDateTime(TermType termType) {
+		return switch (termType) {
+			case NONE -> LocalDateTime.now();
+			case DAILY -> LocalDate.now().plusDays(1).atStartOfDay();
+			case WEEKLY -> LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).atStartOfDay();
+			case MONTHLY -> LocalDate.now().withDayOfMonth(1).plusMonths(1).atStartOfDay();
+			case YEARLY -> LocalDate.of(LocalDate.now().getYear() + 1, 1, 1).atStartOfDay();
+		};
 	}
 
 }

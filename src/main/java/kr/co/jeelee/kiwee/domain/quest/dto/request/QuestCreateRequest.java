@@ -1,8 +1,6 @@
 package kr.co.jeelee.kiwee.domain.quest.dto.request;
 
-import java.time.Duration;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.validator.constraints.URL;
@@ -23,11 +21,9 @@ public record QuestCreateRequest(
 	@NotNull(message = "channelId can't be Null.") UUID channelId,
 	LocalTime verifiableFrom, LocalTime verifiableUntil,
 	@NotNull(message = "isThisInstant can't be Null.") Boolean isThisInstant,
-	Duration completedLimit, Integer maxSuccess, Integer maxProgressCount, Integer maxRetryAllowed,
-	@NotNull(message = "termType can't be Null.") TermType termType,
-	List<Integer> activeDays,
-	@NotNull(message = "minPerTerm can't be Null.") Integer minPerTerm,
-	@NotNull(message = "maxSkipTerm can't be Null.") Integer maxSkipTerm,
-	Integer maxAllowedFails
+	@NotNull(message = "isRepeatable can't be Null.") Boolean isRepeatable,
+	Integer maxSuccess, Integer maxRetryAllowed,
+	@NotNull(message = "autoReschedule can't be Null.") Boolean autoReschedule,
+	@NotNull(message = "rescheduleTerm can't be Null.") TermType rescheduleTerm
 ) {
 }

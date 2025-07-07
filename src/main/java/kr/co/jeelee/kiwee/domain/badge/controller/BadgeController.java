@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -53,12 +54,12 @@ public class BadgeController {
 		return badgeService.badgeDetail(id);
 	}
 
-	@GetMapping(value = "/list/{lv}")
+	@GetMapping
 	public PagedResponse<BadgeSimpleResponse> allPublicBadges(
-		@PathVariable int lv,
+		@RequestParam(defaultValue = "1") int level,
 		@PageableDefault Pageable pageable
 	) {
-		return badgeService.allPublicBadges(lv, pageable);
+		return badgeService.allPublicBadges(level, pageable);
 	}
 
 	@PreAuthorize(value = "hasRole('EDIT_BADGE')")
@@ -89,20 +90,22 @@ public class BadgeController {
 	}
 
 	@PreAuthorize(value = "hasRole('EDIT_BADGE')")
-	@PatchMapping(value = "/{id}/level")
+	@PatchMapping(value = "/{id}/levels/{levelId}")
 	public BadgeLevelResponse updateLevel(
-		@PathVariable Long id,
+		@PathVariable UUID id,
+		@PathVariable Long levelId,
 		@Valid @RequestBody BadgeLevelUpdateRequest request
 	) {
-		return  badgeLevelService.updateLevel(id, request);
+		return  badgeLevelService.updateLevel(id, levelId, request);
 	}
 
 	@PreAuthorize(value = "hasRole('DELETE_BADGE')")
-	@DeleteMapping(value = "/{id}/level")
+	@DeleteMapping(value = "/{id}/levels/{levelId}")
 	public ResponseEntity<Void> deleteLevel(
-		@PathVariable Long id
+		@PathVariable UUID id,
+		@PathVariable Long levelId
 	) {
-		badgeLevelService.deleteLevel(id);
+		badgeLevelService.deleteLevel(id, levelId);
 		return ResponseEntity.noContent().build();
 	}
 

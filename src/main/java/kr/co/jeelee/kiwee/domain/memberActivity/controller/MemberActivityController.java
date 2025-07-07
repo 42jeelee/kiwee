@@ -19,14 +19,14 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/api/v1/activities")
+@RequestMapping(value = "/api/v1/members")
 @RequiredArgsConstructor
 @Validated
 public class MemberActivityController {
 
 	private final MemberActivityService memberActivityService;
 
-	@GetMapping(value = "/me")
+	@GetMapping(value = "/me/activities")
 	public PagedResponse<MemberActivityResponse> myActivities(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PageableDefault Pageable pageable
@@ -35,7 +35,7 @@ public class MemberActivityController {
 	}
 
 	@PreAuthorize(value = "hasRole('OTHER_ACTVITY')")
-	@GetMapping(value = "/{memberId}")
+	@GetMapping(value = "/{memberId}/activities")
 	public PagedResponse<MemberActivityResponse> memberActivities(
 		@PathVariable UUID memberId,
 		@PageableDefault Pageable pageable

@@ -3,9 +3,9 @@ package kr.co.jeelee.kiwee.domain.questMember.exception;
 import kr.co.jeelee.kiwee.global.exception.custom.CustomException;
 import kr.co.jeelee.kiwee.global.exception.custom.ErrorCode;
 
-public class QuestMemberVerificationNotFoundException extends CustomException {
+public class QuestMemberAlreadyExistException extends CustomException {
 
-	public QuestMemberVerificationNotFoundException() {
-		super(ErrorCode.QUEST_VERIFICATION_NOT_FOUND);
+	public QuestMemberAlreadyExistException() {
+		super(ErrorCode.QUEST_ALREADY_EXIST);
 	}
 }

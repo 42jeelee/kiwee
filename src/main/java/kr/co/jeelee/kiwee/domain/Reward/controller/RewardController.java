@@ -27,7 +27,7 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/api/v1/rewards")
+@RequestMapping(value = "/api/v1")
 @RequiredArgsConstructor
 @Validated
 public class RewardController {
@@ -35,7 +35,7 @@ public class RewardController {
 	private final RewardService rewardService;
 
 	@PreAuthorize(value = "hasRole('CREATE_REWARD')")
-	@PostMapping
+	@PostMapping(value = "/rewards")
 	public RewardDetailResponse createReward(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@Valid @RequestBody RewardCreateRequest rewardCreateRequest
@@ -43,14 +43,14 @@ public class RewardController {
 		return rewardService.createReward(principal, rewardCreateRequest);
 	}
 
-	@GetMapping
+	@GetMapping(value = "/rewards")
 	public PagedResponse<RewardSimpleResponse> publicRewards(
 		@PageableDefault Pageable pageable
 	) {
 		return rewardService.getPublicRewards(pageable);
 	}
 
-	@GetMapping(value = "/{domainType}/{domainId}")
+	@GetMapping(value = "/{domainType}/{domainId}/rewards")
 	public PagedResponse<RewardSimpleResponse> rewardsBySource(
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable DomainType domainType,
@@ -61,7 +61,7 @@ public class RewardController {
 	}
 
 	@PreAuthorize(value = "hasRole('DELETE_REWARD')")
-	@DeleteMapping(value = "/{id}")
+	@DeleteMapping(value = "/rewards/{id}")
 	public ResponseEntity<Void> deleteReward(
 		@PathVariable UUID id
 	) {

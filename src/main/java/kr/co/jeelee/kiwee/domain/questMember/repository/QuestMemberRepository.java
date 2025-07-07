@@ -18,13 +18,15 @@ import kr.co.jeelee.kiwee.global.model.TermType;
 public interface QuestMemberRepository extends JpaRepository<QuestMember, UUID> {
 
 	Optional<QuestMember> findByQuestAndMember(Quest quest, Member member);
+	Optional<QuestMember> findByQuestAndMemberAndStatus(Quest quest, Member member, QuestMemberStatus status);
 
-	Page<QuestMember> findByMember(Member member, Pageable pageable);
+	Page<QuestMember> findByMemberAndStatus(Member member, QuestMemberStatus status, Pageable pageable);
 
 	Page<QuestMember> findByQuestAndStatus(Quest quest, QuestMemberStatus status, Pageable pageable);
 
-	List<QuestMember> findByStatusAndEndDateBefore(QuestMemberStatus status, LocalDateTime endDate);
+	List<QuestMember> findByStatus(QuestMemberStatus status);
+	List<QuestMember> findByStatusAndEndDateTimeBefore(QuestMemberStatus status, LocalDateTime endDateTime);
 
-	List<QuestMember> findByStatusAndQuestTermType(QuestMemberStatus status, TermType termType);
+	boolean existsByQuestAndMemberAndStatus(Quest quest, Member member, QuestMemberStatus status);
 
 }

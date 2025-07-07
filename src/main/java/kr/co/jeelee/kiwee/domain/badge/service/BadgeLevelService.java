@@ -10,8 +10,8 @@ public interface BadgeLevelService {
 
 	BadgeLevelResponse addLevel(UUID badgeId, BadgeLevelCreateRequest request);
 
-	BadgeLevelResponse updateLevel(Long id, BadgeLevelUpdateRequest request);
+	BadgeLevelResponse updateLevel(UUID badgeId, Long id, BadgeLevelUpdateRequest request);
 
-	void deleteLevel(Long id);
+	void deleteLevel(UUID badgeId, Long id);
 
 }

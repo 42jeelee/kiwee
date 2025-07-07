@@ -16,21 +16,21 @@ import kr.co.jeelee.kiwee.domain.auth.service.JwtService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/api/v1/auth")
+@RequestMapping(value = "/api/v1")
 @RequiredArgsConstructor
 @Validated
 public class AuthController {
 
 	private final JwtService jwtService;
 
-	@PostMapping(value = "/refresh")
+	@PostMapping(value = "/tokens/refresh")
 	public TokenResponse refresh(
 		@RequestBody @Valid RefreshTokenRequest request
 	) {
 		return jwtService.refresh(request.refreshToken());
 	}
 
-	@PostMapping(value = "/logout")
+	@PostMapping(value = "/auth/logout")
 	public ResponseEntity<Void> logout(
 		@AuthenticationPrincipal CustomOAuth2User principal
 	) {

@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.jeelee.kiwee.domain.authorization.dto.response.RoleResponse;
@@ -26,12 +27,12 @@ public class RolesController {
 
 	private final RoleService roleService;
 
-	@GetMapping(value = "/{domain}")
+	@GetMapping
 	public PagedResponse<RoleResponse> getRoles(
-		@PathVariable DomainType domain,
+		@RequestParam(defaultValue = "globals") DomainType domainType,
 		@PageableDefault Pageable pageable
 	) {
-		return roleService.getRoles(domain, pageable);
+		return roleService.getRoles(domainType, pageable);
 	}
 
 	@GetMapping(value = "/{id}")
