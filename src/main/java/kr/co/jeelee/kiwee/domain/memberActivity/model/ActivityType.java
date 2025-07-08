@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ActivityType {
 	JOIN("가입"),
+	LEAVE("탈퇴"),
+	RECORD("기록"),
+	REMOVE("삭제"),
 	COMPLETE("완료"),
+	FAILED("실패"),
 	LINK("연동"),
 	INVITE("초대"),
-	EVENT("이벤트"),
 	;
 
 	private final String label;

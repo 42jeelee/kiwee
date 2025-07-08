@@ -4,17 +4,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.channel.service.ChannelService;
 import kr.co.jeelee.kiwee.domain.channelMember.service.ChannelMemberService;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
+import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.task.creator.TaskCreatorDispatcher;
 import kr.co.jeelee.kiwee.domain.task.dto.request.TaskCreateRequest;
 import kr.co.jeelee.kiwee.domain.task.dto.response.TaskResponse;
@@ -40,12 +44,23 @@ public class TaskServiceImpl implements TaskService {
 	private final ChannelService channelService;
 	private final ChannelMemberService channelMemberService;
 
+	private final ApplicationEventPublisher eventPublisher;
+
 	@Override
 	@Transactional
 	public TaskResponse createTask(UUID channelId, UUID memberId, TaskCreateRequest request) {
 		validateHasCreateAuthority(memberId);
 		Task task = taskCreatorDispatcher.create(channelId, memberId, request);
-		return TaskResponse.from(taskRepository.save(task));
+		Task savedTask = taskRepository.save(task);
+
+		eventPublisher.publishEvent(MemberActivityEvent.of(
+			memberId,
+			DomainType.TASK,
+			savedTask.getId(),
+			ActivityType.RECORD
+		));
+
+		return TaskResponse.from(savedTask);
 	}
 
 	@Override
@@ -88,6 +103,11 @@ public class TaskServiceImpl implements TaskService {
 		);
 	}
 
+	@Override
+	public Task getById(UUID id) {
+		return taskRepository.findById(id)
+			.orElseThrow(TaskNotFoundException::new);
+	}
 
 	private void validateHasCreateAuthority(UUID memberId) {
 		if (!(
