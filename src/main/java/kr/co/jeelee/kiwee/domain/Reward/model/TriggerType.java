@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum TriggerType {
 	JOIN("가입"),
 	INVITE("초대"),
+	TASK("작업"),
 	IN_PROGRESS("시작"),
 	SUCCESS("성공"),
 	FAILURE("실패"),

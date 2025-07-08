@@ -59,6 +59,9 @@ public enum ErrorCode {
 
 	CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CONTENT-001", "해당 컨텐츠는 존재하지 않습니다."),
 
+	TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK-001", "해당 작업이 존재하지 않습니다."),
+	TASK_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "TASK-002", "해당 타입은 존재하지 않습니다."),
+
 	ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "ACTIVITY-001", "해당 활동을 찾을 수 없습니다."),
 
 	UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER-001", "알 수 없는 오류가 발생했습니다."),

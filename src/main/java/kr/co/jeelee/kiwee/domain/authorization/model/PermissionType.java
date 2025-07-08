@@ -47,6 +47,10 @@ public enum PermissionType {
 	ROLE_CREATE_REWARD(DomainType.REWARD, "보상 생성"),
 	ROLE_DELETE_REWARD(DomainType.REWARD, "보상 삭제"),
 
+	// Task
+	ROLE_CREATE_OTHER_TASK(DomainType.TASK, "작업 생성"),
+	ROLE_EDIT_OTHER_TASK(DomainType.TASK, "작업 수정"),
+
 	// Quest
 	ROLE_CREATE_QUEST(DomainType.QUEST, "퀘스트 생성"),
 	ROLE_EDIT_QUEST(DomainType.QUEST, "퀘스트 수정"),

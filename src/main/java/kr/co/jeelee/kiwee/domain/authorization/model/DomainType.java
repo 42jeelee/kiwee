@@ -16,6 +16,7 @@ public enum DomainType {
 	PLATFORM("플랫폼", "platforms"),
 	CHANNEL("채널", "channels"),
 	REWARD("보상", "rewards"),
+	TASK("작업", "tasks"),
 	QUEST("퀘스트", "quests"),
 	BADGE("배지", "badges"),
 	CONTENT("컨텐츠", "contents"),
