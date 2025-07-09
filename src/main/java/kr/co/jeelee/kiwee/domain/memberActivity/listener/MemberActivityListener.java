@@ -1,7 +1,5 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.listener;
 
-import java.util.UUID;
-
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.dto.request.RolesRequest;
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
@@ -29,7 +27,6 @@ import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
-import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
@@ -48,7 +45,6 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 
 	private final MemberService memberService;
 	private final RoleService roleService;
-	private final MemberActivityService memberActivityService;
 
 	private final ApplicationEventPublisher eventPublisher;
 

@@ -23,7 +23,6 @@ import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
-import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
@@ -51,7 +50,6 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 	private final QuestMemberRepository questMemberRepository;
 
 	private final QuestService questService;
-	private final MemberActivityService memberActivityService;
 
 	private final ApplicationEventPublisher eventPublisher;
 
