@@ -14,8 +14,6 @@ import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.Reward.exception.RewardNotFoundException;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
-import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardObjectResolver;
-import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardResponseResolver;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
@@ -28,7 +26,6 @@ import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
-import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -39,7 +36,6 @@ public class RewardServiceImpl implements RewardService {
 	private final RewardRepository rewardRepository;
 
 	private final DomainObjectResolver domainObjectResolver;
-	private final RewardObjectResolver rewardObjectResolver;
 
 	private final ChannelMemberService channelMemberService;
 
@@ -58,7 +54,7 @@ public class RewardServiceImpl implements RewardService {
 			}
 		}
 
-		Object rewardObj = rewardObjectResolver.resolve(request.rewardType(), request.rewardId());
+		Object rewardObj = domainObjectResolver.resolve(request.rewardType().getDomainType(), request.rewardId());
 		int exp = request.exp() != null? request.exp() : 0;
 
 		if (request.rewardType().equals(RewardType.NONE) && exp <= 0) {
@@ -81,27 +77,14 @@ public class RewardServiceImpl implements RewardService {
 			request.isPublic()
 		);
 
-		return RewardDetailResponse.from(
-			rewardRepository.save(reward),
-			DomainResponseResolver.toResponse(source),
-			RewardResponseResolver.toResponse(rewardObj)
-		);
+		return RewardDetailResponse.from(rewardRepository.save(reward), domainObjectResolver);
 	}
 
 	@Override
 	public PagedResponse<RewardSimpleResponse> getPublicRewards(Pageable pageable) {
 		return PagedResponse.of(
 			rewardRepository.findByIsPublicTrue(pageable),
-			r -> {
-				Object source = domainObjectResolver.resolve(r.getSourceType(), r.getSourceId());
-				Object rewardObj = rewardObjectResolver.resolve(r.getRewardType(), r.getRewardId());
-
-				return RewardSimpleResponse.from(
-					r,
-					DomainResponseResolver.toResponse(source),
-					RewardResponseResolver.toResponse(rewardObj)
-				);
-			}
+			r -> RewardSimpleResponse.from(r, domainObjectResolver)
 		);
 	}
 
@@ -124,15 +107,7 @@ public class RewardServiceImpl implements RewardService {
 			rewardRepository.findBySourceTypeAndSourceIdAndIsPublicTrue(
 				domainType, domainId, pageable
 			),
-			r -> {
-				Object rewardObj = rewardObjectResolver.resolve(r.getRewardType(), r.getRewardId());
-
-				return RewardSimpleResponse.from(
-					r,
-					DomainResponseResolver.toResponse(source),
-					DomainResponseResolver.toResponse(rewardObj)
-				);
-			}
+			r -> RewardSimpleResponse.from(r, domainObjectResolver)
 		);
 	}
 

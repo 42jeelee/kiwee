@@ -236,10 +236,10 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 		NotificationEvent notificationEvent = NotificationEvent.of(
 			member.getId(),
 			NotificationType.CHANNEL,
+			channel.getId(),
 			"채널 가입 완료!",
 			String.format("'%s' 채널에 가입되었습니다:)", channel.getName()),
-			DomainType.CHANNEL,
-			channel.getId()
+			null
 		);
 
 		eventPublisher.publishEvent(activityEvent);

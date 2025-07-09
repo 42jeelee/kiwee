@@ -16,8 +16,7 @@ public interface NotificationService {
 
 	PagedResponse<NotificationResponse> getUnReadNotifications(UUID receiverId, Pageable pageable);
 
-	void readNotification(UUID receiverId, UUID notificationId);
-	void unReadNotification(UUID receiverId, UUID notificationId);
+	NotificationResponse readNotification(UUID receiverId, UUID notificationId, boolean read);
 
 	void deleteNotification(UUID receiverId, UUID notificationId);
 

@@ -9,8 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,22 +40,13 @@ public class NotificationController {
 			: notificationService.getUnReadNotifications(principal.member().getId(), pageable);
 	}
 
-	@PostMapping(value = "/me/notifications/{id}/read")
-	public ResponseEntity<Void> readNotification(
+	@PatchMapping(value = "/me/notifications/{id}/read")
+	public NotificationResponse readNotification(
 		@AuthenticationPrincipal CustomOAuth2User principal,
-		@PathVariable UUID id
+		@PathVariable UUID id,
+		@RequestParam(defaultValue = "true") boolean read
 	) {
-		notificationService.readNotification(principal.member().getId(), id);
-		return ResponseEntity.noContent().build();
-	}
-
-	@PostMapping(value = "/me/notifications/{id}/unread")
-	public ResponseEntity<Void> unReadNotification(
-		@AuthenticationPrincipal CustomOAuth2User principal,
-		@PathVariable UUID id
-	) {
-		notificationService.unReadNotification(principal.member().getId(), id);
-		return ResponseEntity.noContent().build();
+		return notificationService.readNotification(principal.member().getId(), id, read);
 	}
 
 	@DeleteMapping(value = "/me/notifications/{id}")

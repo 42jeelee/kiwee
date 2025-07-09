@@ -1,6 +1,7 @@
 package kr.co.jeelee.kiwee.domain.invite.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
+import kr.co.jeelee.kiwee.domain.notification.metadata.NotificationMetadata;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
@@ -222,13 +224,14 @@ public class InviteServiceImpl implements InviteService {
 
 	private void joinObject(Member member, Invite invite) {
 		switch (invite.getDomain()) {
-			case CHANNEL:
+			case CHANNEL -> {
 				Channel channel = channelService.getById(invite.getTargetId());
 
 				invite.accept();
 				channelMemberService.invitedChannel(member, channel, Set.of());
 				inviteRepository.save(invite);
-				break;
+			}
+			default -> throw new DomainNotFoundException();
 		}
 	}
 
@@ -248,10 +251,15 @@ public class InviteServiceImpl implements InviteService {
 		return new NotificationEvent(
 			invite.getInvitee().getId(),
 			NotificationType.INVITE,
+			invite.getInviter().getId(),
 			title,
 			message,
-			invite.getDomain(),
-			invite.getTargetId()
+			NotificationMetadata.of(
+				List.of(NotificationMetadata.RelatedItem.of(
+					invite.getDomain(),
+					invite.getTargetId()
+				))
+			)
 		);
 	}
 }

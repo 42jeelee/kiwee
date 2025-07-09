@@ -1,5 +1,8 @@
 package kr.co.jeelee.kiwee.domain.rewardMember.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -7,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.BadgeMember.service.BadgeMemberService;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardObjectResolver;
-import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardResponseResolver;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
+import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
+import kr.co.jeelee.kiwee.domain.notification.metadata.NotificationMetadata;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.domain.rewardMember.dto.response.RewardMemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.rewardMember.dto.response.RewardMemberSimpleResponse;
@@ -21,7 +24,6 @@ import kr.co.jeelee.kiwee.domain.rewardMember.repository.RewardMemberRepository;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
-import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,7 +37,6 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 	private final BadgeMemberService badgeMemberService;
 
 	private final DomainObjectResolver domainObjectResolver;
-	private final RewardObjectResolver rewardObjectResolver;
 
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -56,14 +57,7 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 					throw new AccessDeniedException("해당 맴버가 아닙니다");
 				}
 
-				Object source = domainObjectResolver.resolve(rm.getReward().getSourceType(),  rm.getReward().getSourceId());
-				Object rewardObj = rewardObjectResolver.resolve(rm.getReward().getRewardType(), rm.getReward().getRewardId());
-
-				return RewardMemberDetailResponse.from(
-					rm,
-					DomainResponseResolver.toResponse(source),
-					RewardResponseResolver.toResponse(rewardObj)
-				);
+				return RewardMemberDetailResponse.from(rm, domainObjectResolver);
 			})
 			.orElseThrow(RewardMemberNotFoundException::new);
 	}
@@ -74,20 +68,29 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 		RewardMember savedRewardMember = rewardMemberRepository.save(rewardMember);
 		memberService.gainExp(rewardMember.getAwardee().getId(), savedRewardMember.getReward().getExp());
 
+		List<NotificationMetadata.RelatedItem> notificationRelated = new ArrayList<>();
+
 		if (rewardMember.getReward().getRewardType().equals(RewardType.BADGE)) {
 			badgeMemberService.earnBadge(
 				rewardMember.getAwardee().getId(),
 				rewardMember.getReward().getRewardId()
+			);
+
+			notificationRelated.add(
+				NotificationMetadata.RelatedItem.of(
+					DomainType.BADGE,
+					rewardMember.getReward().getRewardId()
+				)
 			);
 		}
 
 		NotificationEvent notificationEvent = NotificationEvent.of(
 			savedRewardMember.getAwardee().getId(),
 			NotificationType.REWARD,
+			rewardMember.getReward().getId(),
 			savedRewardMember.getReward().getTitle(),
 			savedRewardMember.getReward().getDescription(),
-			savedRewardMember.getReward().getSourceType(),
-			savedRewardMember.getReward().getSourceId()
+			NotificationMetadata.of(notificationRelated)
 		);
 
 		eventPublisher.publishEvent(notificationEvent);

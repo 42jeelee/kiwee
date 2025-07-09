@@ -1,6 +1,11 @@
 package kr.co.jeelee.kiwee.domain.notification.entity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.Type;
+
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +16,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
+import kr.co.jeelee.kiwee.domain.notification.metadata.NotificationMetadata;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -32,8 +37,11 @@ public class Notification extends BaseTimeEntity {
 	@JoinColumn(name = "receiver_id", nullable = false)
 	private Member receiver;
 
-	@Column
+	@Column(nullable = false)
 	private NotificationType type;
+
+	@Column
+	private UUID publisherId;
 
 	@Column(length = 100, nullable = false)
 	private String title;
@@ -41,43 +49,45 @@ public class Notification extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String message;
 
-	@Column
-	private DomainType relatedDomain;
+	@Type(JsonBinaryType.class)
+	@Column(columnDefinition = "jsonb")
+	private NotificationMetadata metadata;
 
 	@Column
-	private UUID relatedId;
-
-	@Column(nullable = false)
-	private Boolean isRead;
+	private LocalDateTime readAt;
 
 	private Notification(
-		Member receiver, NotificationType type, String title,
-		String message, DomainType relatedDomain, UUID relatedId
+		Member receiver, NotificationType type, UUID publisherId,
+		String title, String message, NotificationMetadata metadata
 	) {
 		this.receiver = receiver;
 		this.type = type;
+		this.publisherId = publisherId;
 		this.title = title;
 		this.message = message;
-		this.relatedDomain = relatedDomain;
-		this.relatedId = relatedId;
-		this.isRead = false;
+		this.metadata = metadata;
+		this.readAt = null;
 	}
 
 	public static Notification of(
-		Member receiver, NotificationType type, String title,
-		String message, DomainType relatedDomain, UUID relatedId
+		Member receiver, NotificationType type,  UUID publisherId,
+		String title, String message, NotificationMetadata metadata
 	) {
 		return new Notification(
-			receiver, type, title, message, relatedDomain, relatedId
+			receiver, type, publisherId, title, message, metadata
 		);
 	}
 
+	public boolean isRead() {
+		return this.readAt != null;
+	}
+
 	public void read() {
-		this.isRead = true;
+		this.readAt = LocalDateTime.now();
 	}
 
 	public void unread() {
-		this.isRead = false;
+		this.readAt = null;
 	}
 
 }
