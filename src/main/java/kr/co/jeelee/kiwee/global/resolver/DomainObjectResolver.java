@@ -13,6 +13,8 @@ import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.channel.repository.ChannelRepository;
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
 import kr.co.jeelee.kiwee.domain.content.repository.ContentRepository;
+import kr.co.jeelee.kiwee.domain.member.entity.Member;
+import kr.co.jeelee.kiwee.domain.member.repository.MemberRepository;
 import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
 import kr.co.jeelee.kiwee.domain.platform.repository.PlatformRepository;
 import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
@@ -28,6 +30,7 @@ public class DomainObjectResolver {
 
 	private final PlatformRepository platformRepository;
 	private final ChannelRepository channelRepository;
+	private final MemberRepository memberRepository;
 	private final QuestRepository questRepository;
 	private final TaskRepository taskRepository;
 	private final ContentRepository contentRepository;
@@ -36,8 +39,10 @@ public class DomainObjectResolver {
 
 	public Object resolve(DomainType domain, UUID id){
 		return switch (domain) {
+			case GLOBAL -> null;
 			case PLATFORM -> platformRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case CHANNEL -> channelRepository.findById(id).orElseThrow(DomainNotFoundException::new);
+			case MEMBER -> memberRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case QUEST -> questRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case TASK -> taskRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case CONTENT -> contentRepository.findById(id).orElseThrow(DomainNotFoundException::new);
@@ -59,8 +64,10 @@ public class DomainObjectResolver {
 
 	public String resolveName(DomainType domain, UUID id) {
 		return switch (domain) {
+			case GLOBAL -> null;
 			case PLATFORM -> platformRepository.findById(id).map(Platform::getName).orElseThrow(DomainNotFoundException::new);
 			case CHANNEL -> channelRepository.findById(id).map(Channel::getName).orElseThrow(DomainNotFoundException::new);
+			case MEMBER -> memberRepository.findById(id).map(Member::getName).orElseThrow(DomainNotFoundException::new);
 			case QUEST -> questRepository.findById(id).map(Quest::getTitle).orElseThrow(DomainNotFoundException::new);
 			case TASK -> taskRepository.findById(id).map(t -> t.getTaskType().name()).orElseThrow(DomainNotFoundException::new);
 			case CONTENT -> contentRepository.findById(id).map(Content::getTitle).orElseThrow(DomainNotFoundException::new);

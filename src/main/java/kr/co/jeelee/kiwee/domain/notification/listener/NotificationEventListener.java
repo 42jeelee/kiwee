@@ -26,10 +26,10 @@ public class NotificationEventListener {
 		Notification notification = Notification.of(
 			receiver,
 			event.type(),
+			event.publisherId(),
 			event.title(),
 			event.message(),
-			event.domain(),
-			event.relatedId()
+			event.metadata()
 		);
 
 		notificationService.send(notification);

@@ -14,8 +14,8 @@ import kr.co.jeelee.kiwee.domain.notification.exception.NotificationNotFoundExce
 import kr.co.jeelee.kiwee.domain.notification.repository.NotificationRepository;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
+import kr.co.jeelee.kiwee.global.exception.common.InvalidParameterException;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
-import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,29 +37,21 @@ public class NotificationServiceImpl implements NotificationService {
 	public PagedResponse<NotificationResponse> getNotifications(UUID receiverId, Pageable pageable) {
 		return PagedResponse.of(
 			notificationRepository.findByReceiverId(receiverId, pageable),
-			n -> {
-				Object related = domainObjectResolver.resolve(n.getRelatedDomain(), n.getRelatedId());
-
-				return NotificationResponse.from(n, DomainResponseResolver.toResponse(related));
-			}
+			n ->  NotificationResponse.from(n, domainObjectResolver)
 		);
 	}
 
 	@Override
 	public PagedResponse<NotificationResponse> getUnReadNotifications(UUID receiverId, Pageable pageable) {
 		return PagedResponse.of(
-			notificationRepository.findByReceiverIdAndIsReadFalse(receiverId, pageable),
-			n -> {
-				Object related = domainObjectResolver.resolve(n.getRelatedDomain(), n.getRelatedId());
-
-				return NotificationResponse.from(n, DomainResponseResolver.toResponse(related));
-			}
+			notificationRepository.findByReceiverIdAndReadAtIsNotNull(receiverId, pageable),
+			n -> NotificationResponse.from(n, domainObjectResolver)
 		);
 	}
 
 	@Override
 	@Transactional
-	public void readNotification(UUID receiverId, UUID notificationId) {
+	public NotificationResponse readNotification(UUID receiverId, UUID notificationId, boolean read) {
 		Notification notification = notificationRepository.findById(notificationId)
 			.orElseThrow(NotificationNotFoundException::new);
 
@@ -67,22 +59,13 @@ public class NotificationServiceImpl implements NotificationService {
 			throw new AccessDeniedException("본인 알림만 읽을 수 있습니다.");
 		}
 
-		notification.read();
-		notificationRepository.save(notification);
-	}
-
-	@Override
-	@Transactional
-	public void unReadNotification(UUID receiverId, UUID notificationId) {
-		Notification notification = notificationRepository.findById(notificationId)
-			.orElseThrow(NotificationNotFoundException::new);
-
-		if (!notification.getReceiver().getId().equals(receiverId)) {
-			throw new AccessDeniedException("본인 알림만 읽을 수 있습니다.");
+		if (read ^ notification.isRead()) {
+			throw new InvalidParameterException("notificationId", "이미 읽거나 읽지 않은 알림입니다.");
 		}
 
-		notification.unread();
-		notificationRepository.save(notification);
+		if (read) notification.read();
+		else notification.unread();
+		return NotificationResponse.from(notification, domainObjectResolver);
 	}
 
 	@Override

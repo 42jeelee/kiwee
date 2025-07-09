@@ -190,12 +190,13 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 		);
 
 		expiredQuestMember.forEach(questMember -> {
-			eventPublisher.publishEvent(getNotificationEvent(
+			questMember.failed();
+			publishNotificationEvent(
 				"퀘스트 실패 ..",
 				String.format("'%s' 퀘스트를 기한 내에 성공하지 못하였습니다:(", questMember.getQuest().getTitle()),
 				questMember
-			));
-			questMember.failed();
+			);
+
 			if (questMember.getAutoReschedule() != null && questMember.getAutoReschedule()) {
 				rescheduleQuest(questMember);
 			}
@@ -204,25 +205,25 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 		List<QuestMember> plannedQuestMember = questMemberRepository.findByStatus(QuestMemberStatus.PLANNED);
 
 		plannedQuestMember.forEach(questMember -> {
-			eventPublisher.publishEvent(getNotificationEvent(
+			questMember.start();
+			publishNotificationEvent(
 				"퀘스트가 시작되었습니다 !!",
 				String.format("'%s' 퀘스트가 시작되었습니다:)!", questMember.getQuest().getTitle()),
 				questMember
-			));
-			questMember.start();
+			);
 		});
 
 	}
 
-	private NotificationEvent getNotificationEvent(String title, String message, QuestMember questMember) {
-		return NotificationEvent.of(
+	private void publishNotificationEvent(String title, String message, QuestMember questMember) {
+		eventPublisher.publishEvent(NotificationEvent.of(
 			questMember.getMember().getId(),
 			NotificationType.QUEST,
+			questMember.getQuest().getId(),
 			title,
 			message,
-			DomainType.QUEST,
-			questMember.getQuest().getId()
-		);
+			null
+		));
 	}
 
 	private QuestMemberDetailResponse saveQuestMemberAndTrigger(QuestMember questMember, TriggerType triggerType) {
@@ -246,17 +247,13 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 			triggerType == TriggerType.JOIN ? ActivityType.JOIN : ActivityType.COMPLETE
 		);
 
-		NotificationEvent notificationEvent = NotificationEvent.of(
-			member.getId(),
-			NotificationType.QUEST,
+		eventPublisher.publishEvent(activityEvent);
+
+		publishNotificationEvent(
 			String.format("퀘스트 %s", action),
 			String.format("'%s' 퀘스트를 %s 하였습니다.", quest.getTitle(), action),
-			DomainType.QUEST,
-			quest.getId()
+			questMember
 		);
-
-		eventPublisher.publishEvent(activityEvent);
-		eventPublisher.publishEvent(notificationEvent);
 
 		if (
 			triggerType.equals(TriggerType.SUCCESS)

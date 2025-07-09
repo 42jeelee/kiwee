@@ -13,7 +13,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
 	Page<Notification> findByReceiverId(UUID receiverId, Pageable pageable);
 
-	Page<Notification> findByReceiverIdAndIsReadFalse(UUID receiverId, Pageable pageable);
+	Page<Notification> findByReceiverIdAndReadAtIsNotNull(UUID receiverId, Pageable pageable);
 
 	void deleteByCreatedAtBefore(LocalDateTime threshold);
 

@@ -15,6 +15,7 @@ public enum DomainType {
 	GLOBAL("글로벌", "globals"),
 	PLATFORM("플랫폼", "platforms"),
 	CHANNEL("채널", "channels"),
+	MEMBER("맴버", "members"),
 	REWARD("보상", "rewards"),
 	TASK("작업", "tasks"),
 	QUEST("퀘스트", "quests"),
