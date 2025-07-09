@@ -13,7 +13,6 @@ import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
 import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.Reward.exception.RewardNotFoundException;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
 import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardObjectResolver;
 import kr.co.jeelee.kiwee.domain.Reward.resolver.RewardResponseResolver;
@@ -23,6 +22,7 @@ import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
 import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.channelMember.service.ChannelMemberService;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
@@ -73,8 +73,8 @@ public class RewardServiceImpl implements RewardService {
 			request.sourceId(),
 			request.rewardType(),
 			request.rewardId(),
-			request.triggerType(),
-			request.triggerCount(),
+			request.activityType(),
+			request.activityCount(),
 			request.title(),
 			request.description(),
 			exp,
@@ -149,7 +149,13 @@ public class RewardServiceImpl implements RewardService {
 	}
 
 	@Override
-	public List<Reward> getByDomainAndTriggerType(DomainType domain, UUID domainId, TriggerType triggerType) {
-		return rewardRepository.findBySourceTypeAndSourceIdAndTriggerType(domain, domainId, triggerType);
+	public List<Reward> getGeneralRewards(DomainType domainType, ActivityType activityType) {
+		return rewardRepository.findBySourceTypeAndSourceIdIsNullAndActivityType(domainType, activityType);
 	}
+
+	@Override
+	public List<Reward> getSpecificRewards(DomainType domain, UUID domainId, ActivityType activityType) {
+		return rewardRepository.findBySourceTypeAndSourceIdAndActivityType(domain, domainId, activityType);
+	}
+
 }

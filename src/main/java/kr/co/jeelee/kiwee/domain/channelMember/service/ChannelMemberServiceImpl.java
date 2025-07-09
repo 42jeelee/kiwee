@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.dto.request.RolesRequest;
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
@@ -27,8 +25,8 @@ import kr.co.jeelee.kiwee.domain.channelMember.entity.ChannelMemberRole;
 import kr.co.jeelee.kiwee.domain.channelMember.repository.ChannelMemberRepository;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
+import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
-import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
@@ -47,7 +45,6 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 
 	private final MemberService memberService;
 	private final RoleService roleService;
-	private final MemberActivityService memberActivityService;
 
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -229,19 +226,11 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 	}
 
 	private void joinEventPublish(Channel channel, Member member) {
-		RewardEvent rewardEvent = RewardEvent.of(
+		MemberActivityEvent activityEvent = MemberActivityEvent.of(
 			member.getId(),
 			DomainType.CHANNEL,
 			channel.getId(),
-			TriggerType.JOIN,
-			1,
-			memberActivityService.log(
-				member,
-				ActivityType.JOIN,
-				DomainType.CHANNEL,
-				channel.getId(),
-				String.format("'%s' 채널 가입", channel.getName())
-			)
+			ActivityType.JOIN
 		);
 
 		NotificationEvent notificationEvent = NotificationEvent.of(
@@ -253,7 +242,7 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 			channel.getId()
 		);
 
-		eventPublisher.publishEvent(rewardEvent);
+		eventPublisher.publishEvent(activityEvent);
 		eventPublisher.publishEvent(notificationEvent);
 	}
 

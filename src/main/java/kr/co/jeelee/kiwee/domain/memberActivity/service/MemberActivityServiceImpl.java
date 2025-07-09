@@ -54,6 +54,29 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 	}
 
 	@Override
+	public int getGeneralCount(UUID id) {
+		MemberActivity activity = getById(id);
+
+		return memberActivityRepository.countByActorIdAndSourceTypeAndType(
+			activity.getActor().getId(),
+			activity.getSourceType(),
+			activity.getType()
+		);
+	}
+
+	@Override
+	public int getSpecificCount(UUID id) {
+		MemberActivity activity = getById(id);
+
+		return memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdAndType(
+			activity.getActor().getId(),
+			activity.getSourceType(),
+			activity.getSourceId(),
+			activity.getType()
+		);
+	}
+
+	@Override
 	public MemberActivity getById(UUID id) {
 		return memberActivityRepository.findById(id)
 			.orElseThrow(MemberActivityNotFoundException::new);

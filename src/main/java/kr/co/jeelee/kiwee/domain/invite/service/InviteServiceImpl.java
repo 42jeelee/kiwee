@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
@@ -26,8 +24,8 @@ import kr.co.jeelee.kiwee.domain.invite.model.InviteStatus;
 import kr.co.jeelee.kiwee.domain.invite.repository.InviteRepository;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
+import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
-import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
 import kr.co.jeelee.kiwee.domain.notification.model.NotificationType;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
@@ -49,7 +47,6 @@ public class InviteServiceImpl implements InviteService {
 	private final MemberService memberService;
 	private final ChannelService channelService;
 	private final ChannelMemberService channelMemberService;
-	private final MemberActivityService memberActivityService;
 
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -91,24 +88,12 @@ public class InviteServiceImpl implements InviteService {
 		);
 		Invite savedInvite = inviteRepository.save(invite);
 
-		UUID activityId = memberActivityService.log(
-			principal.member(),
-			ActivityType.INVITE,
-			request.domain(),
-			request.targetId(),
-			String.format("'%s' 초대코드 발행", request.domain().name())
-		);
-
-		RewardEvent rewardEvent = RewardEvent.of(
+		eventPublisher.publishEvent(MemberActivityEvent.of(
 			principal.member().getId(),
 			request.domain(),
 			request.targetId(),
-			TriggerType.INVITE,
-			1,
-			activityId
-		);
-
-		eventPublisher.publishEvent(rewardEvent);
+			ActivityType.INVITE
+		));
 
 		if (invitee != null) {
 			eventPublisher.publishEvent(getNotificationEvent(invite, target));

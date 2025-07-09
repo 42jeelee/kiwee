@@ -9,9 +9,9 @@ import kr.co.jeelee.kiwee.domain.Reward.dto.request.RewardCreateRequest;
 import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardDetailResponse;
 import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
 import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
 
 public interface RewardService {
@@ -30,6 +30,8 @@ public interface RewardService {
 	void deleteReward(UUID id);
 
 	Reward getById(UUID id);
-	List<Reward> getByDomainAndTriggerType(DomainType domain, UUID domainId, TriggerType triggerType);
+
+	List<Reward> getGeneralRewards(DomainType domainType, ActivityType activityType);
+	List<Reward> getSpecificRewards(DomainType domain, UUID domainId, ActivityType activityType);
 
 }

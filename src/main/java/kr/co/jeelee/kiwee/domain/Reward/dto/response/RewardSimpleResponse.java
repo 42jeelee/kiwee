@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 
 public record RewardSimpleResponse(
 	UUID id, String title, Object source, Object reward,
-	TriggerType triggerType, Integer triggerCount, Integer exp,
+	ActivityType activityType, Integer activityCount, Integer exp,
 	LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
 	public static RewardSimpleResponse from(Reward reward, Object source, Object rewardObj) {
@@ -17,8 +17,8 @@ public record RewardSimpleResponse(
 			reward.getTitle(),
 			source,
 			rewardObj,
-			reward.getTriggerType(),
-			reward.getTriggerCount(),
+			reward.getActivityType(),
+			reward.getActivityCount(),
 			reward.getExp(),
 			reward.getUpdatedAt(),
 			reward.getCreatedAt()
