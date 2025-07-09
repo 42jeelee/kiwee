@@ -12,9 +12,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class Reward extends BaseTimeEntity {
 	@Column(nullable = false)
 	private DomainType sourceType;
 
-	@Column(nullable = false)
+	@Column
 	private UUID sourceId;
 
 	@Column(nullable = false)
@@ -46,10 +46,10 @@ public class Reward extends BaseTimeEntity {
 	private UUID rewardId;
 
 	@Column(nullable = false)
-	private TriggerType triggerType;
+	private ActivityType activityType;
 
 	@Column(nullable = false)
-	private Integer triggerCount;
+	private Integer activityCount;
 
 	@Column(nullable = false)
 	private String title;
@@ -65,8 +65,8 @@ public class Reward extends BaseTimeEntity {
 
 	private Reward(
 		Member conferrer, DomainType sourceType, UUID sourceId,
-		RewardType rewardType, UUID rewardId, TriggerType triggerType,
-		Integer triggerCount, String title, String description,
+		RewardType rewardType, UUID rewardId, ActivityType activityType,
+		Integer activityCount, String title, String description,
 		Integer exp, Boolean isPublic
 	) {
 		this.conferrer = conferrer;
@@ -74,8 +74,8 @@ public class Reward extends BaseTimeEntity {
 		this.sourceId = sourceId;
 		this.rewardType = rewardType;
 		this.rewardId = rewardId;
-		this.triggerType = triggerType;
-		this.triggerCount = triggerCount;
+		this.activityType = activityType;
+		this.activityCount = activityCount;
 		this.title = title;
 		this.description = description;
 		this.exp = exp;
@@ -84,13 +84,13 @@ public class Reward extends BaseTimeEntity {
 
 	public static Reward of(
 		Member conferrer, DomainType sourceType, UUID sourceId,
-		RewardType rewardType, UUID rewardId, TriggerType triggerType,
-		Integer triggerCount, String title, String description,
+		RewardType rewardType, UUID rewardId, ActivityType activityType,
+		Integer activityCount, String title, String description,
 		Integer exp, Boolean isPublic
 	) {
 		return new Reward(
 			conferrer, sourceType, sourceId, rewardType, rewardId,
-			triggerType, triggerCount, title, description, exp, isPublic
+			activityType, activityCount, title, description, exp, isPublic
 		);
 	}
 

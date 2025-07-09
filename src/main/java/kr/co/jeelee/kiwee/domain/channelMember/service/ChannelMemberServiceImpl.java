@@ -27,6 +27,7 @@ import kr.co.jeelee.kiwee.domain.channelMember.entity.ChannelMemberRole;
 import kr.co.jeelee.kiwee.domain.channelMember.repository.ChannelMemberRepository;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
+import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
@@ -229,19 +230,11 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 	}
 
 	private void joinEventPublish(Channel channel, Member member) {
-		RewardEvent rewardEvent = RewardEvent.of(
+		MemberActivityEvent activityEvent = MemberActivityEvent.of(
 			member.getId(),
 			DomainType.CHANNEL,
 			channel.getId(),
-			TriggerType.JOIN,
-			1,
-			memberActivityService.log(
-				member,
-				ActivityType.JOIN,
-				DomainType.CHANNEL,
-				channel.getId(),
-				String.format("'%s' 채널 가입", channel.getName())
-			)
+			ActivityType.JOIN
 		);
 
 		NotificationEvent notificationEvent = NotificationEvent.of(
@@ -253,7 +246,7 @@ public class ChannelMemberServiceImpl implements ChannelMemberService {
 			channel.getId()
 		);
 
-		eventPublisher.publishEvent(rewardEvent);
+		eventPublisher.publishEvent(activityEvent);
 		eventPublisher.publishEvent(notificationEvent);
 	}
 

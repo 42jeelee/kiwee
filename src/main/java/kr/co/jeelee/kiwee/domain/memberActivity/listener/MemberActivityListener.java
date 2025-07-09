@@ -2,11 +2,13 @@ package kr.co.jeelee.kiwee.domain.memberActivity.listener;
 
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
@@ -23,6 +25,8 @@ public class MemberActivityListener {
 	private final MemberService memberService;
 	private final MemberActivityService memberActivityService;
 
+	private final ApplicationEventPublisher eventPublisher;
+
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handle(MemberActivityEvent event) {
@@ -35,10 +39,9 @@ public class MemberActivityListener {
 			event.activityType().getLabel()
 		);
 
-		UUID activityId =
-			memberActivityService.log(actor, event.activityType(), event.sourceType(), event.sourceId(), title);
-
-		// RewardEvent
+		eventPublisher.publishEvent(RewardEvent.of(
+			memberActivityService.log(actor, event.activityType(), event.sourceType(), event.sourceId(), title)
+		));
 	}
 
 }

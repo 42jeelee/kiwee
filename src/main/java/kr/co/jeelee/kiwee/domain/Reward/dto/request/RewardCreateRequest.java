@@ -5,16 +5,16 @@ import java.util.UUID;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 
 public record RewardCreateRequest(
 	@NotNull(message = "sourceType can't be Null.") DomainType sourceType,
-	@NotNull(message = "sourceId can't be Null.") UUID sourceId,
+	UUID sourceId,
 	@NotNull(message = "rewardType can't be Null.") RewardType rewardType,
 	UUID rewardId,
-	@NotNull(message = "triggerType can't be Null.") TriggerType triggerType,
-	@NotNull(message = "triggerCount can't be Null.") Integer triggerCount,
+	@NotNull(message = "activityType can't be Null.") ActivityType activityType,
+	@NotNull(message = "activityCount can't be Null.") Integer activityCount,
 	@NotBlank(message = "title can't be Blank.") String title,
 	@NotBlank(message = "description can't be Blank.") String description,
 	Integer exp,

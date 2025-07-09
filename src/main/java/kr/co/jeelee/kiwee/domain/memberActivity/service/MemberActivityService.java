@@ -23,6 +23,10 @@ public interface MemberActivityService {
 
 	void addRewards(UUID activityId, List<RewardMember> rewardMembers);
 
+	int getGeneralCount(UUID id);
+
+	int getSpecificCount(UUID id);
+
 	MemberActivity getById(UUID id);
 
 }

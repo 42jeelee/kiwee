@@ -17,11 +17,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
 import kr.co.jeelee.kiwee.domain.Reward.model.TriggerType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
+import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
@@ -241,21 +241,11 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 			? "수락"
 			: "성공";
 
-		String title = String.format("'%s' 퀘스트 %s.", quest.getTitle(), action);
-
-		RewardEvent rewardEvent = RewardEvent.of(
+		MemberActivityEvent activityEvent = MemberActivityEvent.of(
 			member.getId(),
 			DomainType.QUEST,
 			quest.getId(),
-			triggerType,
-			1,
-			memberActivityService.log(
-				member,
-				triggerType == TriggerType.JOIN ? ActivityType.JOIN : ActivityType.COMPLETE,
-				DomainType.QUEST,
-				quest.getId(),
-				title
-			)
+			triggerType == TriggerType.JOIN ? ActivityType.JOIN : ActivityType.COMPLETE
 		);
 
 		NotificationEvent notificationEvent = NotificationEvent.of(
@@ -267,7 +257,7 @@ public class QuestMemberServiceImpl implements QuestMemberService {
 			quest.getId()
 		);
 
-		eventPublisher.publishEvent(rewardEvent);
+		eventPublisher.publishEvent(activityEvent);
 		eventPublisher.publishEvent(notificationEvent);
 
 		if (
