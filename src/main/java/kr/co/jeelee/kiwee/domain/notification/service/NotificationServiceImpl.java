@@ -45,9 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
 	public PagedResponse<NotificationResponse> getUnReadNotifications(UUID receiverId, Pageable pageable) {
 		return PagedResponse.of(
 			notificationRepository.findByReceiverIdAndReadAtIsNotNull(receiverId, pageable),
-			n -> {
-				return NotificationResponse.from(n, domainObjectResolver);
-			}
+			n -> NotificationResponse.from(n, domainObjectResolver)
 		);
 	}
 
