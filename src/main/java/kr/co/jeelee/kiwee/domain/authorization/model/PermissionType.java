@@ -40,7 +40,6 @@ public enum PermissionType {
 	ROLE_CHANNEL_BEN_GRANTER(DomainType.CHANNEL, "상대 벤 가능."),
 	ROLE_CHANNEL_INVITE_MEMBER(DomainType.CHANNEL, "채널에 맴버 초대 가능."),
 	ROLE_CHANNEL_KICK_MEMBER(DomainType.CHANNEL, "채널에서 맴버 강퇴 가능."),
-	ROLE_CHANNEL_CREATE_QUEST(DomainType.CHANNEL, "채널 퀘스트 생성 가능."),
 	ROLE_CHANNEL_MAKE_REWARD(DomainType.CHANNEL, "채널 보상 생성 가능"),
 
 	// Reward
@@ -50,11 +49,6 @@ public enum PermissionType {
 	// Task
 	ROLE_CREATE_OTHER_TASK(DomainType.TASK, "작업 생성"),
 	ROLE_EDIT_OTHER_TASK(DomainType.TASK, "작업 수정"),
-
-	// Quest
-	ROLE_CREATE_QUEST(DomainType.QUEST, "퀘스트 생성"),
-	ROLE_EDIT_QUEST(DomainType.QUEST, "퀘스트 수정"),
-	ROLE_DELETE_QUEST(DomainType.QUEST, "퀘스트 삭제"),
 
 	// Badge
 	ROLE_CREATE_BADGE(DomainType.BADGE, "배지 생성"),

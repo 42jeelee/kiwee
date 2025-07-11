@@ -18,7 +18,6 @@ public enum DomainType {
 	MEMBER("맴버", "members"),
 	REWARD("보상", "rewards"),
 	TASK("작업", "tasks"),
-	QUEST("퀘스트", "quests"),
 	BADGE("배지", "badges"),
 	CONTENT("컨텐츠", "contents"),
 	;

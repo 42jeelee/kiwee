@@ -11,7 +11,6 @@ public enum NotificationType {
 	INVITE("초대", DomainType.MEMBER),
 	MENTION("언급", DomainType.MEMBER),
 	CHANNEL("채널", DomainType.CHANNEL),
-	QUEST("퀘스트", DomainType.QUEST),
 	REWARD("보상", DomainType.REWARD),
 	;
 
