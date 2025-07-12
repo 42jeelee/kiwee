@@ -26,8 +26,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
-import kr.co.jeelee.kiwee.global.dto.response.ErrorResponse;
-import kr.co.jeelee.kiwee.global.dto.response.GlobalResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.ErrorResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.GlobalResponse;
 import kr.co.jeelee.kiwee.global.exception.custom.CustomException;
 import kr.co.jeelee.kiwee.global.exception.custom.ErrorCode;
 

@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import kr.co.jeelee.kiwee.domain.authorization.entity.Permission;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
-import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.PermissionType;
 
 public interface PermissionRepository extends JpaRepository<Permission, Long> {
 

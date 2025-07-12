@@ -1,7 +1,7 @@
 package kr.co.jeelee.kiwee.domain.authorization.dto.response;
 
 import kr.co.jeelee.kiwee.domain.authorization.entity.Permission;
-import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
+import kr.co.jeelee.kiwee.global.model.PermissionType;
 
 public record PermissionResponse(
 	Long id, PermissionType name, String description

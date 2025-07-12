@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.jeelee.kiwee.domain.genre.dto.response.GenreResponse;
 import kr.co.jeelee.kiwee.domain.genre.service.GenreService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

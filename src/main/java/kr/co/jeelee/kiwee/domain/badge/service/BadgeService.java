@@ -9,7 +9,7 @@ import kr.co.jeelee.kiwee.domain.badge.dto.request.BadgeUpdateRequest;
 import kr.co.jeelee.kiwee.domain.badge.dto.response.BadgeDetailResponse;
 import kr.co.jeelee.kiwee.domain.badge.dto.response.BadgeSimpleResponse;
 import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface BadgeService {
 

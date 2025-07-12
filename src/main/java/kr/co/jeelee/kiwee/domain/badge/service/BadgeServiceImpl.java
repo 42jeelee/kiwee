@@ -14,7 +14,7 @@ import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.badge.entity.BadgeLevel;
 import kr.co.jeelee.kiwee.domain.badge.exception.BadgeNotFoundException;
 import kr.co.jeelee.kiwee.domain.badge.repository.BadgeRepository;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -22,7 +22,7 @@ import kr.co.jeelee.kiwee.domain.task.dto.request.TaskCreateRequest;
 import kr.co.jeelee.kiwee.domain.task.dto.response.TaskResponse;
 import kr.co.jeelee.kiwee.domain.task.model.TaskType;
 import kr.co.jeelee.kiwee.domain.task.service.TaskService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

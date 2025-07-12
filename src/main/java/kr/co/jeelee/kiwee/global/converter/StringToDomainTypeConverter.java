@@ -2,7 +2,7 @@ package kr.co.jeelee.kiwee.global.converter;
 
 import org.springframework.core.convert.converter.Converter;
 
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 
 public class StringToDomainTypeConverter implements Converter<String, DomainType> {
 

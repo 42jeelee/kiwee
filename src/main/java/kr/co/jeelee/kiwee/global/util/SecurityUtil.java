@@ -5,7 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import kr.co.jeelee.kiwee.domain.auth.exception.UnauthorizationException;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
-import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
+import kr.co.jeelee.kiwee.global.model.PermissionType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.global.exception.common.InvalidPrincipalException;
 

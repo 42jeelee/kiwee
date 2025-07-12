@@ -1,6 +1,6 @@
 package kr.co.jeelee.kiwee.domain.notification.model;
 
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

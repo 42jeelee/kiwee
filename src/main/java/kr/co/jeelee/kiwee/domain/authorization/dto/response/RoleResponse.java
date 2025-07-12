@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
-import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.RoleType;
 
 public record RoleResponse(
 	UUID id, DomainType domain, RoleType name, String color,

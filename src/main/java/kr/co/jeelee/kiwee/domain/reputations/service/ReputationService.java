@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import kr.co.jeelee.kiwee.domain.reputations.dto.request.ReputationsCreateRequest;
 import kr.co.jeelee.kiwee.domain.reputations.dto.response.ReputationsStatResponse;
 import kr.co.jeelee.kiwee.domain.reputations.dto.response.ReputationsVoteResponse;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface ReputationService {
 

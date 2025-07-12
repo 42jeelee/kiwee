@@ -12,7 +12,7 @@ import kr.co.jeelee.kiwee.domain.notification.dto.response.NotificationResponse;
 import kr.co.jeelee.kiwee.domain.notification.entity.Notification;
 import kr.co.jeelee.kiwee.domain.notification.exception.NotificationNotFoundException;
 import kr.co.jeelee.kiwee.domain.notification.repository.NotificationRepository;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.exception.common.InvalidParameterException;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;

@@ -5,13 +5,13 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.memberActivity.dto.response.MemberActivityResponse;
 import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
-import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
+import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface MemberActivityService {
 

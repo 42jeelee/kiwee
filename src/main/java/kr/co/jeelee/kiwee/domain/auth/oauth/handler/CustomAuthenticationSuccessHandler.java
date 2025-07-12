@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.jeelee.kiwee.domain.auth.dto.response.TokenResponse;
 import kr.co.jeelee.kiwee.domain.auth.service.JwtService;
-import kr.co.jeelee.kiwee.global.dto.response.GlobalResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.GlobalResponse;
 import lombok.RequiredArgsConstructor;
 
 @Component

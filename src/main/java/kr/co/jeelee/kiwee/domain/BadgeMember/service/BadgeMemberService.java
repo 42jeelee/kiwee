@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import kr.co.jeelee.kiwee.domain.BadgeMember.dto.response.BadgeMemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.BadgeMember.dto.response.BadgeMemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.badge.dto.response.BadgeSimpleResponse;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface BadgeMemberService {
 

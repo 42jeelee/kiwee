@@ -27,7 +27,7 @@ import kr.co.jeelee.kiwee.domain.badge.dto.response.BadgeLevelResponse;
 import kr.co.jeelee.kiwee.domain.badge.dto.response.BadgeSimpleResponse;
 import kr.co.jeelee.kiwee.domain.badge.service.BadgeLevelService;
 import kr.co.jeelee.kiwee.domain.badge.service.BadgeService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

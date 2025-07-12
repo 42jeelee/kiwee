@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.notification.dto.response.NotificationResponse;
 import kr.co.jeelee.kiwee.domain.notification.service.NotificationService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

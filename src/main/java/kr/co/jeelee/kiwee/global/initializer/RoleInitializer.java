@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.authorization.entity.Permission;
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
-import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
-import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
+import kr.co.jeelee.kiwee.global.model.PermissionType;
+import kr.co.jeelee.kiwee.global.model.RoleType;
 import kr.co.jeelee.kiwee.domain.authorization.repository.PermissionRepository;
 import kr.co.jeelee.kiwee.domain.authorization.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;

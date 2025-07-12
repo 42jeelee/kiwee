@@ -22,7 +22,7 @@ import kr.co.jeelee.kiwee.domain.platform.dto.request.PlatformCreateRequest;
 import kr.co.jeelee.kiwee.domain.platform.dto.request.PlatformUpdateRequest;
 import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformDetailResponse;
 import kr.co.jeelee.kiwee.domain.platform.service.PlatformService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

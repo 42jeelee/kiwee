@@ -17,7 +17,7 @@ import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.badge.service.BadgeService;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service

@@ -21,7 +21,7 @@ import kr.co.jeelee.kiwee.domain.invite.dto.request.InviteCreateRequest;
 import kr.co.jeelee.kiwee.domain.invite.dto.response.InviteDetailResponse;
 import kr.co.jeelee.kiwee.domain.invite.dto.response.InviteSimpleResponse;
 import kr.co.jeelee.kiwee.domain.invite.service.InviteService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

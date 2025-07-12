@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.badge.repository.BadgeRepository;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;

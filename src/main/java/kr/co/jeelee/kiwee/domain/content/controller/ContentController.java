@@ -21,7 +21,7 @@ import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.content.service.ContentService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

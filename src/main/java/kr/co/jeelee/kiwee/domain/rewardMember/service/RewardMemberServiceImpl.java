@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.jeelee.kiwee.domain.BadgeMember.service.BadgeMemberService;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
 import kr.co.jeelee.kiwee.domain.notification.metadata.NotificationMetadata;
@@ -21,7 +21,7 @@ import kr.co.jeelee.kiwee.domain.rewardMember.dto.response.RewardMemberSimpleRes
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;
 import kr.co.jeelee.kiwee.domain.rewardMember.exception.RewardMemberNotFoundException;
 import kr.co.jeelee.kiwee.domain.rewardMember.repository.RewardMemberRepository;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
 import lombok.RequiredArgsConstructor;
