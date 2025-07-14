@@ -15,7 +15,7 @@ public interface PledgeMemberService {
 
 	PledgeMemberDetailResponse joinPledge(UUID memberId, UUID pledgeId, PledgeMemberCreateRequest request);
 
-	PledgeMemberDetailResponse getPledge(UUID id);
+	PledgeMemberDetailResponse getPledgeMember(UUID id);
 
 	PagedResponse<PledgeMemberSimpleResponse> getMemberPledges(UUID memberId, Pageable pageable);
 
@@ -24,6 +24,9 @@ public interface PledgeMemberService {
 	PledgeMemberSimpleResponse delayPledge(UUID id, LocalDateTime startAt);
 
 	PledgeMemberSimpleResponse giveUpPledge(UUID id);
+
+	void calculateProgress(PledgeMember pledgeMember);
+	void calculateProgress(PledgeMember pledgeMember, int prev);
 
 	PledgeMember getById(UUID id);
 

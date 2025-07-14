@@ -13,6 +13,7 @@ public enum ActivityType {
 	PLAY("활동", false),
 	START("시작", true),
 	END("종료", false),
+	PASS("통과", false),
 	COMPLETE("완료", true),
 	FAILED("실패", true),
 	LINK("연동", true),

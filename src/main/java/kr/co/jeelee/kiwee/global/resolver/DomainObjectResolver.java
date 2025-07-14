@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
+import kr.co.jeelee.kiwee.domain.pledge.entity.Pledge;
+import kr.co.jeelee.kiwee.domain.pledge.repository.PledgeRepository;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.badge.repository.BadgeRepository;
@@ -30,17 +32,20 @@ public class DomainObjectResolver {
 	private final ChannelRepository channelRepository;
 	private final MemberRepository memberRepository;
 	private final TaskRepository taskRepository;
+	private final PledgeRepository pledgeRepository;
 	private final ContentRepository contentRepository;
 	private final RewardRepository rewardRepository;
 	private final BadgeRepository badgeRepository;
 
 	public Object resolve(DomainType domain, UUID id){
+		if (id == null) return null;
 		return switch (domain) {
 			case GLOBAL -> null;
 			case PLATFORM -> platformRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case CHANNEL -> channelRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case MEMBER -> memberRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case TASK -> taskRepository.findById(id).orElseThrow(DomainNotFoundException::new);
+			case PLEDGE -> pledgeRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case CONTENT -> contentRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case REWARD -> rewardRepository.findById(id).orElseThrow(DomainNotFoundException::new);
 			case BADGE -> badgeRepository.findById(id).orElseThrow(DomainNotFoundException::new);
@@ -59,12 +64,14 @@ public class DomainObjectResolver {
 	}
 
 	public String resolveName(DomainType domain, UUID id) {
+		if (id == null) return null;
 		return switch (domain) {
 			case GLOBAL -> null;
 			case PLATFORM -> platformRepository.findById(id).map(Platform::getName).orElseThrow(DomainNotFoundException::new);
 			case CHANNEL -> channelRepository.findById(id).map(Channel::getName).orElseThrow(DomainNotFoundException::new);
 			case MEMBER -> memberRepository.findById(id).map(Member::getName).orElseThrow(DomainNotFoundException::new);
 			case TASK -> taskRepository.findById(id).map(t -> t.getTaskType().name()).orElseThrow(DomainNotFoundException::new);
+			case PLEDGE -> pledgeRepository.findById(id).map(Pledge::getTitle).orElseThrow(DomainNotFoundException::new);
 			case CONTENT -> contentRepository.findById(id).map(Content::getTitle).orElseThrow(DomainNotFoundException::new);
 			case REWARD -> rewardRepository.findById(id).map(Reward::getTitle).orElseThrow(DomainNotFoundException::new);
 			case BADGE -> badgeRepository.findById(id).map(Badge::getName).orElseThrow(DomainNotFoundException::new);

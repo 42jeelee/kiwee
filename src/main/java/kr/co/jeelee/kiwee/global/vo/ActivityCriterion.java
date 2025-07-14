@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import jakarta.persistence.Embeddable;
+import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
 import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 
@@ -26,4 +27,25 @@ public record ActivityCriterion(
 	public int hashCode() {
 		return Objects.hash(domainType, domainId, activityType);
 	}
+
+	public boolean equalsActivity(MemberActivity activity) {
+		if (activity == null) return false;
+		return this.domainType == activity.getSourceType() &&
+			Objects.equals(this.domainId, activity.getSourceId()) &&
+			this.activityType == activity.getType();
+	}
+
+	public static ActivityCriterion of(
+		DomainType domainType,
+		UUID domainId,
+		ActivityType activityType,
+		int activityCount
+	) {
+		return new ActivityCriterion(domainType, domainId, activityType, activityCount);
+	}
+
+	public static ActivityCriterion of(DomainType domainType, UUID domainId, ActivityType activityType) {
+		return new ActivityCriterion(domainType, domainId, activityType, 1);
+	}
+
 }

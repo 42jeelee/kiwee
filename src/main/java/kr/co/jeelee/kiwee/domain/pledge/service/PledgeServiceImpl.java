@@ -1,6 +1,5 @@
 package kr.co.jeelee.kiwee.domain.pledge.service;
 
-import java.util.HashSet;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -14,9 +13,10 @@ import kr.co.jeelee.kiwee.domain.pledge.dto.request.PledgeCreateRequest;
 import kr.co.jeelee.kiwee.domain.pledge.dto.response.PledgeDetailResponse;
 import kr.co.jeelee.kiwee.domain.pledge.dto.response.PledgeSimpleResponse;
 import kr.co.jeelee.kiwee.domain.pledge.entity.Pledge;
+import kr.co.jeelee.kiwee.domain.pledge.entity.PledgeRule;
 import kr.co.jeelee.kiwee.domain.pledge.exception.PledgeNotFoundException;
 import kr.co.jeelee.kiwee.domain.pledge.repository.PledgeRepository;
-import kr.co.jeelee.kiwee.global.dto.request.ActivityCriteriaRequest;
+import kr.co.jeelee.kiwee.domain.pledgeMember.service.PledgeMemberService;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.model.TermType;
@@ -31,10 +31,12 @@ public class PledgeServiceImpl implements PledgeService {
 	private final PledgeRepository pledgeRepository;
 
 	private final MemberService memberService;
+	private final PledgeMemberService pledgeMemberService;
 
 	private final DomainObjectResolver domainObjectResolver;
 
 	@Override
+	@Transactional
 	public PledgeDetailResponse createPledge(UUID proposerId, PledgeCreateRequest request) {
 		Member proposer = memberService.getById(proposerId);
 
@@ -42,18 +44,26 @@ public class PledgeServiceImpl implements PledgeService {
 			request.title(),
 			request.description(),
 			proposer,
-			request.criteria().stream()
-				.map(ActivityCriteriaRequest::toDomain)
-				.toList(),
 			request.completedLimit(),
-			request.termType(),
-			request.condition(),
-			request.allowedCustomFields() != null
-				? request.allowedCustomFields()
-				: new HashSet<>()
+			request.termType()
 		);
 
-		return PledgeDetailResponse.from(pledgeRepository.save(pledge), domainObjectResolver);
+		request.rules().forEach(prr -> {
+			PledgeRule pledgeRule = PledgeRule.of(
+				pledge,
+				prr.criterion().toDomain(),
+				prr.condition(),
+				prr.allowedCustomFields()
+			);
+
+			pledge.addRule(pledgeRule);
+		});
+
+		Pledge savedPledge = pledgeRepository.save(pledge);
+
+		pledgeMemberService.joinPledge(proposerId, savedPledge.getId(), request.joinRequest());
+
+		return PledgeDetailResponse.from(savedPledge, domainObjectResolver);
 	}
 
 	@Override
@@ -63,7 +73,9 @@ public class PledgeServiceImpl implements PledgeService {
 
 	@Override
 	public PagedResponse<PledgeSimpleResponse> getPledges(UUID proposerId, TermType termType, Pageable pageable) {
-		Member proposer = memberService.getById(proposerId);
+		Member proposer = proposerId != null
+			? memberService.getById(proposerId)
+			: null;
 
 		return PagedResponse.of(
 			fetchPledges(proposer, termType, pageable),
@@ -72,6 +84,7 @@ public class PledgeServiceImpl implements PledgeService {
 	}
 
 	@Override
+	@Transactional
 	public void deletePledge(UUID proposerId, UUID id) {
 		Member proposer = memberService.getById(proposerId);
 		Pledge pledge = getById(id);

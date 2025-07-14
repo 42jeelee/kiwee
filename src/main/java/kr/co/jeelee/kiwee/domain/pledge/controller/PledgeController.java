@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.pledge.dto.request.PledgeCreateRequest;
 import kr.co.jeelee.kiwee.domain.pledge.dto.response.PledgeDetailResponse;
@@ -35,7 +37,7 @@ public class PledgeController {
 	@PostMapping
 	public PledgeDetailResponse createPledge(
 		@AuthenticationPrincipal CustomOAuth2User principal,
-		PledgeCreateRequest pledgeCreateRequest
+		@Valid @RequestBody PledgeCreateRequest pledgeCreateRequest
 	) {
 		return pledgeService.createPledge(principal.member().getId(), pledgeCreateRequest);
 	}
@@ -49,8 +51,8 @@ public class PledgeController {
 
 	@GetMapping
 	public PagedResponse<PledgeSimpleResponse> getPledges(
-		@RequestParam UUID proposerId,
-		@RequestParam TermType termType,
+		@RequestParam(required = false) UUID proposerId,
+		@RequestParam(required = false) TermType termType,
 		@PageableDefault Pageable pageable
 	) {
 		return pledgeService.getPledges(proposerId, termType, pageable);

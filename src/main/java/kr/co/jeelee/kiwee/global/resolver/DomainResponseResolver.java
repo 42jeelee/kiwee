@@ -33,6 +33,8 @@ public class DomainResponseResolver {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T toResponse(Object domainObject, DomainObjectResolver resolver) {
+		if (domainObject == null) return null;
+
 		BiFunction<Object, DomainObjectResolver, ?> converter = responseConverter.get(domainObject.getClass());
 
 		if (converter == null) {

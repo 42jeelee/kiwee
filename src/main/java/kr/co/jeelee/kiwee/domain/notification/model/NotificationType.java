@@ -10,6 +10,7 @@ public enum NotificationType {
 	SYSTEM("시스템", DomainType.GLOBAL),
 	INVITE("초대", DomainType.MEMBER),
 	MENTION("언급", DomainType.MEMBER),
+	PLEDGE("약속", DomainType.PLEDGE),
 	CHANNEL("채널", DomainType.CHANNEL),
 	REWARD("보상", DomainType.REWARD),
 	;

@@ -8,7 +8,7 @@ import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.global.vo.ActivityCriterion;
 
-public record ActivityCriteriaRequest(
+public record ActivityCriterionRequest(
 	@NotNull(message = "domainType can't be Null.") DomainType domainType,
 	UUID domainId,
 	@NotNull(message = "activityType can't be Null.") ActivityType activityType,
