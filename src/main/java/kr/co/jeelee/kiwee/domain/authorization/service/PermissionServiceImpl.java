@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.authorization.dto.response.PermissionResponse;
 import kr.co.jeelee.kiwee.domain.authorization.exception.PermissionNotFoundException;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.authorization.repository.PermissionRepository;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service

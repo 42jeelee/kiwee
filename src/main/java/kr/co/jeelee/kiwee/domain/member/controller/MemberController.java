@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
-import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
-import kr.co.jeelee.kiwee.domain.member.dto.request.GainExpRequest;
+import kr.co.jeelee.kiwee.global.model.RoleType;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberCreateRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.MemberRolesRequest;
 import kr.co.jeelee.kiwee.domain.member.dto.request.UpdateMemberRequest;
@@ -29,7 +28,7 @@ import kr.co.jeelee.kiwee.domain.member.dto.response.MemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberRolesResponse;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

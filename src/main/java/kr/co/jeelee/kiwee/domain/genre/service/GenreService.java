@@ -4,7 +4,7 @@ import org.springframework.data.domain.Pageable;
 
 import kr.co.jeelee.kiwee.domain.genre.dto.response.GenreResponse;
 import kr.co.jeelee.kiwee.domain.genre.entity.Genre;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface GenreService {
 

@@ -12,8 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.co.jeelee.kiwee.global.dto.response.ErrorResponse;
-import kr.co.jeelee.kiwee.global.dto.response.GlobalResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.ErrorResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.GlobalResponse;
 import kr.co.jeelee.kiwee.global.exception.custom.ErrorCode;
 import lombok.RequiredArgsConstructor;
 

@@ -21,7 +21,7 @@ import kr.co.jeelee.kiwee.domain.genre.entity.Genre;
 import kr.co.jeelee.kiwee.domain.genre.service.GenreService;
 import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
 import kr.co.jeelee.kiwee.domain.platform.service.PlatformService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import lombok.RequiredArgsConstructor;
 

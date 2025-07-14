@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.dto.request.RolesRequest;
-import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
+import kr.co.jeelee.kiwee.global.model.RoleType;
 import kr.co.jeelee.kiwee.domain.channelMember.dto.response.ChannelMemberResponse;
 import kr.co.jeelee.kiwee.domain.channelMember.service.ChannelMemberService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

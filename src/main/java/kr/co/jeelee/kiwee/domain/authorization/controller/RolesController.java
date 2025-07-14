@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.jeelee.kiwee.domain.authorization.dto.response.RoleResponse;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.authorization.service.RoleService;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @PreAuthorize(value = "hasRole('PERMISSION_GRANTER')")

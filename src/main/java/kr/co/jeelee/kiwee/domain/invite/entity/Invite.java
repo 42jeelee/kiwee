@@ -15,7 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.invite.dto.InviteCondition;
 import kr.co.jeelee.kiwee.domain.invite.model.InviteStatus;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;

@@ -12,7 +12,7 @@ import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformDetailResponse;
 import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
 import kr.co.jeelee.kiwee.domain.platform.exception.PlatformNotFoundException;
 import kr.co.jeelee.kiwee.domain.platform.repository.PlatformRepository;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.model.DataProvider;
 import lombok.RequiredArgsConstructor;

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import kr.co.jeelee.kiwee.domain.notification.dto.response.NotificationResponse;
 import kr.co.jeelee.kiwee.domain.notification.entity.Notification;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface NotificationService {
 

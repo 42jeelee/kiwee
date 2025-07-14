@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.authorization.dto.request.RolesRequest;
-import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
-import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
+import kr.co.jeelee.kiwee.global.model.PermissionType;
+import kr.co.jeelee.kiwee.global.model.RoleType;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.channelMember.dto.response.ChannelMemberResponse;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface ChannelMemberService {
 

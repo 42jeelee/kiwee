@@ -3,7 +3,7 @@ package kr.co.jeelee.kiwee.domain.invite.dto.request;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.invite.dto.InviteCondition;
 
 public record InviteCreateRequest(

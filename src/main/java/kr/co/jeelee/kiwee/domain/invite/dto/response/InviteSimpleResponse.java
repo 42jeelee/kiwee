@@ -3,7 +3,7 @@ package kr.co.jeelee.kiwee.domain.invite.dto.response;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.invite.entity.Invite;
 import kr.co.jeelee.kiwee.domain.invite.model.InviteStatus;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;

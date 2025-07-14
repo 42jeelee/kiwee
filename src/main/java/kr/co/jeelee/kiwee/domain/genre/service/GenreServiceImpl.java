@@ -8,7 +8,7 @@ import kr.co.jeelee.kiwee.domain.genre.dto.response.GenreResponse;
 import kr.co.jeelee.kiwee.domain.genre.entity.Genre;
 import kr.co.jeelee.kiwee.domain.genre.exception.GenreNotFoundException;
 import kr.co.jeelee.kiwee.domain.genre.repository.GenreRepository;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service

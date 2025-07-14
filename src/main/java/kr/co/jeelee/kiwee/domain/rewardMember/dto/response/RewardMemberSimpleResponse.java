@@ -1,7 +1,7 @@
 package kr.co.jeelee.kiwee.domain.rewardMember.dto.response;
 
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;
 

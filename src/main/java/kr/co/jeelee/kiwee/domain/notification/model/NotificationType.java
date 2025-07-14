@@ -1,6 +1,6 @@
 package kr.co.jeelee.kiwee.domain.notification.model;
 
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -10,8 +10,8 @@ public enum NotificationType {
 	SYSTEM("시스템", DomainType.GLOBAL),
 	INVITE("초대", DomainType.MEMBER),
 	MENTION("언급", DomainType.MEMBER),
+	PLEDGE("약속", DomainType.PLEDGE),
 	CHANNEL("채널", DomainType.CHANNEL),
-	QUEST("퀘스트", DomainType.QUEST),
 	REWARD("보상", DomainType.REWARD),
 	;
 

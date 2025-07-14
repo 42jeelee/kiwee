@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -8,15 +9,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.memberActivity.dto.response.MemberActivityResponse;
 import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
 import kr.co.jeelee.kiwee.domain.memberActivity.exception.MemberActivityNotFoundException;
-import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
+import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.memberActivity.repository.MemberActivityRepository;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
+import kr.co.jeelee.kiwee.global.vo.ActivityCriterion;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -51,6 +53,47 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 
 		memberActivity.addRewardMembers(rewardMembers);
 		memberActivityRepository.save(memberActivity);
+	}
+
+	@Override
+	public List<MemberActivity> getTimeMemberActivities(UUID actorId, LocalDateTime start, LocalDateTime end) {
+		return memberActivityRepository.findByActorIdAndCreatedAtBetween(
+			actorId,
+			start,
+			end
+		);
+	}
+
+	@Override
+	public List<MemberActivity> getTimeAllActivities(LocalDateTime start, LocalDateTime end) {
+		return memberActivityRepository.findByCreatedAtBetween(
+			start,
+			end
+		);
+	}
+
+	@Override
+	public boolean existsActivityByCriterionAtTime(
+		UUID actorId, ActivityCriterion criterion, LocalDateTime start, LocalDateTime end
+	) {
+		return criterion.domainId() != null
+			? memberActivityRepository.existsByActorIdAndSourceTypeAndSourceIdAndTypeAndCreatedAtBetween(
+				actorId, criterion.domainType(), criterion.domainId(), criterion.activityType(), start, end
+			)
+			: memberActivityRepository.existsByActorIdAndSourceTypeAndSourceIdIsNullAndTypeAndCreatedAtBetween(
+				actorId, criterion.domainType(), criterion.activityType(), start, end
+		);
+	}
+
+	@Override
+	public int countCriterionAtTime(UUID actorId, ActivityCriterion criterion, LocalDateTime start, LocalDateTime end) {
+		return criterion.domainId() != null
+			? memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdAndTypeAndCreatedAtBetween(
+				actorId, criterion.domainType(), criterion.domainId(), criterion.activityType(), start, end
+			)
+			: memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdIsNullAndTypeAndCreatedAtBetween(
+				actorId, criterion.domainType(), criterion.activityType(), start, end
+		);
 	}
 
 	@Override

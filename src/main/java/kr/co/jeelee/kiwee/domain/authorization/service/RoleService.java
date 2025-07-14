@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 
 import kr.co.jeelee.kiwee.domain.authorization.dto.response.RoleResponse;
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
-import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.RoleType;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface RoleService {
 

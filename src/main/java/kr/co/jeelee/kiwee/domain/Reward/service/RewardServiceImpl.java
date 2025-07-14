@@ -15,14 +15,13 @@ import kr.co.jeelee.kiwee.domain.Reward.exception.RewardNotFoundException;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
-import kr.co.jeelee.kiwee.domain.authorization.model.PermissionType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.PermissionType;
 import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
 import kr.co.jeelee.kiwee.domain.channelMember.service.ChannelMemberService;
-import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
-import kr.co.jeelee.kiwee.domain.quest.entity.Quest;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.model.ActivityType;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
@@ -47,10 +46,6 @@ public class RewardServiceImpl implements RewardService {
 		if (source instanceof Channel) {
 			if (!channelMemberService.hasPermission((Channel) source, principal.member(), PermissionType.ROLE_CHANNEL_MAKE_REWARD)) {
 				throw new AccessDeniedException("채널 보상을 만들 권한이 없습니다.");
-			}
-		} else if (source instanceof Quest) {
-			if (!((Quest) source).getProposer().getId().equals(principal.member().getId())) {
-				throw new AccessDeniedException("퀘스트 제작자만 등록할 수 있습니다.");
 			}
 		}
 

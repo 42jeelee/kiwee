@@ -1,5 +1,7 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.listener;
 
+import java.util.UUID;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,7 @@ import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
+import kr.co.jeelee.kiwee.domain.pledgeMember.service.PledgeMemberStatusService;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +25,7 @@ public class MemberActivityListener {
 
 	private final MemberService memberService;
 	private final MemberActivityService memberActivityService;
+	private final PledgeMemberStatusService pledgeMemberStatusService;
 
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -37,9 +41,11 @@ public class MemberActivityListener {
 			event.activityType().getLabel()
 		);
 
-		eventPublisher.publishEvent(RewardEvent.of(
-			memberActivityService.log(actor, event.activityType(), event.sourceType(), event.sourceId(), title)
-		));
+		UUID activityId =
+			memberActivityService.log(actor, event.activityType(), event.sourceType(), event.sourceId(), title);
+
+		pledgeMemberStatusService.progressActivity(activityId);
+		eventPublisher.publishEvent(RewardEvent.of(activityId));
 	}
 
 }

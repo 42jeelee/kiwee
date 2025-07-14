@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.jeelee.kiwee.domain.authorization.dto.response.RoleResponse;
 import kr.co.jeelee.kiwee.domain.authorization.entity.Role;
 import kr.co.jeelee.kiwee.domain.authorization.exception.RoleNotFoundException;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
-import kr.co.jeelee.kiwee.domain.authorization.model.RoleType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.RoleType;
 import kr.co.jeelee.kiwee.domain.authorization.repository.RoleRepository;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 import lombok.RequiredArgsConstructor;
 

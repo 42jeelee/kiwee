@@ -22,8 +22,8 @@ import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardDetailResponse;
 import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
 import kr.co.jeelee.kiwee.domain.Reward.service.RewardService;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.model.DomainType;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

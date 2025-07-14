@@ -6,7 +6,7 @@ import java.util.UUID;
 import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
-import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
+import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
 import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 

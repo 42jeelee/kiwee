@@ -19,7 +19,7 @@ import kr.co.jeelee.kiwee.domain.reputations.entity.Reputation;
 import kr.co.jeelee.kiwee.domain.reputations.exception.DuplicateVoteException;
 import kr.co.jeelee.kiwee.domain.reputations.exception.SelfVoteNotAllowedException;
 import kr.co.jeelee.kiwee.domain.reputations.projection.ReputationStatProjection;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service

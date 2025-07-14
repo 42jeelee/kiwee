@@ -10,7 +10,7 @@ import kr.co.jeelee.kiwee.domain.channel.dto.request.ChannelUpdateRequest;
 import kr.co.jeelee.kiwee.domain.channel.dto.response.ChannelDetailResponse;
 import kr.co.jeelee.kiwee.domain.channel.dto.response.ChannelSimpleResponse;
 import kr.co.jeelee.kiwee.domain.channel.entity.Channel;
-import kr.co.jeelee.kiwee.global.dto.response.PagedResponse;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface ChannelService {
 

@@ -1,6 +1,5 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,9 +14,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import kr.co.jeelee.kiwee.domain.authorization.model.DomainType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
-import kr.co.jeelee.kiwee.domain.memberActivity.model.ActivityType;
+import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
