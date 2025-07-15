@@ -44,7 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public PagedResponse<NotificationResponse> getUnReadNotifications(UUID receiverId, Pageable pageable) {
 		return PagedResponse.of(
-			notificationRepository.findByReceiverIdAndReadAtIsNotNull(receiverId, pageable),
+			notificationRepository.findByReceiverIdAndReadAtIsNull(receiverId, pageable),
 			n -> NotificationResponse.from(n, domainObjectResolver)
 		);
 	}
@@ -59,7 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
 			throw new AccessDeniedException("본인 알림만 읽을 수 있습니다.");
 		}
 
-		if (read ^ notification.isRead()) {
+		if (read == notification.isRead()) {
 			throw new InvalidParameterException("notificationId", "이미 읽거나 읽지 않은 알림입니다.");
 		}
 

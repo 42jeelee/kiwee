@@ -32,10 +32,10 @@ public class NotificationController {
 	@GetMapping(value = "/me/notifications")
 	public PagedResponse<NotificationResponse> getMyNotifications(
 		@AuthenticationPrincipal CustomOAuth2User principal,
-		@RequestParam(defaultValue = "false") boolean includeRead,
+		@RequestParam(defaultValue = "false") boolean read,
 		@PageableDefault Pageable pageable
 	) {
-		return includeRead
+		return read
 			? notificationService.getNotifications(principal.member().getId(), pageable)
 			: notificationService.getUnReadNotifications(principal.member().getId(), pageable);
 	}
