@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
@@ -21,12 +22,16 @@ public interface PledgeMemberRepository extends JpaRepository<PledgeMember, UUID
 
 	Page<PledgeMember> findByPledge(Pledge pledge, Pageable pageable);
 
+	@EntityGraph(attributePaths = "pledge")
 	List<PledgeMember> findByMemberAndStatus(Member member, PledgeStatusType status);
 
+	@EntityGraph(attributePaths = {"pledge", "member"})
 	List<PledgeMember> findByStatus(PledgeStatusType status);
 
+	@EntityGraph(attributePaths = {"pledge", "member"})
 	List<PledgeMember> findByPledge_TermTypeAndStatus(TermType termType, PledgeStatusType status);
 
+	@EntityGraph(attributePaths = {"pledge", "member"})
 	List<PledgeMember> findByPledge_TermTypeInAndStatus(List<TermType> termTypes, PledgeStatusType status);
 
 }

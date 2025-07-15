@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.Reward.entity;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -51,6 +52,9 @@ public class Reward extends BaseTimeEntity {
 	@Column(nullable = false)
 	private Integer activityCount;
 
+	@Column
+	private Duration duration;
+
 	@Column(nullable = false)
 	private String title;
 
@@ -66,7 +70,7 @@ public class Reward extends BaseTimeEntity {
 	private Reward(
 		Member conferrer, DomainType sourceType, UUID sourceId,
 		RewardType rewardType, UUID rewardId, ActivityType activityType,
-		Integer activityCount, String title, String description,
+		Integer activityCount, Duration duration, String title, String description,
 		Integer exp, Boolean isPublic
 	) {
 		this.conferrer = conferrer;
@@ -76,6 +80,7 @@ public class Reward extends BaseTimeEntity {
 		this.rewardId = rewardId;
 		this.activityType = activityType;
 		this.activityCount = activityCount;
+		this.duration = duration;
 		this.title = title;
 		this.description = description;
 		this.exp = exp;
@@ -85,12 +90,12 @@ public class Reward extends BaseTimeEntity {
 	public static Reward of(
 		Member conferrer, DomainType sourceType, UUID sourceId,
 		RewardType rewardType, UUID rewardId, ActivityType activityType,
-		Integer activityCount, String title, String description,
+		Integer activityCount, Duration duration, String title, String description,
 		Integer exp, Boolean isPublic
 	) {
 		return new Reward(
 			conferrer, sourceType, sourceId, rewardType, rewardId,
-			activityType, activityCount, title, description, exp, isPublic
+			activityType, activityCount, duration, title, description, exp, isPublic
 		);
 	}
 

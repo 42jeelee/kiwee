@@ -14,7 +14,7 @@ public record ContentDetailResponse(
 	UUID id, DataProvider sourceProvider, String sourceId, String title, String originalTitle,
 	String description, Double rating, String imageUrl, String homePage,
 	ContentType contentType, ContentLevel contentLevel, ContentSimpleResponse parent,
-	List<GenreResponse> genres, List<PlatformSimpleResponse> platforms
+	List<GenreResponse> genres, List<PlatformSimpleResponse> platforms, String applicationId
 ) {
 	public static ContentDetailResponse from(Content content) {
 		return new ContentDetailResponse(
@@ -37,7 +37,8 @@ public record ContentDetailResponse(
 				.toList(),
 			content.getPlatforms().stream()
 				.map(PlatformSimpleResponse::from)
-				.toList()
+				.toList(),
+			content.getApplicationId()
 		);
 	}
 }

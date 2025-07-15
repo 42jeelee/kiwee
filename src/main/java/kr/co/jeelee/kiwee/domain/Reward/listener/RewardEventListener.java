@@ -15,6 +15,7 @@ import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
 import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;
 import kr.co.jeelee.kiwee.domain.rewardMember.service.RewardMemberService;
+import kr.co.jeelee.kiwee.global.model.ActivityType;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -54,7 +55,13 @@ public class RewardEventListener {
 
 	private List<RewardMember> getRewardMembers(List<Reward> rewards, int activityCount, MemberActivity activity) {
 		return rewards.stream()
-			.filter(r -> r.getActivityCount().equals(activityCount))
+			.filter(r -> (
+				r.getActivityCount().equals(activityCount)
+				&& (
+					r.getActivityType() != ActivityType.END
+					|| r.getDuration().compareTo(memberActivityService.getPlayDuration(activity)) <= 0
+				)
+			))
 			.map(r -> RewardMember.of(activity.getActor(), r, activity))
 			.map(rewardMemberService::createRewardMember)
 			.toList();

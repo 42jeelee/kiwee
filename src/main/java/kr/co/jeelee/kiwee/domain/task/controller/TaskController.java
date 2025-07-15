@@ -33,23 +33,21 @@ public class TaskController {
 
 	private final TaskService taskService;
 
-	@PostMapping(value = "/channels/{channelId}/members/me")
+	@PostMapping(value = "/members/me")
 	public TaskResponse createMyTask(
-		@PathVariable UUID channelId,
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@Valid @RequestBody TaskCreateRequest request
 	) {
-		return taskService.createTask(channelId, principal.member().getId(), request);
+		return taskService.createTask(principal.member().getId(), request);
 	}
 
 	@PreAuthorize(value = "hasRole('CREATE_OTHER_TASK')")
-	@PostMapping(value = "/channels/{channelId}/members/{memberId}")
+	@PostMapping(value = "/members/{memberId}")
 	public TaskResponse createTask(
-		@PathVariable UUID channelId,
 		@PathVariable UUID memberId,
 		@Valid @RequestBody TaskCreateRequest request
 	) {
-		return taskService.createTask(channelId, memberId, request);
+		return taskService.createTask(memberId, request);
 	}
 
 	@GetMapping(value = "/{id}")
@@ -59,24 +57,22 @@ public class TaskController {
 		return taskService.getTask(id);
 	}
 
-	@GetMapping(value = "/channels/{channelId}")
+	@GetMapping
 	public PagedResponse<TaskResponse> getTasks(
-		@PathVariable UUID channelId,
 		@RequestParam(required = false) UUID memberId,
 		@RequestParam(required = false) TaskType taskType,
 		@RequestParam(required = false) LocalDate date,
 		@PageableDefault Pageable pageable
 	) {
-		return taskService.getTasks(channelId, memberId, taskType, date, pageable);
+		return taskService.getTasks(memberId, taskType, date, pageable);
 	}
 
-	@GetMapping(value = "/channels/{channelId}/contents/{contentId}")
-	public PagedResponse<TaskResponse> getReviewTasksByContentId(
-		@PathVariable UUID channelId,
-		@PathVariable UUID contentId,
+	@GetMapping(value = "/contents/{applicationId}")
+	public PagedResponse<TaskResponse> getPlayTasksByApplicationId(
+		@PathVariable String applicationId,
 		@PageableDefault Pageable pageable
 	) {
-		return taskService.getReviewTasksByContentId(channelId, contentId, pageable);
+		return taskService.getPlayTasksByApplicationId(applicationId, pageable);
 	}
 
 }

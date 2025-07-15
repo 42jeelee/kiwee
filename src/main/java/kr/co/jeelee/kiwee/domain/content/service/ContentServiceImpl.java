@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateRequest;
+import kr.co.jeelee.kiwee.domain.content.dto.request.ContentUpdateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
 import kr.co.jeelee.kiwee.domain.content.exception.ContentNotFoundException;
+import kr.co.jeelee.kiwee.domain.content.model.ContentLevel;
 import kr.co.jeelee.kiwee.global.model.DataProvider;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.content.repository.ContentRepository;
@@ -72,7 +74,8 @@ public class ContentServiceImpl implements ContentService {
 			request.contentLevel(),
 			parent,
 			genres,
-			platforms
+			platforms,
+			request.applicationId()
 		);
 
 		return ContentDetailResponse.from(contentRepository.save(content));
@@ -81,6 +84,41 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public ContentDetailResponse getContentDetail(UUID id) {
 		return ContentDetailResponse.from(getById(id));
+	}
+
+	@Override
+	@Transactional
+	public ContentDetailResponse updateContent(UUID id, ContentUpdateRequest request) {
+		Content content = getById(id);
+
+		try {
+			Content parent = request.parent() != null
+				? getById(request.parent())
+				: null;
+
+			Set<Platform> platforms = request.platformIds().stream()
+				.map(platformService::getById)
+				.collect(Collectors.toSet());
+
+			Set<Genre> genres = request.genres().stream()
+				.map(genreService::getOrCreateGenre)
+				.collect(Collectors.toSet());
+
+			updateTitleIfChanged(content, request.title());
+			updateDescriptionIfChanged(content, request.description());
+			updateRatingIfChanged(content, request.rating());
+			updateImageUrlIfChanged(content, request.imageUrl());
+			updateHomePageIfChanged(content, request.homePage());
+			updateContentTypeAndLevelIfChanged(content, request.contentType(), request.contentLevel());
+			content.updateGenres(genres);
+			content.updatePlatforms(platforms);
+			updateParentIfChanged(content, parent);
+			updateApplicationIdIfChanged(content, request.applicationId());
+
+			return ContentDetailResponse.from(content);
+		} catch (ContentNotFoundException e) {
+			throw new FieldValidationException("parentId", "존재하지 않는 콘텐츠입니다.");
+		}
 	}
 
 	@Override
@@ -100,6 +138,12 @@ public class ContentServiceImpl implements ContentService {
 			contentRepository.findByParent(content, pageable),
 			ContentSimpleResponse::from
 		);
+	}
+
+	@Override
+	public Content getByApplicationId(String applicationId) {
+		return contentRepository.findByApplicationId(applicationId)
+			.orElse(null);
 	}
 
 	@Override
@@ -125,6 +169,57 @@ public class ContentServiceImpl implements ContentService {
 		}
 
 		return contentRepository.findAll(pageable);
+	}
+
+	private void updateTitleIfChanged(Content content, String title) {
+		if (title != null && !title.equals(content.getTitle())) {
+			content.updateTitle(title);
+		}
+	}
+
+	private void updateDescriptionIfChanged(Content content, String description) {
+		if (description != null && !description.equals(content.getDescription())) {
+			content.updateDescription(description);
+		}
+	}
+
+	private void updateRatingIfChanged(Content content, Double rating) {
+		if (rating != null && rating.equals(content.getRating())) {
+			content.updateRating(rating);
+		}
+	}
+
+	private void updateImageUrlIfChanged(Content content, String imageUrl) {
+		if (imageUrl != null && !imageUrl.equals(content.getImageUrl())) {
+			content.updateImageUrl(imageUrl);
+		}
+	}
+
+	private void updateHomePageIfChanged(Content content, String homePage) {
+		if (homePage != null && !homePage.equals(content.getHomePage())) {
+			content.updateHomePage(homePage);
+		}
+	}
+
+	private void updateContentTypeAndLevelIfChanged(Content content, ContentType type, ContentLevel level) {
+		if (
+			(type != null && type != content.getContentType())
+			|| (level != null && level != content.getContentLevel())
+		) {
+			content.updateContentTypeAndLevel(type, level);
+		}
+	}
+
+	private void updateParentIfChanged(Content content, Content parent) {
+		if (parent != null && !content.getParent().equals(parent)) {
+			content.updateParent(parent);
+		}
+	}
+
+	private void updateApplicationIdIfChanged(Content content, String applicationId) {
+		if (applicationId != null && !content.getApplicationId().equals(applicationId)) {
+			content.updateApplicationId(applicationId);
+		}
 	}
 
 }

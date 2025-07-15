@@ -43,8 +43,8 @@ public class RewardServiceImpl implements RewardService {
 	public RewardDetailResponse createReward(CustomOAuth2User principal, RewardCreateRequest request) {
 		Object source = domainObjectResolver.resolve(request.sourceType(), request.sourceId());
 
-		if (source instanceof Channel) {
-			if (!channelMemberService.hasPermission((Channel) source, principal.member(), PermissionType.ROLE_CHANNEL_MAKE_REWARD)) {
+		if (source instanceof Channel channel) {
+			if (!channelMemberService.hasPermission(channel, principal.member(), PermissionType.ROLE_CHANNEL_MAKE_REWARD)) {
 				throw new AccessDeniedException("채널 보상을 만들 권한이 없습니다.");
 			}
 		}
@@ -58,6 +58,10 @@ public class RewardServiceImpl implements RewardService {
 			exp = ((Badge)rewardObj).getExp();
 		}
 
+		if (request.activityType() == ActivityType.END && request.duration() == null) {
+			throw new FieldValidationException("duration", "활동 종료 보상에는 플레이 기간이 포함되어야 합니다.");
+		}
+
 		Reward reward = Reward.of(
 			principal.member(),
 			request.sourceType(),
@@ -66,6 +70,7 @@ public class RewardServiceImpl implements RewardService {
 			request.rewardId(),
 			request.activityType(),
 			request.activityCount(),
+			request.duration(),
 			request.title(),
 			request.description(),
 			exp,

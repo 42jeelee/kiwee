@@ -15,6 +15,8 @@ import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformSimpleResponse;
 import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
+import kr.co.jeelee.kiwee.domain.pledge.dto.response.PledgeSimpleResponse;
+import kr.co.jeelee.kiwee.domain.pledge.entity.Pledge;
 import kr.co.jeelee.kiwee.domain.task.dto.response.TaskResponse;
 import kr.co.jeelee.kiwee.domain.task.entity.Task;
 import kr.co.jeelee.kiwee.global.exception.common.CastErrorException;
@@ -26,6 +28,7 @@ public class DomainResponseResolver {
 		Channel.class, (obj, resolver) -> ChannelSimpleResponse.from((Channel) obj),
 		Member.class, (obj, resolver) -> MemberSimpleResponse.from((Member) obj),
 		Task.class, (obj, resolver) -> TaskResponse.from((Task) obj),
+		Pledge.class, (obj, resolver) -> PledgeSimpleResponse.from((Pledge) obj),
 		Content.class, (obj, resolver) -> ContentSimpleResponse.from((Content) obj),
 		Reward.class, (obj, resolver) -> RewardSimpleResponse.from((Reward) obj, resolver),
 		Badge.class, (obj, resolver) -> BadgeSimpleResponse.from((Badge) obj, 1)

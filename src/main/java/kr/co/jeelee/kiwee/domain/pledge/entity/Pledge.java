@@ -79,7 +79,7 @@ public class Pledge extends BaseTimeEntity {
 
 	public boolean isIncludeCriterion(ActivityCriterion activityCriterion) {
 		return this.rules.stream()
-			.anyMatch(r -> r.getCriterion().equals(activityCriterion));
+			.anyMatch(r -> r.getCriterion().matchesType(activityCriterion));
 	}
 
 	public PledgeRule getRuleByCriterion(ActivityCriterion criterion) {

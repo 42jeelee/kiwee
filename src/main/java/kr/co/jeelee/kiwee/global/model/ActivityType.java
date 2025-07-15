@@ -12,6 +12,7 @@ public enum ActivityType {
 	REMOVE("삭제", false),
 	PLAY("활동", false),
 	START("시작", true),
+	UPDATE("수정", false),
 	END("종료", false),
 	PASS("통과", false),
 	COMPLETE("완료", true),

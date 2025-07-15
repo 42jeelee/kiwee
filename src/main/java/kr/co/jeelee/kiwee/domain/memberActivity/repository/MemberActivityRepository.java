@@ -2,6 +2,7 @@ package kr.co.jeelee.kiwee.domain.memberActivity.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -52,9 +53,25 @@ public interface MemberActivityRepository extends JpaRepository<MemberActivity, 
 
 	int countByActorIdAndSourceTypeAndSourceIdAndType(UUID actorId, DomainType sourceType, UUID sourceId, ActivityType type);
 
+	Optional<MemberActivity> findFirstByActorIdAndSourceTypeAndSourceIdAndTypeInOrderByCreatedAtDesc(
+		UUID actor,
+		DomainType sourceType,
+		UUID sourceId,
+		List<ActivityType> activityTypes
+	);
+
 	Page<MemberActivity> findByActorId(UUID memberId, Pageable pageable);
 
 	List<MemberActivity> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
 	List<MemberActivity> findByActorIdAndCreatedAtBetween(UUID memberId, LocalDateTime start, LocalDateTime end);
+
+	List<MemberActivity> findByActorIdAndSourceTypeAndSourceIdAndTypeInAndCreatedAtBetweenOrderByCreatedAtAsc(
+		UUID actorId,
+		DomainType sourceType,
+		UUID sourceId,
+		List<ActivityType> activityTypes,
+		LocalDateTime start,
+		LocalDateTime end
+	);
 }

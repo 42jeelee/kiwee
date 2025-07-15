@@ -87,7 +87,9 @@ public class PledgeMemberServiceImpl implements PledgeMemberService {
 			throw new PledgeMemberInvalidException("반복 약속이 아닌 경우 완료 목표 시간을 설정할 수 없습니다.");
 		}
 
-		LocalDate minStartDate = TermUtil.getStartTerm(pledge.getTermType(), 1);
+		LocalDate minStartDate = pledge.getTermType() != TermType.NONE
+			? TermUtil.getStartTerm(pledge.getTermType(), 1)
+			: LocalDate.now().minusDays(1);
 
 		if (request.startAt().toLocalDate().isBefore(minStartDate)) {
 			throw new PledgeMemberInvalidException(String.format("시작 시간은 '%s' 보다 이후여야 합니다.", minStartDate));
@@ -195,8 +197,9 @@ public class PledgeMemberServiceImpl implements PledgeMemberService {
 	@Override
 	public void calculateProgress(PledgeMember pledgeMember, int prev) {
 		Map<ActivityCriterion, Integer> progress = new HashMap<>();
-		Pair<LocalDateTime, LocalDateTime> period =
-			TermUtil.getTermPeriod(pledgeMember.getPledge().getTermType(), prev);
+		Pair<LocalDateTime, LocalDateTime> period = pledgeMember.getPledge().getTermType() != TermType.NONE
+			? TermUtil.getTermPeriod(pledgeMember.getPledge().getTermType(), prev)
+			: Pair.of(pledgeMember.getStartAt(), LocalDateTime.now());
 
 		List<MemberActivity> termActivities =
 			memberActivityService.getTimeMemberActivities(

@@ -13,13 +13,13 @@ import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 
 public interface TaskService {
 
-	TaskResponse createTask(UUID channelId, UUID memberId, TaskCreateRequest request);
+	TaskResponse createTask(UUID memberId, TaskCreateRequest request);
 
 	TaskResponse getTask(UUID id);
 
-	PagedResponse<TaskResponse> getTasks(UUID channelId, UUID memberId, TaskType taskType, LocalDate date, Pageable pageable);
+	PagedResponse<TaskResponse> getTasks(UUID memberId, TaskType taskType, LocalDate date, Pageable pageable);
 
-	PagedResponse<TaskResponse> getReviewTasksByContentId(UUID channelId, UUID contentId, Pageable pageable);
+	PagedResponse<TaskResponse> getPlayTasksByApplicationId(String applicationId, Pageable pageable);
 
 	Task getById(UUID id);
 
