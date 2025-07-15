@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateRequest;
+import kr.co.jeelee.kiwee.domain.content.dto.request.ContentUpdateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
@@ -62,6 +64,14 @@ public class ContentController {
 		@PageableDefault Pageable pageable
 	) {
 		return contentService.getChildren(id, pageable);
+	}
+
+	@PatchMapping(value = "/{id}")
+	public ContentDetailResponse updateContent(
+		@PathVariable UUID id,
+		@Valid @RequestBody ContentUpdateRequest contentUpdateRequest
+	) {
+		return contentService.updateContent(id, contentUpdateRequest);
 	}
 
 }

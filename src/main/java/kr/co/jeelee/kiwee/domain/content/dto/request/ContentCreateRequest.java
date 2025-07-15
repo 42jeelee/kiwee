@@ -24,6 +24,7 @@ public record ContentCreateRequest(
 	@NotNull(message = "contentLevel can't be Null.") ContentLevel contentLevel,
 	UUID parentId,
 	@NotNull(message = "genres can't be Null.") Set<String> genres,
-	@NotNull(message = "platformIds can't be Null.") Set<UUID> platformIds
+	@NotNull(message = "platformIds can't be Null.") Set<UUID> platformIds,
+	String applicationId
 ) {
 }

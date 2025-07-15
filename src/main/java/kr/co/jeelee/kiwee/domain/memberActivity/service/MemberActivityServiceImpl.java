@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,61 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 			start,
 			end
 		);
+	}
+
+	@Override
+	public Duration getPlayDuration(MemberActivity endActivity) {
+		if (endActivity.getType() != ActivityType.END) {
+			return Duration.ZERO;
+		}
+
+		MemberActivity playActivity =
+			memberActivityRepository.findFirstByActorIdAndSourceTypeAndSourceIdAndTypeInOrderByCreatedAtDesc(
+				endActivity.getActor().getId(),
+				endActivity.getSourceType(),
+				endActivity.getSourceId(),
+				List.of(ActivityType.PLAY, ActivityType.END)
+			).orElse(null);
+
+		if (playActivity == null || playActivity.getType() != ActivityType.PLAY) {
+			return Duration.ZERO;
+		}
+
+		return Duration.between(playActivity.getCreatedAt(), endActivity.getCreatedAt());
+	}
+
+	@Override
+	public Duration getPlayDurationByTerm(UUID actorId, DomainType sourceType, UUID sourceId, ActivityType activityType,
+		LocalDateTime start, LocalDateTime end) {
+		List<MemberActivity> playActivities =
+			memberActivityRepository.findByActorIdAndSourceTypeAndSourceIdAndTypeInAndCreatedAtBetweenOrderByCreatedAtAsc(
+				actorId,
+				sourceType,
+				sourceId,
+				List.of(ActivityType.PLAY, ActivityType.END),
+				start,
+				end
+			);
+
+		Duration duration = playActivities.get(0).getType() == ActivityType.END
+			? Duration.between(start, playActivities.get(0).getCreatedAt())
+			: Duration.ZERO;
+		MemberActivity prevActivity = null;
+		for (MemberActivity activity : playActivities) {
+			if (
+				prevActivity != null &&
+				(prevActivity.getType() == ActivityType.PLAY && activity.getType() == ActivityType.END)
+			) {
+				duration = duration.plus(Duration.between(prevActivity.getCreatedAt(), activity.getCreatedAt()));
+			}
+			prevActivity = activity;
+		}
+
+		if (prevActivity != null && prevActivity.getType() == ActivityType.PLAY) {
+			duration = duration.plus(Duration.between(prevActivity.getCreatedAt(), end));
+		}
+
+		return duration;
 	}
 
 	@Override

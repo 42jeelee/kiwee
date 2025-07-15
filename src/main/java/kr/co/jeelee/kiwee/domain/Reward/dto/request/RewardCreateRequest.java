@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.Reward.dto.request;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ public record RewardCreateRequest(
 	UUID rewardId,
 	@NotNull(message = "activityType can't be Null.") ActivityType activityType,
 	@NotNull(message = "activityCount can't be Null.") Integer activityCount,
+	Duration duration,
 	@NotBlank(message = "title can't be Blank.") String title,
 	@NotBlank(message = "description can't be Blank.") String description,
 	Integer exp,

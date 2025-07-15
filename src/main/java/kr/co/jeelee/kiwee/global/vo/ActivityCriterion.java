@@ -35,6 +35,13 @@ public record ActivityCriterion(
 			this.activityType == activity.getType();
 	}
 
+	public boolean matchesType(ActivityCriterion that) {
+		if (this == that) return true;
+		return this.domainType == that.domainType &&
+			(this.domainId == null || Objects.equals(this.domainId, that.domainId)) &&
+			this.activityType == that.activityType;
+	}
+
 	public static ActivityCriterion of(
 		DomainType domainType,
 		UUID domainId,

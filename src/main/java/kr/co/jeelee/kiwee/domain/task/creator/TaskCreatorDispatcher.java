@@ -23,12 +23,12 @@ public class TaskCreatorDispatcher {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends TaskCreateRequest> Task create(UUID channelId, UUID memberId, T request) {
+	public <T extends TaskCreateRequest> Task create(UUID memberId, T request) {
 		TaskCreator<T> creator = (TaskCreator<T>) creators.get(request.getClass());
 		if (creator == null) {
 			throw new TaskTypeNotFoundException();
 		}
-		return creator.create(channelId, memberId, request);
+		return creator.create(memberId, request);
 	}
 
 }

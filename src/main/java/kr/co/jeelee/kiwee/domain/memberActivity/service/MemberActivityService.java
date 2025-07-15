@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,10 @@ public interface MemberActivityService {
 	List<MemberActivity> getTimeMemberActivities(UUID actorId, LocalDateTime start, LocalDateTime end);
 
 	List<MemberActivity> getTimeAllActivities(LocalDateTime start, LocalDateTime end);
+
+	Duration getPlayDuration(MemberActivity endActivity);
+
+	Duration getPlayDurationByTerm(UUID actorId, DomainType sourceType, UUID sourceId, ActivityType activityType, LocalDateTime start, LocalDateTime end);
 
 	boolean existsActivityByCriterionAtTime(UUID actorId, ActivityCriterion criterion, LocalDateTime start, LocalDateTime end);
 

@@ -8,7 +8,7 @@ import kr.co.jeelee.kiwee.domain.task.model.TaskType;
 
 public interface TaskCreator<T extends TaskCreateRequest> {
 
-	Task create(UUID channelId, UUID memberId, T request);
+	Task create(UUID memberId, T request);
 
 	TaskType supports();
 
