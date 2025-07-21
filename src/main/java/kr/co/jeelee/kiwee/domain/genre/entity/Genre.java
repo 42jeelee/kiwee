@@ -23,16 +23,12 @@ public class Genre {
 	@Column(unique = true, nullable = false)
 	private String name;
 
-	@Column(unique = true, nullable = false)
-	private String originalName;
-
-	private Genre(String originalName) {
-		this.name = originalName;
-		this.originalName = originalName;
+	private Genre(String name) {
+		this.name = name;
 	}
 
-	public static Genre of(String originalName) {
-		return new Genre(originalName);
+	public static Genre of(String name) {
+		return new Genre(name);
 	}
 
 	public void changeName(String name) {

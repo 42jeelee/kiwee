@@ -1,44 +1,35 @@
 package kr.co.jeelee.kiwee.domain.content.dto.response;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
-import kr.co.jeelee.kiwee.domain.content.model.ContentLevel;
-import kr.co.jeelee.kiwee.global.model.DataProvider;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.genre.dto.response.GenreResponse;
-import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformSimpleResponse;
 
 public record ContentDetailResponse(
-	UUID id, DataProvider sourceProvider, String sourceId, String title, String originalTitle,
-	String description, Double rating, String imageUrl, String homePage,
-	ContentType contentType, ContentLevel contentLevel, ContentSimpleResponse parent,
-	List<GenreResponse> genres, List<PlatformSimpleResponse> platforms, String applicationId
+	UUID id, String title, String overview, Double rating, String imageUrl,
+	String homepage, ContentType contentType, ContentSimpleResponse series,
+	Set<GenreResponse> genres
 ) {
 	public static ContentDetailResponse from(Content content) {
 		return new ContentDetailResponse(
 			content.getId(),
-			content.getSourceProvider(),
-			content.getSourceId(),
 			content.getTitle(),
-			content.getOriginalTitle(),
-			content.getDescription(),
+			content.getOverview(),
 			content.getRating(),
 			content.getImageUrl(),
-			content.getHomePage(),
+			content.getHomepage(),
 			content.getContentType(),
-			content.getContentLevel(),
 			content.getParent() != null
-			? ContentSimpleResponse.from(content.getParent())
-			: null,
-			content.getGenres().stream()
-				.map(GenreResponse::from)
-				.toList(),
-			content.getPlatforms().stream()
-				.map(PlatformSimpleResponse::from)
-				.toList(),
-			content.getApplicationId()
+				? ContentSimpleResponse.from(content.getParent())
+				: null,
+			content.getGenres() != null
+				? content.getGenres().stream()
+					.map(GenreResponse::from)
+					.collect(Collectors.toSet())
+				: null
 		);
 	}
 }

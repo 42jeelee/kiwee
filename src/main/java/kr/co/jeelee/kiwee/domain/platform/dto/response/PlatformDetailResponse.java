@@ -6,7 +6,7 @@ import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
 
 public record PlatformDetailResponse(
 	UUID id, String name, String icon,
-	String banner, String description, String page
+	String banner, String description, String homepage
 ) {
 	public static PlatformDetailResponse from(Platform platform) {
 		return new PlatformDetailResponse(
@@ -15,7 +15,7 @@ public record PlatformDetailResponse(
 			platform.getIcon(),
 			platform.getBanner(),
 			platform.getDescription(),
-			platform.getHomePage()
+			platform.getHomepage()
 		);
 	}
 }
