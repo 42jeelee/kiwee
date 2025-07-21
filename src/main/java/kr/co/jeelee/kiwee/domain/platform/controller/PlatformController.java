@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.platform.dto.request.PlatformCreateRequest;
 import kr.co.jeelee.kiwee.domain.platform.dto.request.PlatformUpdateRequest;
 import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformDetailResponse;
+import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformSimpleResponse;
 import kr.co.jeelee.kiwee.domain.platform.service.PlatformService;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +37,13 @@ public class PlatformController {
 	@PreAuthorize(value = "hasRole('CREATE_PLATFORM')")
 	@PostMapping
 	public PlatformDetailResponse createPlatform(
-		@RequestParam(defaultValue = "false") boolean skipLookUp,
 		@Valid @RequestBody PlatformCreateRequest request
 	) {
-		return skipLookUp
-			? platformService.createPlatform(request)
-			: platformService.createOrGetPlatform(request);
+		return platformService.createPlatform(request);
 	}
 
 	@GetMapping
-	public PagedResponse<PlatformDetailResponse> getPlatforms(
+	public PagedResponse<PlatformSimpleResponse> getPlatforms(
 		@RequestParam(required = false) String keyword,
 		@PageableDefault Pageable pageable
 	) {

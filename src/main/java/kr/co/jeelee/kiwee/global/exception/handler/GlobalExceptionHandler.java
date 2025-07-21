@@ -172,7 +172,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(value = { DataIntegrityViolationException.class })
 	protected ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
 		ErrorCode errorCode = ErrorCode.REQUEST_INVALID;
-		ErrorResponse errorResponse = ErrorResponse.of(errorCode.getCode(), errorCode.getMessage(), Map.of("field", "중복될 수 없는 값이 포함되어 있습니다."));
+		ErrorResponse errorResponse = ErrorResponse.of(errorCode.getCode(), errorCode.getMessage(), Map.of("field", "제약 조건에 위배된 값이 있습니다."));
 		GlobalResponse<ErrorResponse> globalResponse = GlobalResponse.error(errorResponse);
 
 		return ResponseEntity.status(errorCode.getStatus()).body(globalResponse);

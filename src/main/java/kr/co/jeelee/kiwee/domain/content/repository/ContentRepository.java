@@ -1,6 +1,5 @@
 package kr.co.jeelee.kiwee.domain.content.repository;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,8 +11,6 @@ import kr.co.jeelee.kiwee.domain.content.entity.Content;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 
 public interface ContentRepository extends JpaRepository<Content, UUID> {
-
-	Optional<Content> findByApplicationId(String applicationId);
 
 	Page<Content> findByParent(Content parent, Pageable pageable);
 

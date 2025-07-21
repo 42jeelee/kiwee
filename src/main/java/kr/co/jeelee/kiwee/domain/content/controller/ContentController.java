@@ -5,8 +5,10 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateRequest;
+import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateWithPlatformRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentUpdateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
@@ -27,7 +30,7 @@ import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(value = "/api/v1/contents")
+@RequestMapping(value = "/api/v1")
 @RequiredArgsConstructor
 @Validated
 public class ContentController {
@@ -35,43 +38,62 @@ public class ContentController {
 	private final ContentService contentService;
 
 	@PreAuthorize(value = "hasRole('CREATE_CONTENT')")
-	@PostMapping
+	@PostMapping(value = "/contents")
 	public ContentDetailResponse createContent(
 		@Valid @RequestBody ContentCreateRequest contentCreateRequest
 	) {
 		return contentService.createContent(contentCreateRequest);
 	}
 
-	@GetMapping(value = "/{id}")
+	@PreAuthorize(value = "hasRole('CREATE_CONTENT')")
+	@PostMapping(value = "/platforms/{platformId}/contents")
+	public ContentDetailResponse createContent(
+		@PathVariable UUID platformId,
+		@Valid @RequestBody ContentCreateWithPlatformRequest request
+	) {
+		return contentService.createContent(platformId, request);
+	}
+
+	@GetMapping(value = "/contents/{id}")
 	public ContentDetailResponse getContentById(
 		@PathVariable UUID id
 	) {
 		return contentService.getContentDetail(id);
 	}
 
-	@GetMapping
+	@GetMapping(value = "/contents")
 	public PagedResponse<ContentSimpleResponse> getContents(
-		@RequestParam ContentType contentType,
-		@RequestParam Set<Long> genreIds,
+		@RequestParam(required = false) ContentType contentType,
+		@RequestParam(required = false) Set<Long> genreIds,
 		@PageableDefault Pageable pageable
 	) {
 		return contentService.getContents(contentType, genreIds, pageable);
 	}
 
-	@GetMapping(value = "/{id}/children")
-	public PagedResponse<ContentSimpleResponse> getChildren(
-		@PathVariable UUID id,
+	@GetMapping(value = "/contents/{contentId}/children")
+	public PagedResponse<ContentSimpleResponse> getContentsBySeriesId(
+		@PathVariable UUID contentId,
 		@PageableDefault Pageable pageable
 	) {
-		return contentService.getChildren(id, pageable);
+		return contentService.getContentsByParentId(contentId, pageable);
 	}
 
-	@PatchMapping(value = "/{id}")
+	@PreAuthorize(value = "hasRole('EDIT_CONTENT')")
+	@PatchMapping(value = "/contents/{id}")
 	public ContentDetailResponse updateContent(
 		@PathVariable UUID id,
 		@Valid @RequestBody ContentUpdateRequest contentUpdateRequest
 	) {
 		return contentService.updateContent(id, contentUpdateRequest);
+	}
+
+	@PreAuthorize(value = "hasRole('DELETE_CONTENT')")
+	@DeleteMapping(value = "/contents/{id}")
+	public ResponseEntity<Void> deleteContent(
+		@PathVariable UUID id
+	) {
+		contentService.deleteContent(id);
+		return ResponseEntity.noContent().build();
 	}
 
 }

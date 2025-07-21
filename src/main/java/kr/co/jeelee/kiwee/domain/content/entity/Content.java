@@ -19,12 +19,9 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import kr.co.jeelee.kiwee.domain.content.model.ContentLevel;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
-import kr.co.jeelee.kiwee.global.model.DataProvider;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.genre.entity.Genre;
-import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -40,19 +37,10 @@ public class Content extends BaseTimeEntity {
 	private UUID id;
 
 	@Column(nullable = false)
-	private DataProvider sourceProvider;
-
-	@Column
-	private String sourceId;
-
-	@Column(nullable = false)
 	private String title;
 
-	@Column(nullable = false)
-	private String originalTitle;
-
 	@Column(nullable = false, length = 3000)
-	private String description;
+	private String overview;
 
 	@Column(nullable = false)
 	private Double rating;
@@ -61,20 +49,14 @@ public class Content extends BaseTimeEntity {
 	private String imageUrl;
 
 	@Column
-	private String homePage;
+	private String homepage;
 
 	@Column(nullable = false)
 	private ContentType contentType;
 
-	@Column(nullable = false)
-	private ContentLevel contentLevel;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")
 	private Content parent;
-
-	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Content> children;
 
 	@ManyToMany
 	@JoinTable(
@@ -84,50 +66,30 @@ public class Content extends BaseTimeEntity {
 	)
 	private Set<Genre> genres;
 
-	@ManyToMany
-	@JoinTable(
-		name = "content_platforms",
-		joinColumns = @JoinColumn(name = "content_id"),
-		inverseJoinColumns = @JoinColumn(name = "platform_id")
-	)
-	private Set<Platform> platforms;
-
-	@Column(unique = true)
-	private String applicationId;
+	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Content> children;
 
 	private Content(
-		DataProvider sourceProvider, String sourceId, String title, String originalTitle,
-		String description, Double rating, String imageUrl, String homePage,
-		ContentType contentType, ContentLevel contentLevel, Content parent,
-		Set<Genre> genres, Set<Platform> platforms, String applicationId
+		String title, String overview, Double rating,  String imageUrl,
+		String homepage, ContentType contentType, Content parent, Set<Genre> genres
 	) {
-		this.sourceProvider = sourceProvider;
-		this.sourceId = sourceId;
 		this.title = title;
-		this.originalTitle = originalTitle;
-		this.description = description;
+		this.overview = overview;
 		this.rating = rating;
 		this.imageUrl = imageUrl;
-		this.homePage = homePage;
+		this.homepage = homepage;
 		this.contentType = contentType;
-		this.contentLevel = contentLevel;
 		this.parent = parent;
 		this.genres = genres;
-		this.platforms = platforms;
 		this.children = new ArrayList<>();
-		this.applicationId = applicationId;
 	}
 
 	public static Content of(
-		DataProvider sourceProvider, String sourceId, String title, String originalTitle,
-		String description, Double rating, String imageUrl, String homePage,
-		ContentType contentType, ContentLevel contentLevel, Content parent,
-		Set<Genre> genres, Set<Platform> platforms, String applicationId
+		String title, String overview, Double rating,  String imageUrl,
+		String homepage, ContentType contentType, Content parent, Set<Genre> genres
 	) {
 		return new Content(
-			sourceProvider, sourceId, title, originalTitle, description, rating,
-			imageUrl, homePage, contentType, contentLevel, parent,
-			genres, platforms, applicationId
+			title, overview, rating, imageUrl, homepage, contentType, parent, genres
 		);
 	}
 
@@ -165,41 +127,20 @@ public class Content extends BaseTimeEntity {
 		this.imageUrl = imageUrl;
 	}
 
-	public void updateHomePage(String homePage) {
-		this.homePage = homePage;
+	public void updateHomepage(String homepage) {
+		this.homepage = homepage;
 	}
 
-	public void updateContentTypeAndLevel(ContentType contentType, ContentLevel contentLevel) {
-		ContentType type = contentType != null ? contentType : this.contentType;
-		ContentLevel level = contentLevel != null ? contentLevel : this.contentLevel;
+	public void updateContentType(ContentType contentType) {
+		this.contentType = contentType;
+	}
 
-		if (
-			!(type == ContentType.DRAMA || type == ContentType.ANIMATION)
-			&& contentLevel != ContentLevel.ROOT
-		) {
-			throw new FieldValidationException("contentLevel", "콘텐츠 레벨이 잘못되었습니다.");
-		}
-		this.contentType = type;
-		this.contentLevel = level;
+	public void updateParent(Content parent) {
+		this.parent = parent;
 	}
 
 	public void updateGenres(Set<Genre> genres) {
 		this.genres = genres;
-	}
-
-	public void updatePlatforms(Set<Platform> platforms) {
-		this.platforms = platforms;
-	}
-
-	public void updateParent(Content parent) {
-		if (this.contentLevel != ContentLevel.ROOT) {
-			throw new FieldValidationException("parent", "해당 콘텐츠의 상위 레벨은 정의할 수 없습니다.");
-		}
-		this.parent = parent;
-	}
-
-	public void updateApplicationId(String applicationId) {
-		this.applicationId = applicationId;
 	}
 
 }

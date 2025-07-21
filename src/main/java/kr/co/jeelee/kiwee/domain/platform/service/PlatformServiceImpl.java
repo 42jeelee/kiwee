@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.co.jeelee.kiwee.domain.platform.dto.request.PlatformCreateRequest;
 import kr.co.jeelee.kiwee.domain.platform.dto.request.PlatformUpdateRequest;
 import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformDetailResponse;
+import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformSimpleResponse;
 import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
 import kr.co.jeelee.kiwee.domain.platform.exception.PlatformNotFoundException;
 import kr.co.jeelee.kiwee.domain.platform.repository.PlatformRepository;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
-import kr.co.jeelee.kiwee.global.model.DataProvider;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,18 +28,12 @@ public class PlatformServiceImpl implements PlatformService {
 	@Transactional
 	public PlatformDetailResponse createPlatform(PlatformCreateRequest request) {
 
-		if (platformRepository.existsBySourceProviderAndSourceId(request.sourceProvider(), request.sourceId())) {
-			throw new FieldValidationException("sourceId", "이미 존재하는 플랫폼입니다.");
-		}
-
 		Platform platform = Platform.of(
 			request.name(),
 			request.icon(),
 			request.banner(),
-			request.sourceProvider(),
-			request.sourceId(),
 			request.description(),
-			request.homePage(),
+			request.homepage(),
 			request.provider(),
 			request.isToken()
 		);
@@ -52,24 +46,15 @@ public class PlatformServiceImpl implements PlatformService {
 	}
 
 	@Override
-	public PlatformDetailResponse createOrGetPlatform(PlatformCreateRequest request) {
-		return platformRepository.findBySourceProviderAndSourceId(
-			request.sourceProvider(), request.sourceId()
-		)
-			.map(PlatformDetailResponse::from)
-			.orElseGet(() -> createPlatform(request));
+	public PagedResponse<PlatformSimpleResponse> getAllPlatforms(Pageable pageable) {
+		return PagedResponse.of(platformRepository.findAll(pageable), PlatformSimpleResponse::from);
 	}
 
 	@Override
-	public PagedResponse<PlatformDetailResponse> getAllPlatforms(Pageable pageable) {
-		return PagedResponse.of(platformRepository.findAll(pageable), PlatformDetailResponse::from);
-	}
-
-	@Override
-	public PagedResponse<PlatformDetailResponse> searchPlatforms(String keyword, Pageable pageable) {
+	public PagedResponse<PlatformSimpleResponse> searchPlatforms(String keyword, Pageable pageable) {
 		return PagedResponse.of(
 			platformRepository.findByNameContaining(keyword, pageable),
-			PlatformDetailResponse::from
+			PlatformSimpleResponse::from
 		);
 	}
 
@@ -90,7 +75,7 @@ public class PlatformServiceImpl implements PlatformService {
 		updateIconIfChanged(platform, request.icon());
 		updateBannerIfChanged(platform, request.banner());
 		updateDescriptionIfChanged(platform, request.description());
-		updatePageIfChanged(platform, request.page());
+		updateHomepageIfChanged(platform, request.homepage());
 		updateProviderIfChanged(platform, request.provider());
 		updateIsTokenIfChanged(platform, request.isToken());
 
@@ -106,12 +91,6 @@ public class PlatformServiceImpl implements PlatformService {
 	@Override
 	public Platform getEntityByProvider(String provider) {
 		return platformRepository.findByProvider(provider)
-			.orElseThrow(PlatformNotFoundException::new);
-	}
-
-	@Override
-	public Platform getBySourceId(DataProvider sourceProvider, String sourceId) {
-		return platformRepository.findBySourceProviderAndSourceId(sourceProvider, sourceId)
 			.orElseThrow(PlatformNotFoundException::new);
 	}
 
@@ -149,8 +128,8 @@ public class PlatformServiceImpl implements PlatformService {
 		}
 	}
 
-	private void updatePageIfChanged(Platform platform, String page) {
-		if (page != null && !page.equals(platform.getHomePage())) {
+	private void updateHomepageIfChanged(Platform platform, String page) {
+		if (page != null && !page.equals(platform.getHomepage())) {
 			platform.updatePage(page);
 		}
 	}

@@ -8,6 +8,8 @@ import kr.co.jeelee.kiwee.domain.genre.entity.Genre;
 
 public interface GenreRepository extends JpaRepository<Genre, Long> {
 
+	boolean existsByName(String name);
+
 	Optional<Genre> findByName(String name);
 
 }
