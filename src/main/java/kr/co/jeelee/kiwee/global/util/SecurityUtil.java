@@ -1,5 +1,7 @@
 package kr.co.jeelee.kiwee.global.util;
 
+import java.util.UUID;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -34,6 +36,14 @@ public class SecurityUtil {
 
 		return authentication.getAuthorities().stream()
 			.anyMatch(a -> a.getAuthority().equals(permissionType.name()));
+	}
+
+	public static boolean isMemberSelfOrHasPrivilege(UUID memberId, PermissionType permissionType) {
+		Member member = getLoginMember();
+		if (member == null) {
+			return false;
+		}
+		return member.getId().equals(memberId) || hasAuthority(permissionType);
 	}
 
 }
