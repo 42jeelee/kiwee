@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.BadgeMember.service.BadgeMemberService;
-import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
+import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;

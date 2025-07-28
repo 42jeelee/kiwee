@@ -1,14 +1,14 @@
-package kr.co.jeelee.kiwee.domain.Reward.service;
+package kr.co.jeelee.kiwee.domain.reward.service;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
-import kr.co.jeelee.kiwee.domain.Reward.dto.request.RewardCreateRequest;
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardDetailResponse;
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
-import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
+import kr.co.jeelee.kiwee.domain.reward.dto.request.RewardCreateRequest;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardDetailResponse;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardSimpleResponse;
+import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.global.model.ActivityType;

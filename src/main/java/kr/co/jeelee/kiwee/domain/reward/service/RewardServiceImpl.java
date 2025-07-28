@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.Reward.service;
+package kr.co.jeelee.kiwee.domain.reward.service;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,13 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.Reward.dto.request.RewardCreateRequest;
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardDetailResponse;
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
-import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
-import kr.co.jeelee.kiwee.domain.Reward.exception.RewardNotFoundException;
-import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
+import kr.co.jeelee.kiwee.domain.reward.dto.request.RewardCreateRequest;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardDetailResponse;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardSimpleResponse;
+import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
+import kr.co.jeelee.kiwee.domain.reward.exception.RewardNotFoundException;
+import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
+import kr.co.jeelee.kiwee.domain.reward.repository.RewardRepository;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.global.model.PermissionType;

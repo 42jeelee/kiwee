@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
+import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;

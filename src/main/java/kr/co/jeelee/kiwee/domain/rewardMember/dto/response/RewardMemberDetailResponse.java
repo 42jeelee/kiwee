@@ -1,6 +1,6 @@
 package kr.co.jeelee.kiwee.domain.rewardMember.dto.response;
 
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardSimpleResponse;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.memberActivity.dto.response.MemberActivityResponse;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;

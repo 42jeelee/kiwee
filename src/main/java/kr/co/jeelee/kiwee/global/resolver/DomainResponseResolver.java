@@ -3,8 +3,8 @@ package kr.co.jeelee.kiwee.global.resolver;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
-import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardSimpleResponse;
+import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.badge.dto.response.BadgeSimpleResponse;
 import kr.co.jeelee.kiwee.domain.badge.entity.Badge;
 import kr.co.jeelee.kiwee.domain.channel.dto.response.ChannelSimpleResponse;

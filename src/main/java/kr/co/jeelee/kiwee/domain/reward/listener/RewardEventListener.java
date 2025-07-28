@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.Reward.listener;
+package kr.co.jeelee.kiwee.domain.reward.listener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
-import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
-import kr.co.jeelee.kiwee.domain.Reward.service.RewardService;
+import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
+import kr.co.jeelee.kiwee.domain.reward.event.RewardEvent;
+import kr.co.jeelee.kiwee.domain.reward.service.RewardService;
 import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
 import kr.co.jeelee.kiwee.domain.memberActivity.service.MemberActivityService;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;

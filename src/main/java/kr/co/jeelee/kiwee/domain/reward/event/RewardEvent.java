@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.Reward.event;
+package kr.co.jeelee.kiwee.domain.reward.event;
 
 import java.util.UUID;
 

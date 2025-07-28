@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.Reward.controller;
+package kr.co.jeelee.kiwee.domain.reward.controller;
 
 import java.util.UUID;
 
@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import kr.co.jeelee.kiwee.domain.Reward.dto.request.RewardCreateRequest;
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardDetailResponse;
-import kr.co.jeelee.kiwee.domain.Reward.dto.response.RewardSimpleResponse;
-import kr.co.jeelee.kiwee.domain.Reward.service.RewardService;
+import kr.co.jeelee.kiwee.domain.reward.dto.request.RewardCreateRequest;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardDetailResponse;
+import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardSimpleResponse;
+import kr.co.jeelee.kiwee.domain.reward.service.RewardService;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;

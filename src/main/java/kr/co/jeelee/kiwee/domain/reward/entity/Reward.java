@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.Reward.entity;
+package kr.co.jeelee.kiwee.domain.reward.entity;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -12,7 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
+import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.global.model.ActivityType;

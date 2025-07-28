@@ -1,11 +1,11 @@
-package kr.co.jeelee.kiwee.domain.Reward.dto.request;
+package kr.co.jeelee.kiwee.domain.reward.dto.request;
 
 import java.time.Duration;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
+import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.global.model.ActivityType;
 
