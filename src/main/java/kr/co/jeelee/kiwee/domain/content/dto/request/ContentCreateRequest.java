@@ -15,6 +15,7 @@ public record ContentCreateRequest(
 	@NotNull(message = "rating can't be Null.") Double rating,
 	@URL(message = "This is not a URL format.") String imageUrl,
 	@URL(message = "This is not a URL format.") String homepage,
+	Long totalAmount,
 	@NotNull(message = "contentType can't be Null.") ContentType contentType,
 	UUID parentId,
 	Set<Long> genres

@@ -47,8 +47,9 @@ public enum PermissionType {
 	ROLE_DELETE_REWARD(DomainType.REWARD, "보상 삭제"),
 
 	// Task
-	ROLE_CREATE_OTHER_TASK(DomainType.TASK, "작업 생성"),
-	ROLE_EDIT_OTHER_TASK(DomainType.TASK, "작업 수정"),
+	ROLE_CREATE_OTHER_TASK(DomainType.TASK, "다른 유저 작업 생성"),
+	ROLE_EDIT_OTHER_TASK(DomainType.TASK, "다른 유저 작업 수정"),
+	ROLE_DELETE_OTHER_TASK(DomainType.TASK, "다른 유저 작업 삭제"),
 
 	// Badge
 	ROLE_CREATE_BADGE(DomainType.BADGE, "배지 생성"),

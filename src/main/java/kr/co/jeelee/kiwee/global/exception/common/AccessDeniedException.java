@@ -10,4 +10,8 @@ public class AccessDeniedException extends CustomException {
 	public AccessDeniedException(String message) {
 		super(ErrorCode.ACCESS_DENIED, Map.of("message", message));
 	}
+
+	public AccessDeniedException() {
+		super(ErrorCode.ACCESS_DENIED);
+	}
 }

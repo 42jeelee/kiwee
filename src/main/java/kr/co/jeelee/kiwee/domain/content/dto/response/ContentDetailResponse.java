@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.content.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -10,8 +11,9 @@ import kr.co.jeelee.kiwee.domain.genre.dto.response.GenreResponse;
 
 public record ContentDetailResponse(
 	UUID id, String title, String overview, Double rating, String imageUrl,
-	String homepage, ContentType contentType, ContentSimpleResponse series,
-	Set<GenreResponse> genres
+	String homepage, Long totalAmount, ContentType contentType,
+	ContentSimpleResponse series, Set<GenreResponse> genres,
+	LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
 	public static ContentDetailResponse from(Content content) {
 		return new ContentDetailResponse(
@@ -21,6 +23,7 @@ public record ContentDetailResponse(
 			content.getRating(),
 			content.getImageUrl(),
 			content.getHomepage(),
+			content.getTotalAmount(),
 			content.getContentType(),
 			content.getParent() != null
 				? ContentSimpleResponse.from(content.getParent())
@@ -29,7 +32,9 @@ public record ContentDetailResponse(
 				? content.getGenres().stream()
 					.map(GenreResponse::from)
 					.collect(Collectors.toSet())
-				: null
+				: null,
+			content.getUpdatedAt(),
+			content.getCreatedAt()
 		);
 	}
 }

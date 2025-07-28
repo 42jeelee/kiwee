@@ -152,6 +152,7 @@ public class ContentServiceImpl implements ContentService {
 			request.rating(),
 			request.imageUrl(),
 			request.homepage(),
+			request.totalAmount(),
 			request.contentType(),
 			parent,
 			genres

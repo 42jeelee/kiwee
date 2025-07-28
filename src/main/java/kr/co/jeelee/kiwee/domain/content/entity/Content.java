@@ -51,6 +51,9 @@ public class Content extends BaseTimeEntity {
 	@Column
 	private String homepage;
 
+	@Column
+	private Long totalAmount;
+
 	@Column(nullable = false)
 	private ContentType contentType;
 
@@ -70,14 +73,15 @@ public class Content extends BaseTimeEntity {
 	private List<Content> children;
 
 	private Content(
-		String title, String overview, Double rating,  String imageUrl,
-		String homepage, ContentType contentType, Content parent, Set<Genre> genres
+		String title, String overview, Double rating,  String imageUrl, String homepage,
+		Long totalAmount, ContentType contentType, Content parent, Set<Genre> genres
 	) {
 		this.title = title;
 		this.overview = overview;
 		this.rating = rating;
 		this.imageUrl = imageUrl;
 		this.homepage = homepage;
+		this.totalAmount = totalAmount;
 		this.contentType = contentType;
 		this.parent = parent;
 		this.genres = genres;
@@ -85,11 +89,11 @@ public class Content extends BaseTimeEntity {
 	}
 
 	public static Content of(
-		String title, String overview, Double rating,  String imageUrl,
-		String homepage, ContentType contentType, Content parent, Set<Genre> genres
+		String title, String overview, Double rating,  String imageUrl, String homepage,
+		Long totalAmount, ContentType contentType, Content parent, Set<Genre> genres
 	) {
 		return new Content(
-			title, overview, rating, imageUrl, homepage, contentType, parent, genres
+			title, overview, rating, imageUrl, homepage, totalAmount, contentType, parent, genres
 		);
 	}
 
