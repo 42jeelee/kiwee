@@ -38,10 +38,10 @@ public class Reward extends BaseTimeEntity {
 
 	@Embedded
 	@AttributeOverrides({
-		@AttributeOverride(name = "domainType", column = @Column(name = "cond_domain_type", nullable = false)),
-		@AttributeOverride(name = "domainId", column = @Column(name = "cond_domain_id")),
-		@AttributeOverride(name = "activityType", column = @Column(name = "cond_activity_type", nullable = false)),
-		@AttributeOverride(name = "activityCount", column = @Column(name = "cond_activity_count", nullable = false)),
+		@AttributeOverride(name = "domainType", column = @Column(name = "domain_type", nullable = false)),
+		@AttributeOverride(name = "domainId", column = @Column(name = "domain_id")),
+		@AttributeOverride(name = "activityType", column = @Column(name = "activity_type", nullable = false)),
+		@AttributeOverride(name = "activityCount", column = @Column(name = "activity_count", nullable = false)),
 		@AttributeOverride(name = "repeatPolicy", column = @Column(name = "cond_repeat_policy", nullable = false)),
 		@AttributeOverride(name = "duration", column = @Column(name = "cond_duration")),
 		@AttributeOverride(name = "consecutiveCount", column = @Column(name = "cond_consecutive_count", nullable = false)),
