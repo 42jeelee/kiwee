@@ -15,9 +15,20 @@ public interface RewardRepository extends JpaRepository<Reward, UUID> {
 
 	Page<Reward> findByIsPublicTrue(Pageable pageable);
 
-	Page<Reward> findBySourceTypeAndSourceIdAndIsPublicTrue(DomainType sourceType, UUID sourceId, Pageable pageable);
+	Page<Reward> findByCondition_Criterion_DomainTypeAndCondition_Criterion_DomainIdAndIsPublicTrue(
+		DomainType domainType,
+		UUID domainId,
+		Pageable pageable
+	);
 
-	List<Reward> findBySourceTypeAndSourceIdIsNullAndActivityType(DomainType sourceType, ActivityType activityType);
-	List<Reward> findBySourceTypeAndSourceIdAndActivityType(DomainType domainType, UUID domainId, ActivityType activityType);
+	List<Reward> findByCondition_Criterion_DomainTypeAndCondition_Criterion_DomainIdIsNullAndCondition_Criterion_ActivityType(
+		DomainType domainType,
+		ActivityType activityType
+	);
+	List<Reward> findByCondition_Criterion_DomainTypeAndCondition_Criterion_DomainIdAndCondition_Criterion_ActivityType(
+		DomainType domainType,
+		UUID domainId,
+		ActivityType activityType
+	);
 
 }

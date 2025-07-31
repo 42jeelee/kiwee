@@ -18,13 +18,16 @@ public record RewardSimpleResponse(
 		return new RewardSimpleResponse(
 			reward.getId(),
 			reward.getTitle(),
-			DomainResponseResolver.toResponse(resolver.resolve(reward.getSourceType(), reward.getSourceId())),
+			DomainResponseResolver.toResponse(resolver.resolve(
+				reward.getCondition().criterion().domainType(),
+				reward.getCondition().criterion().domainId()
+			)),
 			reward.getRewardType() != RewardType.NONE
 				? DomainResponseResolver.toResponse(
 					resolver.resolve(reward.getRewardType().getDomainType(), reward.getRewardId())
 				) : null,
-			reward.getActivityType(),
-			reward.getActivityCount(),
+			reward.getCondition().criterion().activityType(),
+			reward.getCondition().criterion().activityCount(),
 			reward.getExp(),
 			reward.getUpdatedAt(),
 			reward.getCreatedAt()

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
+import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
 import kr.co.jeelee.kiwee.domain.reward.dto.request.RewardCreateRequest;
 import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardDetailResponse;
 import kr.co.jeelee.kiwee.domain.reward.dto.response.RewardSimpleResponse;
@@ -33,5 +34,7 @@ public interface RewardService {
 
 	List<Reward> getGeneralRewards(DomainType domainType, ActivityType activityType);
 	List<Reward> getSpecificRewards(DomainType domain, UUID domainId, ActivityType activityType);
+
+	List<Reward> getMatchRewards(MemberActivity activity);
 
 }
