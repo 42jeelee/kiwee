@@ -1,10 +1,10 @@
-package kr.co.jeelee.kiwee.domain.Reward.dto.response;
+package kr.co.jeelee.kiwee.domain.reward.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
-import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
+import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
+import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
@@ -19,13 +19,16 @@ public record RewardDetailResponse(
 		return new RewardDetailResponse(
 			reward.getId(),
 			MemberSimpleResponse.from(reward.getConferrer()),
-			DomainResponseResolver.toResponse(resolver.resolve(reward.getSourceType(), reward.getSourceId())),
+			DomainResponseResolver.toResponse(resolver.resolve(
+				reward.getCondition().criterion().domainType(),
+				reward.getCondition().criterion().domainId()
+			)),
 			reward.getRewardType() != RewardType.NONE
 				? DomainResponseResolver.toResponse(
 					resolver.resolve(reward.getRewardType().getDomainType(), reward.getRewardId())
 				) : null,
-			reward.getActivityType(),
-			reward.getActivityCount(),
+			reward.getCondition().criterion().activityType(),
+			reward.getCondition().criterion().activityCount(),
 			reward.getTitle(),
 			reward.getDescription(),
 			reward.getExp(),

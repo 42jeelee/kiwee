@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.Reward.model;
+package kr.co.jeelee.kiwee.domain.reward.model;
 
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import lombok.Getter;

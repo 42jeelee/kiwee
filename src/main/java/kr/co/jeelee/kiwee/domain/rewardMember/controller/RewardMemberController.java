@@ -28,10 +28,10 @@ public class RewardMemberController {
 
 	@GetMapping
 	public PagedResponse<RewardMemberSimpleResponse> getRewardsByMember(
-		CustomOAuth2User principal,
+		@AuthenticationPrincipal CustomOAuth2User principal,
 		Pageable pageable
 	) {
-		return rewardMemberService.getRewardsByMember(principal, pageable);
+		return rewardMemberService.getRewardsByMember(principal.member().getId(), pageable);
 	}
 
 	@GetMapping(value = "/{id}")
@@ -39,7 +39,7 @@ public class RewardMemberController {
 		@AuthenticationPrincipal CustomOAuth2User principal,
 		@PathVariable Long id
 	) {
-		return rewardMemberService.getRewardMemberById(principal, id);
+		return rewardMemberService.getRewardMemberById(principal.member().getId(), id);
 	}
 
 	@PreAuthorize(value = "hasRole('DELETE_REWARD')")

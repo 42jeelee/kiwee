@@ -1,15 +1,19 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.memberActivity.dto.response.MemberActivityResponse;
@@ -19,6 +23,8 @@ import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.domain.memberActivity.repository.MemberActivityRepository;
 import kr.co.jeelee.kiwee.domain.rewardMember.entity.RewardMember;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
+import kr.co.jeelee.kiwee.global.model.TermType;
+import kr.co.jeelee.kiwee.global.util.TermUtil;
 import kr.co.jeelee.kiwee.global.vo.ActivityCriterion;
 import lombok.RequiredArgsConstructor;
 
@@ -142,6 +148,17 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 	}
 
 	@Override
+	public int countChildrenByContentId(UUID actorId, UUID contentId, ActivityType activityType) {
+		return memberActivityRepository.countActivitiesInChildContents(actorId, contentId, activityType);
+	}
+
+	@Override
+	public int countChildrenByContentIdAndTerm(UUID actorId, UUID contentId, ActivityType activityType,
+		LocalDateTime start, LocalDateTime end) {
+		return memberActivityRepository.countActivitiesInChildContents(actorId, contentId, activityType, start, end);
+	}
+
+	@Override
 	public int countCriterionAtTime(UUID actorId, ActivityCriterion criterion, LocalDateTime start, LocalDateTime end) {
 		return criterion.domainId() != null
 			? memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdAndTypeAndCreatedAtBetween(
@@ -149,6 +166,69 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 			)
 			: memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdIsNullAndTypeAndCreatedAtBetween(
 				actorId, criterion.domainType(), criterion.activityType(), start, end
+		);
+	}
+
+	@Override
+	public int countConsecutiveCount(UUID actorId, ActivityCriterion criterion, TermType termType, int num) {
+		List<LocalDate> activitiesDates = criterion.domainId() == null
+			? memberActivityRepository.findActivityDatesByCriterion(
+				actorId,
+				criterion.domainType(),
+				criterion.activityType(),
+				num
+			)
+			:  memberActivityRepository.findActivityDatesByCriterion(
+				actorId,
+				criterion.domainType(),
+				criterion.domainId(),
+				criterion.activityType(),
+				num
+			);
+
+		return countConsecutiveByDates(activitiesDates, termType, num);
+	}
+
+	@Override
+	public int countConsecutiveCount(UUID actorId, ActivityCriterion criterion, TermType termType, ContentType contentType, int num) {
+		if (criterion.domainId() != null) {
+			return countConsecutiveCount(actorId, criterion, termType, num);
+		}
+
+		List<LocalDate> activitiesDates = memberActivityRepository.findActivityDatesByCriterion(
+			actorId,
+			contentType,
+			criterion.activityType(),
+			num
+		);
+
+		return countConsecutiveByDates(activitiesDates, termType, num);
+	}
+
+	@Override
+	public int countByCriterion(UUID actorId, ActivityCriterion criterion) {
+		return criterion.domainId() == null
+			? memberActivityRepository.countByActorIdAndSourceTypeAndType(
+				actorId,
+				criterion.domainType(),
+				criterion.activityType()
+			)
+			: memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdAndType(
+				actorId,
+				criterion.domainType(),
+				criterion.domainId(),
+				criterion.activityType()
+			);
+	}
+
+	@Override
+	public int getGeneralContentTypeCount(UUID id, ContentType contentType) {
+		MemberActivity activity = getById(id);
+
+		return memberActivityRepository.countActivitiesByContentType(
+			activity.getActor().getId(),
+			contentType,
+			activity.getType()
 		);
 	}
 
@@ -176,8 +256,44 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 	}
 
 	@Override
+	public int getGeneralContentTypeCountByTerm(UUID id, ContentType contentType, LocalDateTime start,
+		LocalDateTime end) {
+		MemberActivity activity = getById(id);
+
+		return memberActivityRepository.countActivitiesByContentTypeAndTerm(
+			activity.getActor().getId(),
+			contentType,
+			activity.getType(),
+			start,
+			end
+		);
+	}
+
+	@Override
 	public MemberActivity getById(UUID id) {
 		return memberActivityRepository.findById(id)
 			.orElseThrow(MemberActivityNotFoundException::new);
+	}
+
+	private int countConsecutiveByDates(List<LocalDate> dates, TermType termType, int num) {
+		if (dates == null || dates.isEmpty()) {
+			return 0;
+		}
+
+		Set<LocalDate> datesSet = dates.stream()
+			.map(date -> TermUtil.getStartTerm(termType, date))
+			.collect(Collectors.toSet());
+
+		int streak = 0;
+		for (int i = 0; i < num; i++) {
+			LocalDate currentDate = TermUtil.getStartTerm(termType, -i);
+
+			if (!datesSet.contains(currentDate)) {
+				break;
+			}
+			streak++;
+		}
+
+		return streak;
 	}
 }

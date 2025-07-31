@@ -1,7 +1,9 @@
 package kr.co.jeelee.kiwee.domain.rewardMember.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -9,8 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.BadgeMember.service.BadgeMemberService;
-import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
+import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
 import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.notification.event.NotificationEvent;
@@ -41,25 +42,31 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
-	public PagedResponse<RewardMemberSimpleResponse> getRewardsByMember(CustomOAuth2User principal, Pageable pageable) {
+	public PagedResponse<RewardMemberSimpleResponse> getRewardsByMember(UUID memberId, Pageable pageable) {
 		return PagedResponse.of(
-			rewardMemberRepository.findByAwardeeId(principal.member().getId(), pageable),
+			rewardMemberRepository.findByAwardeeId(memberId, pageable),
 			RewardMemberSimpleResponse::from
 		);
 	}
 
 	@Override
-	public RewardMemberDetailResponse getRewardMemberById(CustomOAuth2User principal, Long id) {
+	public RewardMemberDetailResponse getRewardMemberById(UUID memberId, Long id) {
 		return rewardMemberRepository.findById(id)
 			.map(rm -> {
 
-				if (!rm.getAwardee().getId().equals(principal.member().getId())) {
+				if (!rm.getAwardee().getId().equals(memberId)) {
 					throw new AccessDeniedException("해당 맴버가 아닙니다");
 				}
 
 				return RewardMemberDetailResponse.from(rm, domainObjectResolver);
 			})
 			.orElseThrow(RewardMemberNotFoundException::new);
+	}
+
+	@Override
+	public LocalDate getDateByLastGetReward(UUID memberId, UUID rewardId) {
+		return rewardMemberRepository.findLastGetDatesByAwardeeIdAndRewardId(memberId, rewardId)
+			.orElse(null);
 	}
 
 	@Override

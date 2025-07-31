@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import kr.co.jeelee.kiwee.domain.Reward.event.RewardEvent;
+import kr.co.jeelee.kiwee.domain.reward.event.RewardEvent;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;

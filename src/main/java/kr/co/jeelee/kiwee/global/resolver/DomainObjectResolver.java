@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import kr.co.jeelee.kiwee.domain.Reward.entity.Reward;
-import kr.co.jeelee.kiwee.domain.Reward.repository.RewardRepository;
+import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
+import kr.co.jeelee.kiwee.domain.reward.repository.RewardRepository;
 import kr.co.jeelee.kiwee.domain.pledge.entity.Pledge;
 import kr.co.jeelee.kiwee.domain.pledge.repository.PledgeRepository;
 import kr.co.jeelee.kiwee.global.model.DomainType;

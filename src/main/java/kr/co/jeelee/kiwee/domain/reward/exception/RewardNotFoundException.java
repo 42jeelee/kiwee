@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.Reward.exception;
+package kr.co.jeelee.kiwee.domain.reward.exception;
 
 import kr.co.jeelee.kiwee.global.exception.custom.CustomException;
 import kr.co.jeelee.kiwee.global.exception.custom.ErrorCode;

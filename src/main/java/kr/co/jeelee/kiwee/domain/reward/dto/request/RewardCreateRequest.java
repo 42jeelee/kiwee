@@ -1,21 +1,17 @@
-package kr.co.jeelee.kiwee.domain.Reward.dto.request;
+package kr.co.jeelee.kiwee.domain.reward.dto.request;
 
 import java.time.Duration;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import kr.co.jeelee.kiwee.domain.Reward.model.RewardType;
-import kr.co.jeelee.kiwee.global.model.DomainType;
-import kr.co.jeelee.kiwee.global.model.ActivityType;
+import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
 
 public record RewardCreateRequest(
-	@NotNull(message = "sourceType can't be Null.") DomainType sourceType,
-	UUID sourceId,
+	@Valid @NotNull(message = "condition can't be Null.") RewardConditionRequest condition,
 	@NotNull(message = "rewardType can't be Null.") RewardType rewardType,
 	UUID rewardId,
-	@NotNull(message = "activityType can't be Null.") ActivityType activityType,
-	@NotNull(message = "activityCount can't be Null.") Integer activityCount,
 	Duration duration,
 	@NotBlank(message = "title can't be Blank.") String title,
 	@NotBlank(message = "description can't be Blank.") String description,
