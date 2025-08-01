@@ -2,6 +2,8 @@ package kr.co.jeelee.kiwee.domain.auth.oauth.dto;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import kr.co.jeelee.kiwee.domain.auth.oauth.exception.ProviderNotFoundException;
@@ -13,7 +15,7 @@ public enum OAuthAttributes {
 		"google",
 		userNameAttributeName,
 		"name",
-		"picture",
+		() -> Optional.ofNullable(attributes.get("picture")).map(Objects::toString).orElse(null),
 		"email",
 		"email_verified",
 		attributes
@@ -22,7 +24,15 @@ public enum OAuthAttributes {
 		"discord",
 		userNameAttributeName,
 		"global_name",
-		"avatar",
+		() -> {
+			String baseUrl = "https://cdn.discordapp.com/avatars/";
+			String userId = attributes.get(userNameAttributeName).toString();
+			String hash = Optional.ofNullable(attributes.get("avatar")).map(Objects::toString).orElse(null);
+
+			return hash != null
+				? baseUrl + userId + "/" + hash + (hash.startsWith("a_") ? ".gif" : ".png")
+				: null;
+		},
 		"email",
 		"verified",
 		attributes
