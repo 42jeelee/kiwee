@@ -1,6 +1,7 @@
 package kr.co.jeelee.kiwee.domain.auth.oauth.handler;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -28,7 +29,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 		AuthenticationException authException) throws IOException, ServletException {
 
 		ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
-		ErrorResponse errorResponse = ErrorResponse.of(errorCode.getCode(), errorCode.getMessage(), null);
+		ErrorResponse errorResponse = ErrorResponse.of(
+			errorCode.getCode(),
+			errorCode.getMessage(),
+			Map.of("message", authException.getMessage())
+		);
+
 		GlobalResponse<ErrorResponse> globalResponse = GlobalResponse.error(errorResponse);
 
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
