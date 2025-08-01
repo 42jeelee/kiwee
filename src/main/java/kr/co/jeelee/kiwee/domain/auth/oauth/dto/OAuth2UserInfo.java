@@ -2,6 +2,7 @@ package kr.co.jeelee.kiwee.domain.auth.oauth.dto;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public record OAuth2UserInfo(
 	String provider, String id, String name,
@@ -12,7 +13,7 @@ public record OAuth2UserInfo(
 		String provider,
 		String idField,
 		String nameField,
-		String avatarUrlField,
+		Supplier<String> getAvatarUrl,
 		String emailField,
 		String emailVerifiedField,
 		Map<String, Object> attributes
@@ -33,7 +34,7 @@ public record OAuth2UserInfo(
 			provider,
 			attributes.get(idField).toString(),
 			attributes.get(nameField).toString(),
-			Optional.ofNullable(attributes.get(avatarUrlField)).map(Object::toString).orElse(null),
+			getAvatarUrl.get(),
 			email,
 			attributes);
 	}
