@@ -34,7 +34,7 @@ public class AuthController {
 		@PathVariable String registrationId
 	) {
 		URI redirectUri = URI.create("/oauth2/authorization/"  + registrationId);
-		return ResponseEntity.status(HttpStatus.FOUND)
+		return ResponseEntity.status(HttpStatus.SEE_OTHER)
 			.location(redirectUri)
 			.build();
 	}
