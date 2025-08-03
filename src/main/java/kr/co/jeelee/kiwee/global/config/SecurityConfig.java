@@ -29,10 +29,15 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
+			.formLogin(AbstractHttpConfigurer::disable)
+			.httpBasic(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.GET, "/api/v1/platforms", "/api/v1/login/**").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/v1/tokens/refresh").permitAll()
 				.anyRequest().authenticated()
+			)
+			.exceptionHandling(exception -> exception
+				.authenticationEntryPoint(customAuthenticationEntryPoint)
 			)
 			.headers(headers -> headers
 				.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
@@ -44,7 +49,6 @@ public class SecurityConfig {
 			)
 			.oauth2ResourceServer(oauth2 -> oauth2
 				.jwt(jwt -> jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter))
-				.authenticationEntryPoint(customAuthenticationEntryPoint)
 			)
 		;
 		return http.build();
