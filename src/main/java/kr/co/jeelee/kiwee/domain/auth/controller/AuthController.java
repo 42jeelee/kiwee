@@ -1,8 +1,14 @@
 package kr.co.jeelee.kiwee.domain.auth.controller;
 
+import java.net.URI;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +29,16 @@ public class AuthController {
 
 	private final JwtService jwtService;
 
+	@GetMapping("/login/{registrationId}")
+	public ResponseEntity<Void> login(
+		@PathVariable String registrationId
+	) {
+		URI redirectUri = URI.create("/oauth2/authorization/"  + registrationId);
+		return ResponseEntity.status(HttpStatus.FOUND)
+			.location(redirectUri)
+			.build();
+	}
+
 	@PostMapping(value = "/tokens/refresh")
 	public TokenResponse refresh(
 		@RequestBody @Valid RefreshTokenRequest request
@@ -30,7 +46,7 @@ public class AuthController {
 		return jwtService.refresh(request.refreshToken());
 	}
 
-	@PostMapping(value = "/auth/logout")
+	@DeleteMapping(value = "/logout")
 	public ResponseEntity<Void> logout(
 		@AuthenticationPrincipal CustomOAuth2User principal
 	) {
