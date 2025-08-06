@@ -20,3 +20,5 @@ server:
     include-message: always
     include-exception: true
 
+frontend:
+  base-url: ${FRONTEND_BASE_URL}
