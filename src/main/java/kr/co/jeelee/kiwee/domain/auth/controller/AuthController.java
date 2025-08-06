@@ -1,11 +1,15 @@
 package kr.co.jeelee.kiwee.domain.auth.controller;
 
 import java.net.URI;
+import java.time.Duration;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import kr.co.jeelee.kiwee.domain.auth.dto.request.RefreshTokenRequest;
+import kr.co.jeelee.kiwee.domain.auth.dto.response.AccessTokenResponse;
 import kr.co.jeelee.kiwee.domain.auth.dto.response.TokenResponse;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.auth.service.JwtService;
@@ -39,11 +44,30 @@ public class AuthController {
 			.build();
 	}
 
-	@PostMapping(value = "/tokens/refresh")
+	@PostMapping(value = "/tokens/refresh/internal")
 	public TokenResponse refresh(
 		@RequestBody @Valid RefreshTokenRequest request
 	) {
 		return jwtService.refresh(request.refreshToken());
+	}
+
+	@PostMapping(value = "/tokens/refresh")
+	public ResponseEntity<AccessTokenResponse> refresh(
+		@CookieValue("refreshToken") String refreshToken
+	) {
+		TokenResponse tokenResponse = jwtService.refresh(refreshToken);
+
+		ResponseCookie cookie = ResponseCookie.from("refreshToken", tokenResponse.refreshToken())
+			.httpOnly(true)
+			.secure(true)
+			.path("/")
+			.sameSite("Strict")
+			.maxAge(Duration.ofDays(7))
+			.build();
+
+		return ResponseEntity.ok()
+			.header(HttpHeaders.SET_COOKIE, cookie.toString())
+			.body(AccessTokenResponse.from(tokenResponse.accessToken()));
 	}
 
 	@DeleteMapping(value = "/logout")
