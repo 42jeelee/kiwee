@@ -75,7 +75,18 @@ public class AuthController {
 		@AuthenticationPrincipal CustomOAuth2User principal
 	) {
 		jwtService.removeRefreshToken(principal.member().getId());
-		return ResponseEntity.noContent().build();
+
+		ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+			.httpOnly(true)
+			.secure(true)
+			.path("/")
+			.maxAge(0)
+			.sameSite("Strict")
+			.build();
+
+		return ResponseEntity
+			.noContent().header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+			.build();
 	}
 
 }

@@ -1,19 +1,24 @@
-package kr.co.jeelee.kiwee.domain.auth.service;
+package kr.co.jeelee.kiwee.domain.memberPlatform.service;
 
 import java.util.Optional;
+import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.jeelee.kiwee.domain.auth.dto.request.MemberPlatformTokenRequest;
-import kr.co.jeelee.kiwee.domain.auth.entity.MemberPlatform;
-import kr.co.jeelee.kiwee.domain.auth.exception.MemberPlatformNotFoundException;
+import kr.co.jeelee.kiwee.domain.memberPlatform.dto.request.MemberPlatformTokenRequest;
+import kr.co.jeelee.kiwee.domain.memberPlatform.dto.response.MemberPlatformResponse;
+import kr.co.jeelee.kiwee.domain.memberPlatform.entity.MemberPlatform;
+import kr.co.jeelee.kiwee.domain.memberPlatform.exception.MemberPlatformNotFoundException;
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuth2UserInfo;
-import kr.co.jeelee.kiwee.domain.auth.repository.MemberPlatformRepository;
+import kr.co.jeelee.kiwee.domain.memberPlatform.repository.MemberPlatformRepository;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 import kr.co.jeelee.kiwee.domain.member.service.MemberService;
 import kr.co.jeelee.kiwee.domain.platform.entity.Platform;
 import kr.co.jeelee.kiwee.domain.platform.service.PlatformService;
+import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +32,14 @@ public class MemberPlatformServiceImpl implements MemberPlatformService {
 
 	private final MemberService memberService;
 	private final PlatformService platformService;
+
+	@Override
+	public PagedResponse<MemberPlatformResponse> getMemberPlatforms(UUID memberId, UUID platformId, Pageable pageable) {
+		return PagedResponse.of(
+			fetchMemberPlatforms(memberId, platformId, pageable),
+			MemberPlatformResponse::from
+		);
+	}
 
 	@Override
 	@Transactional
@@ -76,4 +89,22 @@ public class MemberPlatformServiceImpl implements MemberPlatformService {
 	public void deleteMemberPlatform(long id) {
 		memberPlatformRepository.deleteById(id);
 	}
+
+	private Page<MemberPlatform> fetchMemberPlatforms(UUID memberId, UUID platformId, Pageable pageable) {
+
+		if (memberId != null && platformId != null) {
+			return memberPlatformRepository.findByMemberIdAndPlatformId(memberId, platformId, pageable);
+		}
+
+		if (memberId != null) {
+			return memberPlatformRepository.findByMemberId(memberId, pageable);
+		}
+
+		if (platformId != null) {
+			return memberPlatformRepository.findByPlatformId(platformId, pageable);
+		}
+
+		return memberPlatformRepository.findAll(pageable);
+	}
+
 }

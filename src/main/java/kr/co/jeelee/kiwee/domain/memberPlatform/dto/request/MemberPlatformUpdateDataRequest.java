@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.auth.dto.request;
+package kr.co.jeelee.kiwee.domain.memberPlatform.dto.request;
 
 import org.hibernate.validator.constraints.URL;
 
