@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.auth.exception;
+package kr.co.jeelee.kiwee.domain.memberPlatform.exception;
 
 import kr.co.jeelee.kiwee.global.exception.custom.CustomException;
 import kr.co.jeelee.kiwee.global.exception.custom.ErrorCode;

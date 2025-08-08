@@ -1,4 +1,4 @@
-package kr.co.jeelee.kiwee.domain.auth.entity;
+package kr.co.jeelee.kiwee.domain.memberPlatform.entity;
 
 import java.time.LocalDateTime;
 

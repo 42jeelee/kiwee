@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuth2UserInfo;
 import kr.co.jeelee.kiwee.domain.auth.oauth.dto.OAuthAttributes;
 import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
-import kr.co.jeelee.kiwee.domain.auth.service.MemberPlatformService;
+import kr.co.jeelee.kiwee.domain.memberPlatform.service.MemberPlatformService;
 import lombok.RequiredArgsConstructor;
 
 @Service
