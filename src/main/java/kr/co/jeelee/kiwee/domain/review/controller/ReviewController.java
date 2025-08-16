@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.review.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -60,6 +61,22 @@ public class ReviewController {
 		@PageableDefault Pageable pageable
 	) {
 		return reviewService.getReviewDetails(contentId, memberId, pageable);
+	}
+
+	@GetMapping(value = "/contents/{contentId}/reviews/consumeAmounts/{consumeAmount}")
+	public PagedResponse<ReviewSimpleResponse> getReviewsByConsumedAmount(
+		@PathVariable UUID contentId,
+		@PathVariable Long consumeAmount,
+		@PageableDefault Pageable pageable
+	) {
+		return reviewService.getReviewsByConsumedAmount(contentId, consumeAmount, pageable);
+	}
+
+	@GetMapping(value = "/contents/{contentId}/reviews/consumeAmounts")
+	public List<Long> getReviewConsumedAmount(
+		@PathVariable UUID contentId
+	) {
+		return reviewService.getReviewConsumedAmountByContentId(contentId);
 	}
 
 	@GetMapping(value = "/reviews")
