@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.review.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -105,6 +106,15 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
+	public PagedResponse<ReviewSimpleResponse> getReviewsByConsumedAmount(UUID contentId, Long consumedAmount,
+		Pageable pageable) {
+		return PagedResponse.of(
+			reviewRepository.findByContentMember_ContentIdAndConsumedAmount(contentId, consumedAmount, pageable),
+			ReviewSimpleResponse::from
+		);
+	}
+
+	@Override
 	@Transactional
 	public ReviewDetailResponse updateReview(UUID id, ReviewUpdateRequest request) {
 		Review review = getById(id);
@@ -121,6 +131,11 @@ public class ReviewServiceImpl implements ReviewService {
 		updateConsumedAmountIfChanged(review, request.consumedAmount());
 
 		return ReviewDetailResponse.from(review);
+	}
+
+	@Override
+	public List<Long> getReviewConsumedAmountByContentId(UUID contentId) {
+		return reviewRepository.findDistinctConsumedAmountByContentId(contentId);
 	}
 
 	@Override

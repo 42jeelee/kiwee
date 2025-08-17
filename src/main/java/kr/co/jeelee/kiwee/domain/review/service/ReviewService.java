@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.review.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,11 @@ public interface ReviewService {
 
 	PagedResponse<ReviewSimpleResponse> getReviews(UUID contentId, UUID memberId, Pageable pageable);
 
+	PagedResponse<ReviewSimpleResponse> getReviewsByConsumedAmount(UUID contentId, Long consumedAmount, Pageable pageable);
+
 	ReviewDetailResponse updateReview(UUID id, ReviewUpdateRequest request);
+
+	List<Long> getReviewConsumedAmountByContentId(UUID contentId);
 
 	void deleteById(UUID id);
 
