@@ -15,6 +15,7 @@ public interface PlatformRepository extends JpaRepository<Platform, UUID> {
 
 	Page<Platform> findByNameContaining(String name, Pageable pageable);
 
+	Optional<Platform> findByName(String name);
 	Optional<Platform> findByProvider(String provider);
 
 }

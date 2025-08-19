@@ -8,6 +8,7 @@ import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberCreateRe
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberUpdateRequest;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberSimpleResponse;
+import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberStarResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.entity.ContentMember;
 import kr.co.jeelee.kiwee.domain.review.dto.request.ReviewCreateRequest;
 import kr.co.jeelee.kiwee.domain.review.entity.Review;
@@ -30,5 +31,7 @@ public interface ContentMemberService {
 	ContentMember getByContentIdAndMemberId(UUID contentId, UUID memberId);
 
 	void updateByReviews(UUID contentId, UUID memberId, Review review);
+
+	ContentMemberStarResponse getAverageStar(UUID contentId);
 
 }

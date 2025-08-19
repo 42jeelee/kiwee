@@ -24,6 +24,7 @@ public interface PlatformService {
 	void deletePlatformById(UUID id);
 
 	Platform getEntityByProvider(String provider);
+	UUID getPlatformIdByName(String name);
 
 	Platform getById(UUID id);
 

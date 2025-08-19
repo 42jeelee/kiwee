@@ -20,6 +20,7 @@ import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberCreateRe
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberUpdateRequest;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberSimpleResponse;
+import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberStarResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.service.ContentMemberService;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,13 @@ public class ContentMemberController {
 		@PageableDefault Pageable pageable
 	) {
 		return contentMemberService.getContentMembers(null, memberId, pageable);
+	}
+
+	@GetMapping(value = "/contents/{contentId}/stars")
+	public ContentMemberStarResponse getAverageStar(
+		@PathVariable UUID contentId
+	) {
+		return contentMemberService.getAverageStar(contentId);
 	}
 
 	@PatchMapping(value = "/contents/{contentId}/members/{memberId}")

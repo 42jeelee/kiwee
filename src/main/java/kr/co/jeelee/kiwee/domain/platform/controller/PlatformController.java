@@ -23,6 +23,7 @@ import kr.co.jeelee.kiwee.domain.platform.dto.request.PlatformUpdateRequest;
 import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformDetailResponse;
 import kr.co.jeelee.kiwee.domain.platform.dto.response.PlatformSimpleResponse;
 import kr.co.jeelee.kiwee.domain.platform.service.PlatformService;
+import kr.co.jeelee.kiwee.global.dto.response.OnlyIdResponse;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -57,6 +58,13 @@ public class PlatformController {
 		@PathVariable UUID id
 	) {
 		return platformService.getPlatformById(id);
+	}
+
+	@GetMapping(value = "/names/{name}")
+	public OnlyIdResponse getPlatformIdByName(
+		@PathVariable String name
+	) {
+		return OnlyIdResponse.from(platformService.getPlatformIdByName(name));
 	}
 
 	@PreAuthorize(value = "hasRole('EDIT_PLATFORM')")

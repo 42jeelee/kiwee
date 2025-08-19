@@ -34,4 +34,6 @@ public interface ContentService {
 
 	Content getByPlatform(UUID platformId, String idInPlatform);
 
+	UUID getContentIdByPlatform(UUID platformId, String idInPlatform);
+
 }

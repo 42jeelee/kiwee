@@ -18,6 +18,7 @@ import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberCreateRe
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberUpdateRequest;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberSimpleResponse;
+import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberStarResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.entity.ContentMember;
 import kr.co.jeelee.kiwee.domain.contentMember.exception.ContentMemberCantUpdateException;
 import kr.co.jeelee.kiwee.domain.contentMember.exception.ContentMemberNotFoundException;
@@ -192,6 +193,11 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 
 		contentMember.updateStar(star);
 		contentMember.updateConsumedAmount(consumedAmount);
+	}
+
+	@Override
+	public ContentMemberStarResponse getAverageStar(UUID contentId) {
+		return contentMemberRepository.getAverageStarByContentId(contentId);
 	}
 
 	private Page<ContentMember> fetchContentMembers(UUID contentId, UUID memberId, Pageable pageable) {

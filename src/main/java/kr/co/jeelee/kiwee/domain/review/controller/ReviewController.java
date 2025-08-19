@@ -80,7 +80,7 @@ public class ReviewController {
 	}
 
 	@GetMapping(value = "/reviews")
-	public PagedResponse<ReviewSimpleResponse> getReviews(
+	public PagedResponse<ReviewDetailResponse> getReviews(
 		@RequestParam(required = false) UUID contentId,
 		@RequestParam(required = false) UUID memberId,
 		@PageableDefault Pageable pageable

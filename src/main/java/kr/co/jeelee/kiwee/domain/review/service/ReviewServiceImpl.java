@@ -98,10 +98,10 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public PagedResponse<ReviewSimpleResponse> getReviews(UUID contentId, UUID memberId, Pageable pageable) {
+	public PagedResponse<ReviewDetailResponse> getReviews(UUID contentId, UUID memberId, Pageable pageable) {
 		return PagedResponse.of(
 			fetchReviews(contentId, memberId, pageable),
-			ReviewSimpleResponse::from
+			ReviewDetailResponse::from
 		);
 	}
 
