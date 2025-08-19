@@ -25,6 +25,15 @@ public enum PlatformInfo {
 		"discord",
 		false
 	),
+	TMDB(
+		"TMDB",
+		"https://files.readme.io/29c6fee-blue_short.svg",
+		"https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg",
+		"영화, 텔레비전 관련 사이트. 정확히는 영화, TV 프로그램을 수집하여 데이터베이스로 만드는 회사이다.",
+		"https://www.themoviedb.org/",
+		"tmdb",
+		false
+	),
 	;
 
 	private final String name;

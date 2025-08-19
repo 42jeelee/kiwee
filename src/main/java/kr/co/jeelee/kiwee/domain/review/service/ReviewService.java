@@ -18,7 +18,7 @@ public interface ReviewService {
 
 	PagedResponse<ReviewDetailResponse> getReviewDetails(UUID contentId, UUID memberId, Pageable pageable);
 
-	PagedResponse<ReviewSimpleResponse> getReviews(UUID contentId, UUID memberId, Pageable pageable);
+	PagedResponse<ReviewDetailResponse> getReviews(UUID contentId, UUID memberId, Pageable pageable);
 
 	PagedResponse<ReviewSimpleResponse> getReviewsByConsumedAmount(UUID contentId, Long consumedAmount, Pageable pageable);
 

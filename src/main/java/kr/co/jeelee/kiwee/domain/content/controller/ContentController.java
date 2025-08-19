@@ -23,6 +23,7 @@ import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateWithPlatformRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentUpdateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
+import kr.co.jeelee.kiwee.global.dto.response.OnlyIdResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.content.service.ContentService;
@@ -45,13 +46,20 @@ public class ContentController {
 		return contentService.createContent(contentCreateRequest);
 	}
 
-	@PreAuthorize(value = "hasRole('CREATE_CONTENT')")
 	@PostMapping(value = "/platforms/{platformId}/contents")
 	public ContentDetailResponse createContent(
 		@PathVariable UUID platformId,
 		@Valid @RequestBody ContentCreateWithPlatformRequest request
 	) {
 		return contentService.createContent(platformId, request);
+	}
+
+	@GetMapping(value = "/platforms/{platformId}/contents/{idInPlatform}")
+	public OnlyIdResponse getContentByPlatform(
+		@PathVariable UUID platformId,
+		@PathVariable String idInPlatform
+	) {
+		return OnlyIdResponse.from(contentService.getContentIdByPlatform(platformId, idInPlatform));
 	}
 
 	@GetMapping(value = "/contents/{id}")

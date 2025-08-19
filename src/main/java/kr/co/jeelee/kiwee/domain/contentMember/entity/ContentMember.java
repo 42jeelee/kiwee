@@ -133,7 +133,7 @@ public class ContentMember extends BaseTimeEntity {
 			throw new FieldValidationException("consumedAmount", "비어 있을 수 없는 값입니다.");
 		}
 
-		if (consumedAmount <= 0) {
+		if (consumedAmount < 0) {
 			throw new FieldValidationException("consumedAmount", "양수만 가능합니다.");
 		}
 		this.consumedAmount = consumedAmount;

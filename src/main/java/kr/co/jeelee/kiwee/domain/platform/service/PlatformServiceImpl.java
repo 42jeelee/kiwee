@@ -95,6 +95,13 @@ public class PlatformServiceImpl implements PlatformService {
 	}
 
 	@Override
+	public UUID getPlatformIdByName(String name) {
+		return platformRepository.findByName(name)
+			.map(Platform::getId)
+			.orElseThrow(PlatformNotFoundException::new);
+	}
+
+	@Override
 	public Platform getById(UUID id) {
 		return platformRepository.findById(id)
 			.orElseThrow(PlatformNotFoundException::new);

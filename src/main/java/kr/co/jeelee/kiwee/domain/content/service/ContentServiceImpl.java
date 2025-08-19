@@ -135,6 +135,11 @@ public class ContentServiceImpl implements ContentService {
 			.orElseThrow(ContentNotFoundException::new);
 	}
 
+	@Override
+	public UUID getContentIdByPlatform(UUID platformId, String idInPlatform) {
+		return getByPlatform(platformId, idInPlatform).getId();
+	}
+
 	private Content requestToContent(ContentCreateRequest request) {
 		Content parent = request.parentId() != null
 			? getParent(request.parentId())
