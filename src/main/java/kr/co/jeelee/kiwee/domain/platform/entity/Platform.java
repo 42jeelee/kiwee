@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import kr.co.jeelee.kiwee.global.entity.BaseTimeEntity;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
@@ -33,6 +34,7 @@ public class Platform extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String banner;
 
+	@Lob
 	@Column
 	private String description;
 

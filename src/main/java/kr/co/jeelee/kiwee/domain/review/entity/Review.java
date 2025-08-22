@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.co.jeelee.kiwee.domain.contentMember.entity.ContentMember;
@@ -31,7 +32,8 @@ public class Review extends BaseTimeEntity {
 	@JoinColumn(name = "content_member_id")
 	private ContentMember contentMember;
 
-	@Column(nullable = false, length = 3000)
+	@Lob
+	@Column(nullable = false)
 	private String message;
 
 	@Column(nullable = false)
