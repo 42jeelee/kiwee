@@ -43,6 +43,13 @@ public class RewardController {
 		return rewardService.createReward(principal, rewardCreateRequest);
 	}
 
+	@GetMapping(value = "/rewards/{id}")
+	public RewardDetailResponse getRewardDetail(
+		@PathVariable UUID id
+	) {
+		return rewardService.getRewardDetail(id);
+	}
+
 	@GetMapping(value = "/rewards")
 	public PagedResponse<RewardSimpleResponse> publicRewards(
 		@PageableDefault Pageable pageable

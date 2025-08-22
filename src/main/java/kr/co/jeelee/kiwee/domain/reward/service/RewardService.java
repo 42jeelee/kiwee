@@ -28,6 +28,8 @@ public interface RewardService {
 		Pageable pageable
 	);
 
+	RewardDetailResponse getRewardDetail(UUID id);
+
 	void deleteReward(UUID id);
 
 	Reward getById(UUID id);

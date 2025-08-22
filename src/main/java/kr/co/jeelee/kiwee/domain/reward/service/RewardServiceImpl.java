@@ -95,7 +95,7 @@ public class RewardServiceImpl implements RewardService {
 	public PagedResponse<RewardSimpleResponse> getPublicRewards(Pageable pageable) {
 		return PagedResponse.of(
 			rewardRepository.findByIsPublicTrue(pageable),
-			r -> RewardSimpleResponse.from(r, domainObjectResolver)
+			RewardSimpleResponse::from
 		);
 	}
 
@@ -118,8 +118,13 @@ public class RewardServiceImpl implements RewardService {
 			rewardRepository.findByCondition_Criterion_DomainTypeAndCondition_Criterion_DomainIdAndIsPublicTrue(
 				domainType, domainId, pageable
 			),
-			r -> RewardSimpleResponse.from(r, domainObjectResolver)
+			RewardSimpleResponse::from
 		);
+	}
+
+	@Override
+	public RewardDetailResponse getRewardDetail(UUID id) {
+		return RewardDetailResponse.from(getById(id), domainObjectResolver);
 	}
 
 	@Override
