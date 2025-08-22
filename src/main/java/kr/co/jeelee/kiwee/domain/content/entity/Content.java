@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -39,7 +40,8 @@ public class Content extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String title;
 
-	@Column(nullable = false, length = 3000)
+	@Lob
+	@Column(nullable = false)
 	private String overview;
 
 	@Column(nullable = false)
