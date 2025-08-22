@@ -24,7 +24,7 @@ import kr.co.jeelee.kiwee.domain.rewardMember.exception.RewardMemberNotFoundExce
 import kr.co.jeelee.kiwee.domain.rewardMember.repository.RewardMemberRepository;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
-import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,8 +36,6 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 
 	private final MemberService memberService;
 	private final BadgeMemberService badgeMemberService;
-
-	private final DomainObjectResolver domainObjectResolver;
 
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -58,7 +56,7 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 					throw new AccessDeniedException("해당 맴버가 아닙니다");
 				}
 
-				return RewardMemberDetailResponse.from(rm, domainObjectResolver);
+				return RewardMemberDetailResponse.from(rm);
 			})
 			.orElseThrow(RewardMemberNotFoundException::new);
 	}

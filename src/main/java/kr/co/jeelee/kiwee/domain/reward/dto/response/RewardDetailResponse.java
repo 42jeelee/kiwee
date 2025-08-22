@@ -7,11 +7,12 @@ import kr.co.jeelee.kiwee.domain.reward.entity.Reward;
 import kr.co.jeelee.kiwee.domain.reward.model.RewardType;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
 import kr.co.jeelee.kiwee.global.model.ActivityType;
+import kr.co.jeelee.kiwee.global.model.DomainType;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
 import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 
 public record RewardDetailResponse(
-	UUID id, MemberSimpleResponse conferrer, Object source, Object reward,
+	UUID id, MemberSimpleResponse conferrer, DomainType sourceType, Object source, RewardType rewardType, Object reward,
 	ActivityType activityType, Integer activityCount, String title, String description,
 	Integer exp, Boolean isPublic, LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
@@ -19,10 +20,12 @@ public record RewardDetailResponse(
 		return new RewardDetailResponse(
 			reward.getId(),
 			MemberSimpleResponse.from(reward.getConferrer()),
+			reward.getCondition().criterion().domainType(),
 			DomainResponseResolver.toResponse(resolver.resolve(
 				reward.getCondition().criterion().domainType(),
 				reward.getCondition().criterion().domainId()
 			)),
+			reward.getRewardType(),
 			reward.getRewardType() != RewardType.NONE
 				? DomainResponseResolver.toResponse(
 					resolver.resolve(reward.getRewardType().getDomainType(), reward.getRewardId())
