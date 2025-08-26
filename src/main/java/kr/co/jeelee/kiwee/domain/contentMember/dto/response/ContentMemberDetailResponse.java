@@ -1,17 +1,15 @@
 package kr.co.jeelee.kiwee.domain.contentMember.dto.response;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.entity.ContentMember;
 import kr.co.jeelee.kiwee.domain.member.dto.response.MemberSimpleResponse;
-import kr.co.jeelee.kiwee.domain.review.dto.response.ReviewSimpleResponse;
 
 public record ContentMemberDetailResponse(
 	ContentSimpleResponse content, MemberSimpleResponse member, LocalDateTime startAt,
 	Integer completedCount, Integer recommended, String recommendReason, Double star,
-	Long consumedAmount, List<ReviewSimpleResponse> reviews,
+	Long consumedAmount, Integer reviewCount,
 	LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
 	public static ContentMemberDetailResponse from(ContentMember contentMember) {
@@ -25,10 +23,8 @@ public record ContentMemberDetailResponse(
 			contentMember.getStar(),
 			contentMember.getConsumedAmount(),
 			contentMember.getReviews() != null
-				? contentMember.getReviews().stream()
-					.map(ReviewSimpleResponse::from)
-						.toList()
-				: null,
+				? contentMember.getReviews().size()
+				: 0,
 			contentMember.getUpdatedAt(),
 			contentMember.getCreatedAt()
 		);

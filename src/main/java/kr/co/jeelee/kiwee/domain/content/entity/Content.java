@@ -63,6 +63,9 @@ public class Content extends BaseTimeEntity {
 	@JoinColumn(name = "parent_id")
 	private Content parent;
 
+	@Column
+	private Long childrenIdx;
+
 	@ManyToMany
 	@JoinTable(
 		name = "content_genres",
@@ -76,7 +79,7 @@ public class Content extends BaseTimeEntity {
 
 	private Content(
 		String title, String overview, Double rating,  String imageUrl, String homepage,
-		Long totalAmount, ContentType contentType, Content parent, Set<Genre> genres
+		Long totalAmount, ContentType contentType, Content parent, Long childrenIdx, Set<Genre> genres
 	) {
 		this.title = title;
 		this.overview = overview;
@@ -86,16 +89,17 @@ public class Content extends BaseTimeEntity {
 		this.totalAmount = totalAmount;
 		this.contentType = contentType;
 		this.parent = parent;
+		this.childrenIdx = childrenIdx;
 		this.genres = genres;
 		this.children = new ArrayList<>();
 	}
 
 	public static Content of(
 		String title, String overview, Double rating,  String imageUrl, String homepage,
-		Long totalAmount, ContentType contentType, Content parent, Set<Genre> genres
+		Long totalAmount, ContentType contentType, Content parent, Long childrenIdx, Set<Genre> genres
 	) {
 		return new Content(
-			title, overview, rating, imageUrl, homepage, totalAmount, contentType, parent, genres
+			title, overview, rating, imageUrl, homepage, totalAmount, contentType, parent, childrenIdx, genres
 		);
 	}
 

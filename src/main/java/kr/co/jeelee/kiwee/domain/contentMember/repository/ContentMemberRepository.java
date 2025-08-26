@@ -1,6 +1,8 @@
 package kr.co.jeelee.kiwee.domain.contentMember.repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -11,11 +13,14 @@ import org.springframework.data.jpa.repository.Query;
 
 import io.lettuce.core.dynamic.annotation.Param;
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
+import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberStarResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.entity.ContentMember;
 import kr.co.jeelee.kiwee.domain.member.entity.Member;
 
 public interface ContentMemberRepository extends JpaRepository<ContentMember, Long> {
+
+	boolean existsByContent_Parent_IdAndMember_Id(UUID parentId, UUID memberId);
 
 	@Query("""
 		SELECT new kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberStarResponse(
@@ -29,8 +34,10 @@ public interface ContentMemberRepository extends JpaRepository<ContentMember, Lo
 	@EntityGraph(attributePaths = "reviews")
 	Optional<ContentMember> findByContentAndMember(Content content, Member member);
 
+	List<ContentMember> findByContent_Parent_IdAndMember_IdAndContent_ChildrenIdxGreaterThan(UUID parentId, UUID memberId, Long childrenIdx);
+
 	Page<ContentMember> findByContent(Content content, Pageable pageable);
 	Page<ContentMember> findByMember(Member member, Pageable pageable);
-	Page<ContentMember> findByContentAndMember(Content content, Member member, Pageable pageable);
+	Page<ContentMember> findByMemberAndContent_ContentTypeIn(Member member, Set<ContentType> contentTypes, Pageable pageable);
 
 }

@@ -55,12 +55,13 @@ public class ReviewController {
 	}
 
 	@GetMapping(value = "/contents/{contentId}/members/{memberId}/reviews")
-	public PagedResponse<ReviewDetailResponse> getReviewDetails(
+	public PagedResponse<ReviewDetailResponse> getReviews(
 		@PathVariable UUID contentId,
 		@PathVariable UUID memberId,
+		@RequestParam(required = false, defaultValue = "false") Boolean includeChildren,
 		@PageableDefault Pageable pageable
 	) {
-		return reviewService.getReviewDetails(contentId, memberId, pageable);
+		return reviewService.getReviews(contentId, memberId, includeChildren, pageable);
 	}
 
 	@GetMapping(value = "/contents/{contentId}/reviews/consumeAmounts/{consumeAmount}")
@@ -79,13 +80,20 @@ public class ReviewController {
 		return reviewService.getReviewConsumedAmountByContentId(contentId);
 	}
 
-	@GetMapping(value = "/reviews")
-	public PagedResponse<ReviewDetailResponse> getReviews(
-		@RequestParam(required = false) UUID contentId,
-		@RequestParam(required = false) UUID memberId,
+	@GetMapping(value = "/contents/{contentId}/reviews")
+	public PagedResponse<ReviewDetailResponse> getReviewsByContentId(
+		@PathVariable UUID contentId,
 		@PageableDefault Pageable pageable
 	) {
-		return reviewService.getReviews(contentId, memberId, pageable);
+		return reviewService.getReviewsByContentId(contentId, pageable);
+	}
+
+	@GetMapping(value = "/members/{memberId}/reviews")
+	public PagedResponse<ReviewDetailResponse> getReviewsByMemberId(
+		@PathVariable UUID memberId,
+		@PageableDefault Pageable pageable
+	) {
+		return reviewService.getReviewsByMemberId(memberId, pageable);
 	}
 
 	@PatchMapping(value = "/reviews/{id}")

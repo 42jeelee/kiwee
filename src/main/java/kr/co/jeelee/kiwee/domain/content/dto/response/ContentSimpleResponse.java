@@ -3,9 +3,12 @@ package kr.co.jeelee.kiwee.domain.content.dto.response;
 import java.util.UUID;
 
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
+import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 
 public record ContentSimpleResponse(
-	UUID id, String title, String description, String imageUrl, ContentSimpleResponse series
+	UUID id, String title, String description, String imageUrl,
+	Long totalAmount, ContentType contentType,
+	ContentSimpleResponse series, Long childrenIdx
 ) {
 	public static ContentSimpleResponse from(Content content) {
 		return new ContentSimpleResponse(
@@ -13,9 +16,12 @@ public record ContentSimpleResponse(
 			content.getTitle(),
 			content.getOverview(),
 			content.getImageUrl(),
+			content.getTotalAmount(),
+			content.getContentType(),
 			content.getParent() != null
 				? ContentSimpleResponse.from(content.getParent())
-				: null
+				: null,
+			content.getChildrenIdx()
 		);
 	}
 }

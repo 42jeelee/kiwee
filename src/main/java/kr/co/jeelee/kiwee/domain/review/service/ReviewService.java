@@ -16,9 +16,11 @@ public interface ReviewService {
 
 	ReviewDetailResponse review(UUID contentId, UUID memberId, ReviewCreateRequest request);
 
-	PagedResponse<ReviewDetailResponse> getReviewDetails(UUID contentId, UUID memberId, Pageable pageable);
+	PagedResponse<ReviewDetailResponse> getReviews(UUID contentId, UUID memberId, Boolean includeChildren, Pageable pageable);
 
-	PagedResponse<ReviewDetailResponse> getReviews(UUID contentId, UUID memberId, Pageable pageable);
+	PagedResponse<ReviewDetailResponse> getReviewsByContentId(UUID contentId, Pageable pageable);
+
+	PagedResponse<ReviewDetailResponse> getReviewsByMemberId(UUID memberId, Pageable pageable);
 
 	PagedResponse<ReviewSimpleResponse> getReviewsByConsumedAmount(UUID contentId, Long consumedAmount, Pageable pageable);
 

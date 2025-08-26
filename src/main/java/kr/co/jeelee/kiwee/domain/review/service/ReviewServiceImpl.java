@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,19 +87,29 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public PagedResponse<ReviewDetailResponse> getReviewDetails(UUID contentId, UUID memberId, Pageable pageable) {
+	public PagedResponse<ReviewDetailResponse> getReviews(UUID contentId, UUID memberId, Boolean includeChildren, Pageable pageable) {
 		ContentMember contentMember = contentMemberService.getByContentIdAndMemberId(contentId, memberId);
 
 		return PagedResponse.of(
-			reviewRepository.findByContentMember(contentMember, pageable),
+			includeChildren
+				? reviewRepository.findByContentMemberIncludesChildren(contentMember.getId(), pageable)
+				: reviewRepository.findByContentMemberId(contentMember.getId(), pageable),
 			ReviewDetailResponse::from
 		);
 	}
 
 	@Override
-	public PagedResponse<ReviewDetailResponse> getReviews(UUID contentId, UUID memberId, Pageable pageable) {
+	public PagedResponse<ReviewDetailResponse> getReviewsByContentId(UUID contentId, Pageable pageable) {
 		return PagedResponse.of(
-			fetchReviews(contentId, memberId, pageable),
+			reviewRepository.findByContentMember_ContentId(contentId, pageable),
+			ReviewDetailResponse::from
+		);
+	}
+
+	@Override
+	public PagedResponse<ReviewDetailResponse> getReviewsByMemberId(UUID memberId, Pageable pageable) {
+		return PagedResponse.of(
+			reviewRepository.findByContentMember_MemberId(memberId, pageable),
 			ReviewDetailResponse::from
 		);
 	}
@@ -157,23 +166,6 @@ public class ReviewServiceImpl implements ReviewService {
 	public Review getById(UUID id) {
 		return reviewRepository.findById(id)
 			.orElseThrow(ReviewNotFoundException::new);
-	}
-
-	private Page<Review> fetchReviews(UUID contentId, UUID memberId, Pageable pageable) {
-		if (contentId != null && memberId != null) {
-			ContentMember contentMember = contentMemberService.getByContentIdAndMemberId(contentId, memberId);
-			return reviewRepository.findByContentMember(contentMember, pageable);
-		}
-
-		if (contentId != null) {
-			return reviewRepository.findByContentMember_ContentId(contentId, pageable);
-		}
-
-		if (memberId != null) {
-			return reviewRepository.findByContentMember_MemberId(memberId, pageable);
-		}
-
-		return reviewRepository.findAll(pageable);
 	}
 
 	private void updateMessageIfChanged(Review review, String message) {

@@ -18,6 +18,7 @@ public record ContentCreateRequest(
 	Long totalAmount,
 	@NotNull(message = "contentType can't be Null.") ContentType contentType,
 	UUID parentId,
+	Long childrenIdx,
 	Set<Long> genres
 ) {
 }

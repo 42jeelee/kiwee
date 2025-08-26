@@ -14,7 +14,7 @@ public record ContentMemberCreateRequest(
 	Integer recommended,
 	String recommendReason,
 	@Min(value = 0, message = "star must be 0 or greater.")
-	@Max(value = 5, message = "star must be 5 or less.")
+	@Max(value = 10, message = "star must be 10 or less.")
 	@NotNull(message = "star can't be Null.")
 	Double star,
 	Long consumedAmount

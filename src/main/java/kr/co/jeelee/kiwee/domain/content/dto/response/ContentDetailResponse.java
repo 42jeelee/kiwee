@@ -12,7 +12,7 @@ import kr.co.jeelee.kiwee.domain.genre.dto.response.GenreResponse;
 public record ContentDetailResponse(
 	UUID id, String title, String overview, Double rating, String imageUrl,
 	String homepage, Long totalAmount, ContentType contentType,
-	ContentSimpleResponse series, Set<GenreResponse> genres,
+	ContentSimpleResponse series, Long childrenIdx, Set<GenreResponse> genres,
 	LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
 	public static ContentDetailResponse from(Content content) {
@@ -28,6 +28,7 @@ public record ContentDetailResponse(
 			content.getParent() != null
 				? ContentSimpleResponse.from(content.getParent())
 				: null,
+			content.getChildrenIdx(),
 			content.getGenres() != null
 				? content.getGenres().stream()
 					.map(GenreResponse::from)

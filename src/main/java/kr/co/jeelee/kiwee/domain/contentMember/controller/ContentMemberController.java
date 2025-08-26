@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.contentMember.controller;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberCreateRequest;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberUpdateRequest;
+import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberCompletedRateResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberDetailResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberSimpleResponse;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberStarResponse;
@@ -55,15 +59,16 @@ public class ContentMemberController {
 		@PathVariable UUID contentId,
 		@PageableDefault Pageable pageable
 	) {
-		return contentMemberService.getContentMembers(contentId, null, pageable);
+		return contentMemberService.getContentMembersByContentId(contentId, pageable);
 	}
 
 	@GetMapping(value = "/members/{memberId}/contents")
 	public PagedResponse<ContentMemberSimpleResponse> getContentMembersByMemberId(
 		@PathVariable UUID memberId,
+		@RequestParam(name = "contentType", required = false) Set<ContentType> contentTypes,
 		@PageableDefault Pageable pageable
 	) {
-		return contentMemberService.getContentMembers(null, memberId, pageable);
+		return contentMemberService.getContentMembersByMemberId(memberId, contentTypes, pageable);
 	}
 
 	@GetMapping(value = "/contents/{contentId}/stars")
@@ -71,6 +76,14 @@ public class ContentMemberController {
 		@PathVariable UUID contentId
 	) {
 		return contentMemberService.getAverageStar(contentId);
+	}
+
+	@GetMapping(value = "/contents/{contentId}/members/{memberId}/completedRate")
+	public ContentMemberCompletedRateResponse getCompletedRate(
+		@PathVariable UUID contentId,
+		@PathVariable UUID memberId
+	) {
+		return ContentMemberCompletedRateResponse.from(contentMemberService.getCompletedRate(contentId, memberId));
 	}
 
 	@PatchMapping(value = "/contents/{contentId}/members/{memberId}")
