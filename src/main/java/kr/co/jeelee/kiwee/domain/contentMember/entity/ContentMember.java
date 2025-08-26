@@ -99,6 +99,7 @@ public class ContentMember extends BaseTimeEntity {
 	public void updateCompleteCount(boolean isCompleted) {
 		if (isCompleted) {
 			this.completedCount += 1;
+			this.consumedAmount = 0L;
 			return;
 		}
 		if (this.completedCount > 0) {

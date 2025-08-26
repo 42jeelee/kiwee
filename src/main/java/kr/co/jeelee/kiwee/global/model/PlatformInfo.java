@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public enum PlatformInfo {
 	GOOGLE(
 		"구글",
-		"https://developers.google.com/identity/images/g-logo.png",
+		"/googleLogo.png",
 		"/googleLogo.png",
 		"구글(Google LLC)는 1998년 미국 캘리포니아주 멘로파크에서 래리 페이지(Larry Page)와 세르게이 브린(Sergey Brin)이 설립한 다국적 기술 기업입니다. 현재는 알파벳(Alphabet Inc.)의 자회사로서, 주로 인터넷 검색, 온라인 광고, 클라우드 컴퓨팅, 소프트웨어, 인공지능(AI) 분야에 집중하고 있습니다.",
 		"https://www.google.com",
