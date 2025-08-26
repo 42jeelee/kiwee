@@ -200,7 +200,7 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 
 				if (
 					root.getId() != content.getId() &&
-					contentMemberRepository.existsByMemberIdAndContentId(member.getId(), content.getId())
+					!contentMemberRepository.existsByMemberIdAndContentId(member.getId(), content.getId())
 				) {
 					contentMemberRepository.save(
 						ContentMember.of(
