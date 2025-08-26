@@ -119,35 +119,37 @@ public interface MemberActivityRepository extends JpaRepository<MemberActivity, 
 		@Param("end") LocalDateTime end
 	);
 
-	@Query("""
-		SELECT DISTINCT DATE(ma.createdAt) FROM MemberActivity ma
-		WHERE ma.actor.id = :actorId
-		AND ma.sourceType = :sourceType
-		AND ma.sourceId = :sourceId
+	@Query(value = """
+		SELECT DISTINCT CAST(ma.created_at AS DATE) AS d
+		FROM member_activities ma
+		WHERE ma.actor_id = :actorId
+		AND ma.source_type = :sourceType
+		AND ma.source_id = :sourceId
 		AND ma.type = :type
-		ORDER BY ma.createdAt DESC
+		ORDER BY d DESC
 		LIMIT :num
-	""")
-	List<LocalDate> findActivityDatesByCriterion(
+	""", nativeQuery = true)
+	List<java.sql.Date> findActivityDatesByCriterion(
 		@Param("actorId") UUID actorId,
-		@Param("sourceType") DomainType sourceType,
+		@Param("sourceType") String sourceType,
 		@Param("sourceId") UUID sourceId,
-		@Param("type") ActivityType type,
+		@Param("type") String type,
 		@Param("num") int num
 	);
 
-	@Query("""
-		SELECT DISTINCT DATE(ma.createdAt) FROM MemberActivity ma
-		WHERE ma.actor.id = :actorId
-		AND ma.sourceType = :sourceType
+	@Query(value = """
+		SELECT DISTINCT CAST(ma.created_at AS DATE) AS d
+		FROM member_activities ma
+		WHERE ma.actor_id = :actorId
+		AND ma.source_type = :sourceType
 		AND ma.type = :type
-		ORDER BY ma.createdAt DESC
+		ORDER BY d DESC
 		LIMIT :num
-	""")
-	List<LocalDate> findActivityDatesByCriterion(
+	""", nativeQuery = true)
+	List<java.sql.Date> findActivityDatesByCriterion(
 		@Param("actorId") UUID actorId,
-		@Param("sourceType") DomainType sourceType,
-		@Param("type") ActivityType type,
+		@Param("sourceType") String sourceType,
+		@Param("type") String type,
 		@Param("num") int num
 	);
 
