@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.memberActivity.service;
 
+import java.sql.Date;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -171,22 +172,25 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 
 	@Override
 	public int countConsecutiveCount(UUID actorId, ActivityCriterion criterion, TermType termType, int num) {
-		List<LocalDate> activitiesDates = criterion.domainId() == null
+		List<java.sql.Date> activitiesDates = criterion.domainId() == null
 			? memberActivityRepository.findActivityDatesByCriterion(
 				actorId,
-				criterion.domainType(),
-				criterion.activityType(),
+				criterion.domainType().name(),
+				criterion.activityType().name(),
 				num
 			)
 			:  memberActivityRepository.findActivityDatesByCriterion(
 				actorId,
-				criterion.domainType(),
+				criterion.domainType().name(),
 				criterion.domainId(),
-				criterion.activityType(),
+				criterion.activityType().name(),
 				num
 			);
 
-		return countConsecutiveByDates(activitiesDates, termType, num);
+		return countConsecutiveByDates(
+			activitiesDates.stream().map(Date::toLocalDate).collect(Collectors.toList()),
+			termType, num
+		);
 	}
 
 	@Override
