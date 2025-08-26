@@ -20,6 +20,7 @@ import kr.co.jeelee.kiwee.domain.member.entity.Member;
 
 public interface ContentMemberRepository extends JpaRepository<ContentMember, Long> {
 
+	boolean existsByMemberIdAndContentId(UUID memberId, UUID contentId);
 	boolean existsByContent_Parent_IdAndMember_Id(UUID parentId, UUID memberId);
 
 	@Query("""

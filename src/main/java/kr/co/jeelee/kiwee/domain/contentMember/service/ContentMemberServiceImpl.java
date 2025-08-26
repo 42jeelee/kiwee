@@ -198,7 +198,10 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 			.orElseGet(() -> {
 				Content root = contentService.getRootById(content.getId());
 
-				if (root.getId() != content.getId()) {
+				if (
+					root.getId() != content.getId() &&
+					contentMemberRepository.existsByMemberIdAndContentId(member.getId(), content.getId())
+				) {
 					contentMemberRepository.save(
 						ContentMember.of(
 							root,

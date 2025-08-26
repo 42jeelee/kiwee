@@ -34,6 +34,7 @@ import kr.co.jeelee.kiwee.global.exception.common.AccessDeniedException;
 import kr.co.jeelee.kiwee.global.exception.common.FieldValidationException;
 import kr.co.jeelee.kiwee.global.model.RewardMatchPolicy;
 import kr.co.jeelee.kiwee.global.model.RewardRepeatPolicy;
+import kr.co.jeelee.kiwee.global.model.TermType;
 import kr.co.jeelee.kiwee.global.resolver.DomainObjectResolver;
 import kr.co.jeelee.kiwee.global.util.TermUtil;
 import kr.co.jeelee.kiwee.global.vo.RewardCondition;
@@ -206,7 +207,7 @@ public class RewardServiceImpl implements RewardService {
 		LocalDate lastGetTime =
 			rewardMemberService.getDateByLastGetReward(awardeeId, rewardId);
 
-		LocalDate startTerm = repeatPolicy.getTermType() != null
+		LocalDate startTerm = repeatPolicy.getTermType() != null && repeatPolicy.getTermType() != TermType.NONE
 			? TermUtil.getStartTerm(repeatPolicy.getTermType(), LocalDate.now())
 			: null;
 
