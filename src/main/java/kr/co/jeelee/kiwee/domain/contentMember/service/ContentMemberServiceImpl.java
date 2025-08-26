@@ -4,15 +4,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
+import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.content.service.ContentService;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberCreateRequest;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberUpdateRequest;
@@ -98,10 +101,24 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 	}
 
 	@Override
-	public PagedResponse<ContentMemberSimpleResponse> getContentMembers(UUID contentId, UUID memberId,
-		Pageable pageable) {
+	public PagedResponse<ContentMemberSimpleResponse> getContentMembersByContentId(UUID contentId, Pageable pageable) {
+		Content content = contentService.getById(contentId);
+
 		return PagedResponse.of(
-			fetchContentMembers(contentId, memberId, pageable),
+			contentMemberRepository.findByContent(content, pageable),
+			ContentMemberSimpleResponse::from
+		);
+	}
+
+	@Override
+	public PagedResponse<ContentMemberSimpleResponse> getContentMembersByMemberId(UUID memberId, Set<ContentType> contentTypes,
+		Pageable pageable) {
+		Member member = memberService.getById(memberId);
+
+		return PagedResponse.of(
+			contentTypes != null && !contentTypes.isEmpty() ?
+				contentMemberRepository.findByMemberAndContent_ContentTypeIn(member, contentTypes, pageable)
+				: contentMemberRepository.findByMember(member, pageable),
 			ContentMemberSimpleResponse::from
 		);
 	}
@@ -116,7 +133,10 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 			throw new AccessDeniedException();
 		}
 
-		if (contentMember.getReviews() != null && !contentMember.getReviews().isEmpty()) {
+		if (
+			(request.startAt() != null || request.star() != null || request.consumedAmount() != null) &&
+			contentMember.getReviews() != null && !contentMember.getReviews().isEmpty()
+		) {
 			throw new ContentMemberCantUpdateException();
 		}
 
@@ -139,23 +159,73 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 	}
 
 	@Override
+	public double getCompletedRate(UUID contentId, UUID memberId) {
+		ContentMember contentMember = getByContentIdAndMemberId(contentId, memberId);
+		Long totalAmount = contentMember.getContent().getTotalAmount();
+
+		if (totalAmount == null || totalAmount == 0) {
+			return 0;
+		}
+
+		double sum = contentMember.getConsumedAmount() != null
+			? contentMember.getConsumedAmount() * 100
+			: 0;
+		if (contentMemberRepository.existsByContent_Parent_IdAndMember_Id(contentId, memberId)) {
+			long consumedAmount = contentMember.getConsumedAmount() != null
+				? contentMember.getConsumedAmount()
+				: 0;
+
+			List<ContentMember> children = contentMemberRepository
+					.findByContent_Parent_IdAndMember_IdAndContent_ChildrenIdxGreaterThan(
+						contentId,
+						memberId,
+						consumedAmount
+					);
+
+			sum += children.stream()
+				.mapToDouble(cm -> getCompletedRate(cm.getContent().getId(), cm.getMember().getId()))
+				.sum();
+		}
+
+		return sum / totalAmount;
+	}
+
+	@Override
 	@Transactional
 	public ContentMember getOrCreateByReviewCreate(UUID contentId, UUID memberId, ReviewCreateRequest request) {
 		Content content = contentService.getById(contentId);
 		Member member = memberService.getById(memberId);
 
 		return contentMemberRepository.findByContentAndMember(content, member)
-			.orElseGet(() -> contentMemberRepository.save(
-				ContentMember.of(
-					content,
-					member,
-					LocalDateTime.now(),
-					0,
-					null,
-					request.star(),
-					request.consumedAmount()
-				)
-			));
+			.orElseGet(() -> {
+				Content root = contentService.getRootById(content.getId());
+
+				if (root.getId() != content.getId()) {
+					contentMemberRepository.save(
+						ContentMember.of(
+							root,
+							member,
+							LocalDateTime.now(),
+							0,
+							null,
+							request.star(),
+							0L
+						)
+					);
+				}
+
+				return contentMemberRepository.save(
+					ContentMember.of(
+						content,
+						member,
+						LocalDateTime.now(),
+						0,
+						null,
+						request.star(),
+						request.consumedAmount()
+					)
+				);
+			});
 	}
 
 	@Override
@@ -185,6 +255,7 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 			.orElse(0d);
 
 		long consumedAmount = reviews.stream()
+			.filter(r -> r.getCompletedCount().equals(review.getCompletedCount()))
 			.map(Review::getConsumedAmount)
 			.filter(Objects::nonNull)
 			.mapToLong(Long::longValue)
@@ -198,25 +269,6 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 	@Override
 	public ContentMemberStarResponse getAverageStar(UUID contentId) {
 		return contentMemberRepository.getAverageStarByContentId(contentId);
-	}
-
-	private Page<ContentMember> fetchContentMembers(UUID contentId, UUID memberId, Pageable pageable) {
-		Content content = contentId != null ? contentService.getById(contentId) : null;
-		Member member = memberId != null ? memberService.getById(memberId) : null;
-
-		if (content != null && member != null) {
-			return contentMemberRepository.findByContentAndMember(content, member, pageable);
-		}
-
-		if (member != null) {
-			return contentMemberRepository.findByMember(member, pageable);
-		}
-
-		if (content != null) {
-			return contentMemberRepository.findByContent(content, pageable);
-		}
-
-		return contentMemberRepository.findAll(pageable);
 	}
 
 	private void updateStartIfChanged(ContentMember contentMember, LocalDateTime startAt) {

@@ -1,9 +1,11 @@
 package kr.co.jeelee.kiwee.domain.contentMember.service;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 
+import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberCreateRequest;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.request.ContentMemberUpdateRequest;
 import kr.co.jeelee.kiwee.domain.contentMember.dto.response.ContentMemberDetailResponse;
@@ -20,11 +22,15 @@ public interface ContentMemberService {
 
 	ContentMemberDetailResponse getContentMember(UUID contentId, UUID memberId);
 
-	PagedResponse<ContentMemberSimpleResponse> getContentMembers(UUID contentId, UUID memberId, Pageable pageable);
+	PagedResponse<ContentMemberSimpleResponse> getContentMembersByContentId(UUID contentId, Pageable pageable);
+
+	PagedResponse<ContentMemberSimpleResponse> getContentMembersByMemberId(UUID memberId, Set<ContentType> contentTypes, Pageable pageable);
 
 	ContentMemberDetailResponse updateContentMember(UUID contentId, UUID memberId, ContentMemberUpdateRequest request);
 
 	void deleteContentMember(UUID contentId, UUID memberId);
+
+	double getCompletedRate(UUID contentId, UUID memberId);
 
 	ContentMember getOrCreateByReviewCreate(UUID contentId, UUID memberId, ReviewCreateRequest request);
 

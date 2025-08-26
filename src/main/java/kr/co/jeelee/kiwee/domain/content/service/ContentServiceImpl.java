@@ -104,10 +104,10 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public PagedResponse<ContentSimpleResponse> getContents(ContentType contentType, Set<Long> genreIds,
+	public PagedResponse<ContentSimpleResponse> getContents(Set<ContentType> contentTypes, Set<Long> genreIds,
 		Pageable pageable) {
 		return PagedResponse.of(
-			fetchContents(contentType, genreIds, pageable),
+			fetchContents(contentTypes, genreIds, pageable),
 			ContentSimpleResponse::from
 		);
 	}
@@ -129,6 +129,12 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
+	public Content getRootById(UUID id) {
+		return contentRepository.findRootByChildrenId(id)
+			.orElseThrow(ContentNotFoundException::new);
+	}
+
+	@Override
 	public Content getByPlatform(UUID platformId, String idInPlatform) {
 		return platformContentRepository.findByPlatformIdAndIdInPlatform(platformId, idInPlatform)
 			.map(PlatformContent::getContent)
@@ -145,6 +151,10 @@ public class ContentServiceImpl implements ContentService {
 			? getParent(request.parentId())
 			: null;
 
+		if (parent != null && request.childrenIdx() == null) {
+			throw new FieldValidationException("childrenIdx", "부모가 있을 경우 인덱스가 필요합니다.");
+		}
+
 		Set<Genre> genres = request.genres() != null
 			? request.genres().stream()
 			.map(genreService::getById)
@@ -160,6 +170,7 @@ public class ContentServiceImpl implements ContentService {
 			request.totalAmount(),
 			request.contentType(),
 			parent,
+			request.childrenIdx(),
 			genres
 		);
 	}
@@ -172,16 +183,16 @@ public class ContentServiceImpl implements ContentService {
 		}
 	}
 
-	private Page<Content> fetchContents(ContentType contentType, Set<Long> genreIds, Pageable pageable) {
-		boolean hasContentType = contentType != null;
+	private Page<Content> fetchContents(Set<ContentType> contentTypes, Set<Long> genreIds, Pageable pageable) {
+		boolean hasContentTypes = contentTypes != null && !contentTypes.isEmpty();
 		boolean hasGenres = genreIds != null && !genreIds.isEmpty();
 
-		if (hasContentType && hasGenres) {
-			return contentRepository.findDistinctByContentTypeAndGenres_idIn(contentType, genreIds, pageable);
+		if (hasContentTypes && hasGenres) {
+			return contentRepository.findDistinctByContentTypeInAndGenres_idIn(contentTypes, genreIds, pageable);
 		}
 
-		if (hasContentType) {
-			return contentRepository.findByContentType(contentType, pageable);
+		if (hasContentTypes) {
+			return contentRepository.findByContentTypeIn(contentTypes, pageable);
 		}
 
 		if (hasGenres) {

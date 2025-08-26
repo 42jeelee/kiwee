@@ -22,7 +22,7 @@ public interface ContentService {
 
 	ContentDetailResponse getContentDetail(UUID id);
 
-	PagedResponse<ContentSimpleResponse> getContents(ContentType contentType, Set<Long> genreIds, Pageable pageable);
+	PagedResponse<ContentSimpleResponse> getContents(Set<ContentType> contentTypes, Set<Long> genreIds, Pageable pageable);
 
 	PagedResponse<ContentSimpleResponse> getContentsByParentId(UUID parentId, Pageable pageable);
 
@@ -31,6 +31,8 @@ public interface ContentService {
 	void deleteContent(UUID id);
 
 	Content getById(UUID id);
+
+	Content getRootById(UUID id);
 
 	Content getByPlatform(UUID platformId, String idInPlatform);
 

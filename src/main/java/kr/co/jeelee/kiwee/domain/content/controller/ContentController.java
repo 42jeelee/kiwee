@@ -71,11 +71,11 @@ public class ContentController {
 
 	@GetMapping(value = "/contents")
 	public PagedResponse<ContentSimpleResponse> getContents(
-		@RequestParam(required = false) ContentType contentType,
+		@RequestParam(name = "contentType", required = false) Set<ContentType> contentTypes,
 		@RequestParam(required = false) Set<Long> genreIds,
 		@PageableDefault Pageable pageable
 	) {
-		return contentService.getContents(contentType, genreIds, pageable);
+		return contentService.getContents(contentTypes, genreIds, pageable);
 	}
 
 	@GetMapping(value = "/contents/{contentId}/children")
