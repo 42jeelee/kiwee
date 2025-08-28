@@ -10,6 +10,7 @@ import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateWithPlatformRe
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentUpdateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
+import kr.co.jeelee.kiwee.domain.content.dto.response.PlatformContentResponse;
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
@@ -20,7 +21,11 @@ public interface ContentService {
 
 	ContentDetailResponse createContent(UUID platformId, ContentCreateWithPlatformRequest request);
 
+	ContentDetailResponse createContent(String platformProvider, ContentCreateWithPlatformRequest request);
+
 	ContentDetailResponse getContentDetail(UUID id);
+
+	PagedResponse<PlatformContentResponse> getPlatformsByContentId(UUID contentId, Pageable pageable);
 
 	PagedResponse<ContentSimpleResponse> getContents(Set<ContentType> contentTypes, Set<Long> genreIds, Pageable pageable);
 
@@ -36,6 +41,12 @@ public interface ContentService {
 
 	Content getByPlatform(UUID platformId, String idInPlatform);
 
+	PlatformContentResponse getPlatformContentByContentId(String platformProvider, UUID contentId);
+
+	PlatformContentResponse getPlatformContentByContentId(UUID platformId, UUID contentId);
+
 	UUID getContentIdByPlatform(UUID platformId, String idInPlatform);
+
+	UUID getContentIdByPlatformProvider(String platformProvider, String idInPlatform);
 
 }
