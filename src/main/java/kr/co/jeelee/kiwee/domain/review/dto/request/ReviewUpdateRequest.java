@@ -9,6 +9,7 @@ public record ReviewUpdateRequest(
 	@Max(value = 10, message = "star must be 10 or less.")
 	Double star,
 	@Min(value = 0, message = "consumedAmount must be 0 or greater.")
-	Long consumedAmount
+	Long consumedAmount,
+	Boolean isSpoiler
 ) {
 }

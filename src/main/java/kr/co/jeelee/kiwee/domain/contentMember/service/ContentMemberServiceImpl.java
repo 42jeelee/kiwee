@@ -165,14 +165,12 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 			return 0;
 		}
 
-		double sum = contentMember.getConsumedAmount() != null
-			? contentMember.getConsumedAmount() * 100
+		long consumedAmount = contentMember.getConsumedAmount() != null
+			? contentMember.getConsumedAmount()
 			: 0;
-		if (contentMemberRepository.existsByContent_Parent_IdAndMember_Id(contentId, memberId)) {
-			long consumedAmount = contentMember.getConsumedAmount() != null
-				? contentMember.getConsumedAmount()
-				: 0;
 
+		double sum = consumedAmount * 100;
+		if (contentMemberRepository.existsByContent_Parent_IdAndMember_Id(contentId, memberId)) {
 			List<ContentMember> children = contentMemberRepository
 					.findByContent_Parent_IdAndMember_IdAndContent_ChildrenIdxGreaterThan(
 						contentId,
@@ -181,7 +179,37 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 					);
 
 			sum += children.stream()
-				.mapToDouble(cm -> getCompletedRate(cm.getContent().getId(), cm.getMember().getId()))
+				.mapToDouble(this::calcChildrenCompletedRate)
+				.sum();
+		}
+
+		return sum / totalAmount;
+	}
+
+	private double calcChildrenCompletedRate(ContentMember cm) {
+		Long totalAmount = cm.getContent().getTotalAmount();
+
+		if (totalAmount == null || totalAmount == 0) {
+			return 0;
+		}
+
+		long consumedAmount = cm.getCompletedCount() > 0
+			? totalAmount
+			: cm.getConsumedAmount() != null
+				? cm.getConsumedAmount()
+				: 0;
+
+		double sum = consumedAmount * 100;
+		if (contentMemberRepository.existsByContent_Parent_IdAndMember_Id(cm.getContent().getId(), cm.getMember().getId())) {
+			List<ContentMember> children = contentMemberRepository
+				.findByContent_Parent_IdAndMember_IdAndContent_ChildrenIdxGreaterThan(
+					cm.getContent().getId(),
+					cm.getMember().getId(),
+					consumedAmount
+				);
+
+			sum += children.stream()
+				.mapToDouble(this::calcChildrenCompletedRate)
 				.sum();
 		}
 
