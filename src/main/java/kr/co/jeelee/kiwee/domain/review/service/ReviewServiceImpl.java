@@ -51,7 +51,8 @@ public class ReviewServiceImpl implements ReviewService {
 			request.message(),
 			request.star(),
 			contentMember.getCompletedCount(),
-			request.consumedAmount()
+			request.consumedAmount(),
+			request.isSpoiler() != null ? request.isSpoiler() : false
 		);
 
 		Review savedReview = reviewRepository.save(review);
@@ -138,6 +139,7 @@ public class ReviewServiceImpl implements ReviewService {
 		updateMessageIfChanged(review, request.message());
 		updateStarIfChanged(review, request.star());
 		updateConsumedAmountIfChanged(review, request.consumedAmount());
+		updateIsSpoilerIfChanged(review, request.isSpoiler());
 
 		return ReviewDetailResponse.from(review);
 	}
@@ -183,6 +185,12 @@ public class ReviewServiceImpl implements ReviewService {
 	private void updateConsumedAmountIfChanged(Review review, Long consumedAmount) {
 		if (consumedAmount != null && !consumedAmount.equals(review.getConsumedAmount())) {
 			review.updateConsumedAmount(consumedAmount);
+		}
+	}
+
+	private void updateIsSpoilerIfChanged(Review review, Boolean isSpoiler) {
+		if (isSpoiler != null && !isSpoiler.equals(review.getIsSpoiler())) {
+			review.updateSpoiler(isSpoiler);
 		}
 	}
 

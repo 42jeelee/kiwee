@@ -8,7 +8,7 @@ import kr.co.jeelee.kiwee.domain.review.entity.Review;
 
 public record ReviewDetailResponse(
 	UUID id, ContentMemberSimpleResponse info, String message, Double star,
-	Integer completedCount, Long consumedAmount,
+	Integer completedCount, Long consumedAmount, Boolean isSpoiler,
 	LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
 	public static ReviewDetailResponse from(Review review) {
@@ -19,6 +19,7 @@ public record ReviewDetailResponse(
 			review.getStar(),
 			review.getCompletedCount(),
 			review.getConsumedAmount(),
+			review.getIsSpoiler(),
 			review.getUpdatedAt(),
 			review.getCreatedAt()
 		);

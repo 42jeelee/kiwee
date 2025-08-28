@@ -45,20 +45,26 @@ public class Review extends BaseTimeEntity {
 	@Column
 	private Long consumedAmount;
 
+	@Column(nullable = false)
+	private Boolean isSpoiler;
+
 	private Review(
-		ContentMember contentMember, String message, Double star, Integer completedCount, Long consumedAmount
+		ContentMember contentMember, String message, Double star,
+		Integer completedCount, Long consumedAmount, Boolean isSpoiler
 	) {
 		this.contentMember = contentMember;
 		this.message = message;
 		this.star = star;
 		this.completedCount = completedCount;
 		this.consumedAmount = consumedAmount;
+		this.isSpoiler = isSpoiler;
 	}
 
 	public static Review of(
-		ContentMember contentMember, String message, Double star, Integer completedCount, Long consumedAmount
+		ContentMember contentMember, String message, Double star,
+		Integer completedCount, Long consumedAmount, Boolean isSpoiler
 	) {
-		return new Review(contentMember, message, star, completedCount, consumedAmount);
+		return new Review(contentMember, message, star, completedCount, consumedAmount, isSpoiler);
 	}
 
 	public void updateMessage(String message) {
@@ -80,6 +86,10 @@ public class Review extends BaseTimeEntity {
 			throw new FieldValidationException("consumedAmount", "소비량은 음수일 수 없습니다.");
 		}
 		this.consumedAmount = consumedAmount;
+	}
+
+	public void updateSpoiler(boolean isSpoiler) {
+		this.isSpoiler = isSpoiler;
 	}
 
 }
