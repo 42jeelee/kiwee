@@ -14,9 +14,11 @@ import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateWithPlatformRe
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentUpdateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
+import kr.co.jeelee.kiwee.domain.content.dto.response.PlatformContentResponse;
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
 import kr.co.jeelee.kiwee.domain.content.entity.PlatformContent;
 import kr.co.jeelee.kiwee.domain.content.exception.ContentNotFoundException;
+import kr.co.jeelee.kiwee.domain.content.exception.PlatformContentNotFoundException;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 import kr.co.jeelee.kiwee.domain.content.repository.ContentRepository;
 import kr.co.jeelee.kiwee.domain.content.repository.PlatformContentRepository;
@@ -50,34 +52,28 @@ public class ContentServiceImpl implements ContentService {
 	public ContentDetailResponse createContent(UUID platformId, ContentCreateWithPlatformRequest request) {
 		Platform platform = platformService.getById(platformId);
 
-		if (platformContentRepository.existsByPlatformIdAndIdInPlatform(platformId, request.idInPlatform())) {
-			throw new FieldValidationException("idInPlatform", "이미 존재하는 컨텐츠가 있습니다.");
-		}
+		return createWithPlatform(platform, request);
+	}
 
-		Content content = requestToContent(request.content());
+	@Override
+	@Transactional
+	public ContentDetailResponse createContent(String platformProvider, ContentCreateWithPlatformRequest request) {
+		Platform platform = platformService.getEntityByProvider(platformProvider);
 
-		Set<Genre> genres = request.genres() != null
-			? request.genres().stream()
-				.map(genreService::getOrCreateGenre)
-				.collect(Collectors.toSet())
-			: null;
-
-		content.updateGenres(genres);
-
-		Content savedContent = contentRepository.save(content);
-
-		platformContentRepository.save(PlatformContent.of(
-			platform,
-			savedContent,
-			request.idInPlatform()
-		));
-
-		return ContentDetailResponse.from(savedContent);
+		return createWithPlatform(platform, request);
 	}
 
 	@Override
 	public ContentDetailResponse getContentDetail(UUID id) {
 		return ContentDetailResponse.from(getById(id));
+	}
+
+	@Override
+	public PagedResponse<PlatformContentResponse> getPlatformsByContentId(UUID contentId, Pageable pageable) {
+		return PagedResponse.of(
+			platformContentRepository.findByContent_Id(contentId, pageable),
+			PlatformContentResponse::from
+		);
 	}
 
 	@Override
@@ -142,8 +138,30 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
+	public PlatformContentResponse getPlatformContentByContentId(String platformProvider, UUID contentId) {
+		return platformContentRepository.findByPlatform_ProviderAndContent_Id(platformProvider, contentId)
+			.map(PlatformContentResponse::from)
+			.orElseThrow(PlatformContentNotFoundException::new);
+	}
+
+	@Override
+	public PlatformContentResponse getPlatformContentByContentId(UUID platformId, UUID contentId) {
+		return platformContentRepository.findByPlatform_IdAndContent_Id(platformId, contentId)
+			.map(PlatformContentResponse::from)
+			.orElseThrow(PlatformContentNotFoundException::new);
+	}
+
+	@Override
 	public UUID getContentIdByPlatform(UUID platformId, String idInPlatform) {
 		return getByPlatform(platformId, idInPlatform).getId();
+	}
+
+	@Override
+	public UUID getContentIdByPlatformProvider(String platformProvider, String idInPlatform) {
+		return platformContentRepository.findByPlatform_ProviderAndIdInPlatform(platformProvider, idInPlatform)
+			.map(PlatformContent::getContent)
+			.map(Content::getId)
+			.orElseThrow(ContentNotFoundException::new);
 	}
 
 	private Content requestToContent(ContentCreateRequest request) {
@@ -173,6 +191,32 @@ public class ContentServiceImpl implements ContentService {
 			request.childrenIdx(),
 			genres
 		);
+	}
+
+	private ContentDetailResponse createWithPlatform(Platform platform, ContentCreateWithPlatformRequest request) {
+		if (platformContentRepository.existsByPlatformIdAndIdInPlatform(platform.getId(), request.idInPlatform())) {
+			throw new FieldValidationException("idInPlatform", "이미 존재하는 컨텐츠가 있습니다.");
+		}
+
+		Content content = requestToContent(request.content());
+
+		Set<Genre> genres = request.genres() != null
+			? request.genres().stream()
+			.map(genreService::getOrCreateGenre)
+			.collect(Collectors.toSet())
+			: null;
+
+		content.updateGenres(genres);
+
+		Content savedContent = contentRepository.save(content);
+
+		platformContentRepository.save(PlatformContent.of(
+			platform,
+			savedContent,
+			request.idInPlatform()
+		));
+
+		return ContentDetailResponse.from(savedContent);
 	}
 
 	private Content getParent(UUID parentId) {
