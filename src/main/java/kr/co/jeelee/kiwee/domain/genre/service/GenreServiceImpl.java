@@ -33,7 +33,13 @@ public class GenreServiceImpl implements GenreService {
 	@Override
 	@Transactional
 	public Genre getOrCreateGenre(GenreCreateWithPlatformRequest request) {
-		Platform platform = platformService.getById(request.platformId());
+		System.out.println(request);
+		if ((request.platformId() == null) == (request.platformProvider() == null)) {
+			throw new FieldValidationException("platform", "platformId 또는 platformProvider 중 하나만 존재해야 합니다.");
+		}
+		Platform platform = request.platformId() != null
+			? platformService.getById(request.platformId())
+			: platformService.getEntityByProvider(request.platformProvider());
 
 		return platformGenreRepository.findByPlatformIdAndIdInPlatform(request.platformId(), request.idInPlatform())
 			.map(PlatformGenre::getGenre)
