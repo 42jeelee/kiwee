@@ -188,7 +188,7 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 
 		return countConsecutiveByDates(
 			activitiesDates.stream().map(Date::toLocalDate).collect(Collectors.toList()),
-			termType, num
+			termType
 		);
 	}
 
@@ -205,7 +205,7 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 			num
 		);
 
-		return countConsecutiveByDates(activitiesDates, termType, num);
+		return countConsecutiveByDates(activitiesDates, termType);
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 			.orElseThrow(MemberActivityNotFoundException::new);
 	}
 
-	private int countConsecutiveByDates(List<LocalDate> dates, TermType termType, int num) {
+	private int countConsecutiveByDates(List<LocalDate> dates, TermType termType) {
 		if (dates == null || dates.isEmpty()) {
 			return 0;
 		}
