@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -165,7 +164,7 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 			? memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdAndTypeAndCreatedAtBetween(
 				actorId, criterion.domainType(), criterion.domainId(), criterion.activityType(), start, end
 			)
-			: memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdIsNullAndTypeAndCreatedAtBetween(
+			: memberActivityRepository.countByActorIdAndSourceTypeAndTypeAndCreatedAtBetween(
 				actorId, criterion.domainType(), criterion.activityType(), start, end
 		);
 	}
@@ -189,7 +188,7 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 
 		return countConsecutiveByDates(
 			activitiesDates.stream().map(Date::toLocalDate).collect(Collectors.toList()),
-			termType, num
+			termType
 		);
 	}
 
@@ -206,7 +205,7 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 			num
 		);
 
-		return countConsecutiveByDates(activitiesDates, termType, num);
+		return countConsecutiveByDates(activitiesDates, termType);
 	}
 
 	@Override
@@ -279,25 +278,37 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 			.orElseThrow(MemberActivityNotFoundException::new);
 	}
 
-	private int countConsecutiveByDates(List<LocalDate> dates, TermType termType, int num) {
+	private int countConsecutiveByDates(List<LocalDate> dates, TermType termType) {
 		if (dates == null || dates.isEmpty()) {
 			return 0;
 		}
+		LocalDate currStartDate = TermUtil.getStartTerm(termType, LocalDate.now());
 
-		Set<LocalDate> datesSet = dates.stream()
-			.map(date -> TermUtil.getStartTerm(termType, date))
-			.collect(Collectors.toSet());
+		List<LocalDate> dateList = dates.stream()
+			.filter(date -> TermUtil.getStartTerm(termType, date).equals(currStartDate))
+			.toList();
 
-		int streak = 0;
-		for (int i = 0; i < num; i++) {
-			LocalDate currentDate = TermUtil.getStartTerm(termType, -i);
-
-			if (!datesSet.contains(currentDate)) {
-				break;
-			}
-			streak++;
+		if (dateList.size() < 2) {
+			return dateList.size();
 		}
 
-		return streak;
+		int streak = 1, max = 0;
+		long prev = dateList.get(0).toEpochDay();
+		for (int i = 1; i < dateList.size(); i++) {
+			long day = dateList.get(i).toEpochDay();
+
+			if (day == prev - 1) {
+				streak++;
+			} else {
+				streak = 1;
+			}
+
+			if (streak > max) {
+				max = streak;
+			}
+			prev = day;
+		}
+
+		return max;
 	}
 }
