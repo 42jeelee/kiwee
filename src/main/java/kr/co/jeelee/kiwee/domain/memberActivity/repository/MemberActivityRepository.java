@@ -45,7 +45,7 @@ public interface MemberActivityRepository extends JpaRepository<MemberActivity, 
 		LocalDateTime end
 	);
 
-	int countByActorIdAndSourceTypeAndSourceIdIsNullAndTypeAndCreatedAtBetween(
+	int countByActorIdAndSourceTypeAndTypeAndCreatedAtBetween(
 		UUID actorId,
 		DomainType sourceType,
 		ActivityType type,
