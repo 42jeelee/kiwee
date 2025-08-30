@@ -13,7 +13,7 @@ import kr.co.jeelee.kiwee.global.resolver.DomainResponseResolver;
 
 public record RewardDetailResponse(
 	UUID id, MemberSimpleResponse conferrer, DomainType sourceType, Object source, RewardType rewardType, Object reward,
-	ActivityType activityType, Integer activityCount, String title, String description,
+	ActivityType activityType, Integer activityCount, String title, String description, String successMessage,
 	Integer exp, Boolean isPublic, LocalDateTime updatedAt, LocalDateTime createdAt
 ) {
 	public static RewardDetailResponse from(Reward reward, DomainObjectResolver resolver) {
@@ -34,6 +34,7 @@ public record RewardDetailResponse(
 			reward.getCondition().criterion().activityCount(),
 			reward.getTitle(),
 			reward.getDescription(),
+			reward.getSuccessMessage(),
 			reward.getExp(),
 			reward.getIsPublic(),
 			reward.getUpdatedAt(),

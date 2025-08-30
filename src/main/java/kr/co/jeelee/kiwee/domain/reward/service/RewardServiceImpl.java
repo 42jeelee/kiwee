@@ -85,6 +85,7 @@ public class RewardServiceImpl implements RewardService {
 			request.duration(),
 			request.title(),
 			request.description(),
+			request.successMessage(),
 			exp,
 			request.isPublic()
 		);

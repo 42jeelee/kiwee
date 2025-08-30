@@ -94,7 +94,7 @@ public class RewardMemberServiceImpl implements RewardMemberService {
 			NotificationType.REWARD,
 			rewardMember.getReward().getId(),
 			savedRewardMember.getReward().getTitle(),
-			savedRewardMember.getReward().getDescription(),
+			savedRewardMember.getReward().getSuccessMessage(),
 			NotificationMetadata.of(notificationRelated)
 		);
 

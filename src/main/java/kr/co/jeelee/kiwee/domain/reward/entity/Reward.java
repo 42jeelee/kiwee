@@ -67,6 +67,10 @@ public class Reward extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String description;
 
+	@Lob
+	@Column(nullable = false)
+	private String successMessage;
+
 	@Column(nullable = false)
 	private Integer exp;
 
@@ -75,7 +79,7 @@ public class Reward extends BaseTimeEntity {
 
 	private Reward(
 		Member conferrer, RewardCondition condition, RewardType rewardType, UUID rewardId,
-		Duration duration, String title, String description, Integer exp, Boolean isPublic
+		Duration duration, String title, String description, String successMessage, Integer exp, Boolean isPublic
 	) {
 		this.conferrer = conferrer;
 		this.condition = condition;
@@ -84,16 +88,17 @@ public class Reward extends BaseTimeEntity {
 		this.duration = duration;
 		this.title = title;
 		this.description = description;
+		this.successMessage = successMessage;
 		this.exp = exp;
 		this.isPublic = isPublic;
 	}
 
 	public static Reward of(
 		Member conferrer, RewardCondition condition, RewardType rewardType, UUID rewardId,
-		Duration duration, String title, String description, Integer exp, Boolean isPublic
+		Duration duration, String title, String description, String successMessage, Integer exp, Boolean isPublic
 	) {
 		return new Reward(
-			conferrer, condition, rewardType, rewardId, duration, title, description, exp, isPublic
+			conferrer, condition, rewardType, rewardId, duration, title, description, successMessage, exp, isPublic
 		);
 	}
 
