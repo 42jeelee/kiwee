@@ -1,14 +1,16 @@
 package kr.co.jeelee.kiwee.global.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 
 import kr.co.jeelee.kiwee.domain.auth.converter.CustomJwtAuthenticationConverter;
 import kr.co.jeelee.kiwee.domain.auth.oauth.handler.CustomAuthenticationEntryPoint;
@@ -32,9 +34,16 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
-			.cors(Customizer.withDefaults())
+			.cors(cors -> cors.configurationSource(request -> {
+				CorsConfiguration c = new CorsConfiguration();
+				c.setAllowedOriginPatterns(List.of("*"));
+				c.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+				c.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+				c.setAllowCredentials(true);
+				return c;
+			}))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(HttpMethod.GET, "/api/v1/platforms", "/api/v1/login/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/v1/platforms", "/api/v1/login/**", "/sse/stream").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/v1/tokens/refresh").permitAll()
 				.anyRequest().authenticated()
 			)
