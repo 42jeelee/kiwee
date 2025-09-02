@@ -170,34 +170,34 @@ public class RewardServiceImpl implements RewardService {
 	private boolean matches(Reward reward, MemberActivity activity) {
 		RewardCondition condition = reward.getCondition();
 
-		if (!isCoolDownOver(activity.getActor().getId(), reward.getId(), condition.repeatPolicy())) {
+		if (!isCoolDownOver(activity.getActor().getId(), reward.getId(), condition.getRepeatPolicy())) {
 			return false;
 		}
 
 		if (
-			condition.timeRange() != null &&
-			!condition.timeRange().isWithin(activity.getCreatedAt().toLocalTime())
+			condition.getTimeRange() != null &&
+			!condition.getTimeRange().isWithin(activity.getCreatedAt().toLocalTime())
 		) {
 			return false;
 		}
 
-		if (activity.getType() == ActivityType.END && condition.duration() != null) {
+		if (activity.getType() == ActivityType.END && condition.getDuration() != null) {
 			Duration playTime = memberActivityService.getPlayDurationByTerm(
 				activity.getActor().getId(),
-				condition.criterion().domainType(),
-				condition.criterion().domainId(),
-				condition.criterion().activityType(),
+				condition.getCriterion().getDomainType(),
+				condition.getCriterion().getDomainId(),
+				condition.getCriterion().getActivityType(),
 				LocalDate.of(2000, 1, 1).atStartOfDay(),
 				LocalDateTime.now()
 			);
-			if (condition.duration().compareTo(playTime) > 0) {
+			if (condition.getDuration().compareTo(playTime) > 0) {
 				return false;
 			}
 		}
 
 		int activityCount = getActivityCount(activity, condition);
 
-		if (condition.criterion().activityCount() > activityCount) {
+		if (condition.getCriterion().getActivityCount() > activityCount) {
 			return false;
 		}
 
@@ -226,29 +226,29 @@ public class RewardServiceImpl implements RewardService {
 		boolean isGeneral = activity.getSourceId() == null;
 
 		if (
-			!(condition.repeatPolicy() == RewardRepeatPolicy.ONCE ||
-			condition.repeatPolicy() == RewardRepeatPolicy.EVERY_DAY)
+			!(condition.getRepeatPolicy() == RewardRepeatPolicy.ONCE ||
+			condition.getRepeatPolicy() == RewardRepeatPolicy.EVERY_DAY)
 		) {
 			Pair<LocalDateTime, LocalDateTime> term = TermUtil.getTermPeriod(
-				condition.repeatPolicy().getTermType(),
+				condition.getRepeatPolicy().getTermType(),
 				0
 			);
 
-			int selfActivityCount = condition.contentType() == null
+			int selfActivityCount = condition.getContentType() == null
 				? memberActivityService.countCriterionAtTime(
 					activity.getActor().getId(),
-					condition.criterion(),
+					condition.getCriterion(),
 					term.getLeft(),
 					term.getRight()
 				)
 				: memberActivityService.getGeneralContentTypeCountByTerm(
 					activity.getId(),
-					condition.contentType(),
+					condition.getContentType(),
 					term.getLeft(),
 					term.getRight()
 			);
 
-			return !isGeneral && condition.matchPolicy() != RewardMatchPolicy.EXACT
+			return !isGeneral && condition.getMatchPolicy() != RewardMatchPolicy.EXACT
 				? selfActivityCount + memberActivityService.countChildrenByContentIdAndTerm(
 					activity.getActor().getId(),
 					activity.getSourceId(),
@@ -258,11 +258,11 @@ public class RewardServiceImpl implements RewardService {
 				) : selfActivityCount;
 		}
 
-		int selfActivityCount = condition.contentType() != null
-				? memberActivityService.getGeneralContentTypeCount(activity.getId(), condition.contentType())
-				: memberActivityService.countByCriterion(activity.getActor().getId(), condition.criterion());
+		int selfActivityCount = condition.getContentType() != null
+				? memberActivityService.getGeneralContentTypeCount(activity.getId(), condition.getContentType())
+				: memberActivityService.countByCriterion(activity.getActor().getId(), condition.getCriterion());
 
-		return !isGeneral && condition.matchPolicy() != RewardMatchPolicy.EXACT
+		return !isGeneral && condition.getMatchPolicy() != RewardMatchPolicy.EXACT
 			? selfActivityCount + memberActivityService.countChildrenByContentId(
 				activity.getActor().getId(),
 				activity.getSourceId(),
@@ -271,25 +271,25 @@ public class RewardServiceImpl implements RewardService {
 	}
 
 	private boolean isConsecutive(UUID actorId, RewardCondition condition) {
-		if (condition.consecutiveCount() == 0) {
+		if (condition.getConsecutiveCount() == 0) {
 			return true;
 		}
 
-		int consecutiveCount = condition.contentType() != null
+		int consecutiveCount = condition.getContentType() != null
 			? memberActivityService.countConsecutiveCount(
 				actorId,
-				condition.criterion(),
-				condition.repeatPolicy().getTermType(),
-				condition.contentType(),
-				condition.consecutiveCount()
+				condition.getCriterion(),
+				condition.getRepeatPolicy().getTermType(),
+				condition.getContentType(),
+				condition.getConsecutiveCount()
 			)
 			: memberActivityService.countConsecutiveCount(
 				actorId,
-				condition.criterion(),
-				condition.repeatPolicy().getTermType(),
-				condition.consecutiveCount()
+				condition.getCriterion(),
+				condition.getRepeatPolicy().getTermType(),
+				condition.getConsecutiveCount()
 			);
 
-		return consecutiveCount >= condition.consecutiveCount();
+		return consecutiveCount >= condition.getConsecutiveCount();
 	}
 }

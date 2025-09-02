@@ -17,10 +17,10 @@ public record RewardSimpleResponse(
 		return new RewardSimpleResponse(
 			reward.getId(),
 			reward.getTitle(),
-			reward.getCondition().criterion().domainType(),
+			reward.getCondition().getCriterion().getDomainType(),
 			reward.getRewardType(),
-			reward.getCondition().criterion().activityType(),
-			reward.getCondition().criterion().activityCount(),
+			reward.getCondition().getCriterion().getActivityType(),
+			reward.getCondition().getCriterion().getActivityCount(),
 			reward.getExp(),
 			reward.getUpdatedAt(),
 			reward.getCreatedAt()

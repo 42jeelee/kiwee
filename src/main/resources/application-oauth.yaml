@@ -33,4 +33,4 @@ spring:
             user-name-attribute: id
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:pcDaHBXeh0WkVjATWZ8HffnEX3g4aNCA}

@@ -4,29 +4,38 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import kr.co.jeelee.kiwee.domain.memberActivity.entity.MemberActivity;
 import kr.co.jeelee.kiwee.global.model.ActivityType;
 import kr.co.jeelee.kiwee.global.model.DomainType;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Embeddable
-public record ActivityCriterion(
-	DomainType domainType, UUID domainId, ActivityType activityType, int activityCount
-) implements Serializable {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@EqualsAndHashCode
+public class ActivityCriterion implements Serializable {
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof ActivityCriterion that)) return false;
-		return this.domainType == that.domainType &&
-			Objects.equals(this.domainId, that.domainId) &&
-			this.activityType == that.activityType;
-	}
+	@EqualsAndHashCode.Include
+	@Column(name = "domain_type")
+	private DomainType domainType;
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(domainType, domainId, activityType);
-	}
+	@EqualsAndHashCode.Include
+	@Column(name = "domain_id")
+	private UUID domainId;
+
+	@EqualsAndHashCode.Include
+	@Column(name = "activity_type")
+	private ActivityType activityType;
+
+	@Column(name = "activity_count")
+	private int activityCount;
 
 	public boolean equalsActivity(MemberActivity activity) {
 		if (activity == null) return false;

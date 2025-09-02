@@ -11,12 +11,12 @@ public record ActivityCriterionResponse(
 ) {
 	public static ActivityCriterionResponse from(ActivityCriterion activityCriterion, DomainObjectResolver resolver) {
 		return new ActivityCriterionResponse(
-			activityCriterion.domainType(),
+			activityCriterion.getDomainType(),
 			DomainResponseResolver.toResponse(
-				resolver.resolve(activityCriterion.domainType(), activityCriterion.domainId())
+				resolver.resolve(activityCriterion.getDomainType(), activityCriterion.getDomainId())
 			),
-			activityCriterion.activityType(),
-			activityCriterion.activityCount()
+			activityCriterion.getActivityType(),
+			activityCriterion.getActivityCount()
 		);
 	}
 }
