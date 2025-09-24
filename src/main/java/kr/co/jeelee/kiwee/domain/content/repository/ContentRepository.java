@@ -13,18 +13,18 @@ import io.lettuce.core.dynamic.annotation.Param;
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
 import kr.co.jeelee.kiwee.domain.content.model.ContentType;
 
-public interface ContentRepository extends JpaRepository<Content, UUID> {
+public interface ContentRepository extends JpaRepository<Content, UUID>, ContentQueryRepository {
 
 	@Query(value = """
         WITH RECURSIVE parent_chain AS (
-            SELECT * FROM contents WHERE id = :id
+            SELECT id, parent_id FROM contents WHERE id = :id
             UNION ALL
-            SELECT c.* FROM contents c
+            SELECT c.id, c.parent_id FROM contents c
             INNER JOIN parent_chain pc ON c.id = pc.parent_id
         )
-        SELECT * FROM parent_chain WHERE parent_id IS NULL
+        SELECT id FROM parent_chain WHERE parent_id IS NULL
 	""", nativeQuery = true)
-	Optional<Content> findRootByChildrenId(@Param("id") UUID id);
+	Optional<UUID> findRootByChildrenId(@Param("id") UUID id);
 
 	Page<Content> findByParent(Content parent, Pageable pageable);
 

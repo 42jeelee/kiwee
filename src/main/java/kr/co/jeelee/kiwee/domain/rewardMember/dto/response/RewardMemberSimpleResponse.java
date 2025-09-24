@@ -12,7 +12,7 @@ public record RewardMemberSimpleResponse(
 		return new RewardMemberSimpleResponse(
 			rewardMember.getId(),
 			MemberSimpleResponse.from(rewardMember.getAwardee()),
-			rewardMember.getReward().getCondition().criterion().domainType(),
+			rewardMember.getReward().getCondition().getCriterion().getDomainType(),
 			rewardMember.getReward().getRewardType()
 		);
 	}

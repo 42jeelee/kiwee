@@ -57,9 +57,10 @@ public class ContentMemberController {
 	@GetMapping(value = "/contents/{contentId}/members")
 	public PagedResponse<ContentMemberSimpleResponse> getContentMembersByContentId(
 		@PathVariable UUID contentId,
+		@RequestParam(required = false, defaultValue = "false") boolean includeChild,
 		@PageableDefault Pageable pageable
 	) {
-		return contentMemberService.getContentMembersByContentId(contentId, pageable);
+		return contentMemberService.getContentMembersByContentId(contentId, includeChild, pageable);
 	}
 
 	@GetMapping(value = "/members/{memberId}/contents")

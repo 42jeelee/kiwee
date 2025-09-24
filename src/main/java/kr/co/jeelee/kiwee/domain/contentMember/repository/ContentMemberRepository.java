@@ -41,4 +41,45 @@ public interface ContentMemberRepository extends JpaRepository<ContentMember, Lo
 	Page<ContentMember> findByMember(Member member, Pageable pageable);
 	Page<ContentMember> findByMemberAndContent_ContentTypeIn(Member member, Set<ContentType> contentTypes, Pageable pageable);
 
+	@Query(value = """
+    	WITH RECURSIVE descendants AS (
+			SELECT id
+			FROM contents
+			WHERE id = :contentId
+			UNION ALL
+			SELECT c.id
+			FROM contents c
+			JOIN descendants d ON c.parent_id = d.id
+		)
+		SELECT cm.*
+		FROM (
+			SELECT DISTINCT ON (cm.member_id) cm.*
+			FROM content_members cm
+			WHERE cm.content_id IN (SELECT id FROM descendants)
+			ORDER BY cm.member_id, cm.updated_at DESC, cm.id DESC
+		) cm
+		ORDER BY cm.updated_at DESC, cm.id DESC
+  	""",
+	countQuery = """
+		WITH RECURSIVE descendants AS (
+			SELECT id
+			FROM contents
+			WHERE id = :contentId
+		UNION ALL
+			SELECT c.id
+			FROM contents c
+			JOIN descendants d ON c.parent_id = d.id
+		)
+		SELECT COUNT(*)
+		FROM (
+			SELECT DISTINCT cm.member_id
+			FROM content_members cm
+			WHERE cm.content_id IN (SELECT id FROM descendants)
+		) s
+	""", nativeQuery = true)
+	Page<ContentMember> findLatestPerMemberIncludingDescendants(
+		@Param("contentId") UUID contentId,
+		Pageable pageable
+	);
+
 }

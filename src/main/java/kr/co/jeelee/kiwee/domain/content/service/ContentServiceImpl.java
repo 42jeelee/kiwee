@@ -1,5 +1,6 @@
 package kr.co.jeelee.kiwee.domain.content.service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentCreateWithPlatformRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.request.ContentUpdateRequest;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentDetailResponse;
+import kr.co.jeelee.kiwee.domain.content.dto.response.ContentReactSummary;
 import kr.co.jeelee.kiwee.domain.content.dto.response.ContentSimpleResponse;
 import kr.co.jeelee.kiwee.domain.content.dto.response.PlatformContentResponse;
 import kr.co.jeelee.kiwee.domain.content.entity.Content;
@@ -65,7 +67,9 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public ContentDetailResponse getContentDetail(UUID id) {
-		return ContentDetailResponse.from(getById(id));
+		Content content = getById(id);
+		ContentReactSummary reactSummary = contentRepository.findReactSummaryById(content.getId());
+		return ContentDetailResponse.from(content, reactSummary);
 	}
 
 	@Override
@@ -101,10 +105,23 @@ public class ContentServiceImpl implements ContentService {
 
 	@Override
 	public PagedResponse<ContentSimpleResponse> getContents(Set<ContentType> contentTypes, Set<Long> genreIds,
-		Pageable pageable) {
+		boolean includeReaction, Pageable pageable) {
+		Page<Content> fetchContents = contentRepository.findOrderByContentMemberUpdatedAt(contentTypes, genreIds, pageable);
+
+		if (!includeReaction) {
+			return PagedResponse.of(fetchContents, ContentSimpleResponse::from);
+		}
+
+		List<ContentReactSummary> reactSummaries = contentRepository.findReactSummaryByIds(
+			fetchContents.stream().map(Content::getId).toList()
+		);
+
 		return PagedResponse.of(
-			fetchContents(contentTypes, genreIds, pageable),
-			ContentSimpleResponse::from
+			fetchContents,
+			content -> ContentSimpleResponse.from(content, reactSummaries.stream()
+				.filter(reactSummary -> reactSummary.id().equals(content.getId()))
+				.findFirst().orElse(null)
+			)
 		);
 	}
 
@@ -125,7 +142,7 @@ public class ContentServiceImpl implements ContentService {
 	}
 
 	@Override
-	public Content getRootById(UUID id) {
+	public UUID getRootById(UUID id) {
 		return contentRepository.findRootByChildrenId(id)
 			.orElseThrow(ContentNotFoundException::new);
 	}
@@ -225,25 +242,6 @@ public class ContentServiceImpl implements ContentService {
 		} catch (ContentNotFoundException e) {
 			throw new FieldValidationException("parentId", "해당 콘텐츠가 존재하지 않습니다.");
 		}
-	}
-
-	private Page<Content> fetchContents(Set<ContentType> contentTypes, Set<Long> genreIds, Pageable pageable) {
-		boolean hasContentTypes = contentTypes != null && !contentTypes.isEmpty();
-		boolean hasGenres = genreIds != null && !genreIds.isEmpty();
-
-		if (hasContentTypes && hasGenres) {
-			return contentRepository.findDistinctByContentTypeInAndGenres_idIn(contentTypes, genreIds, pageable);
-		}
-
-		if (hasContentTypes) {
-			return contentRepository.findByContentTypeIn(contentTypes, pageable);
-		}
-
-		if (hasGenres) {
-			return contentRepository.findDistinctByGenres_idIn(genreIds, pageable);
-		}
-
-		return contentRepository.findAll(pageable);
 	}
 
 	private void updateTitleIfChanged(Content content, String title) {

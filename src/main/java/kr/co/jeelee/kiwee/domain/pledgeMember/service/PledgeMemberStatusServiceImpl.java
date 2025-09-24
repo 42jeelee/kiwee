@@ -223,7 +223,7 @@ public class PledgeMemberStatusServiceImpl implements PledgeMemberStatusService 
 			yesterday.plusDays(1).atStartOfDay()
 		);
 
-		if (count < criterion.activityCount()) {
+		if (count < criterion.getActivityCount()) {
 			evaluatePledgeMember(pledgeMember);
 		}
 
@@ -234,7 +234,7 @@ public class PledgeMemberStatusServiceImpl implements PledgeMemberStatusService 
 			return;
 		}
 
-		if (condition.timeRange().endTime().isBefore(LocalTime.now())) {
+		if (condition.timeRange().getEndTime().isBefore(LocalTime.now())) {
 			evaluatePledgeMember(pledgeMember);
 		}
 	}

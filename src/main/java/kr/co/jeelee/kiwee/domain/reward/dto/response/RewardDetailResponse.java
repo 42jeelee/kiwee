@@ -20,18 +20,18 @@ public record RewardDetailResponse(
 		return new RewardDetailResponse(
 			reward.getId(),
 			MemberSimpleResponse.from(reward.getConferrer()),
-			reward.getCondition().criterion().domainType(),
+			reward.getCondition().getCriterion().getDomainType(),
 			DomainResponseResolver.toResponse(resolver.resolve(
-				reward.getCondition().criterion().domainType(),
-				reward.getCondition().criterion().domainId()
+				reward.getCondition().getCriterion().getDomainType(),
+				reward.getCondition().getCriterion().getDomainId()
 			)),
 			reward.getRewardType(),
 			reward.getRewardType() != RewardType.NONE
 				? DomainResponseResolver.toResponse(
 					resolver.resolve(reward.getRewardType().getDomainType(), reward.getRewardId())
 				) : null,
-			reward.getCondition().criterion().activityType(),
-			reward.getCondition().criterion().activityCount(),
+			reward.getCondition().getCriterion().getActivityType(),
+			reward.getCondition().getCriterion().getActivityCount(),
 			reward.getTitle(),
 			reward.getDescription(),
 			reward.getSuccessMessage(),

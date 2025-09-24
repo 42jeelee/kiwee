@@ -138,12 +138,12 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 	public boolean existsActivityByCriterionAtTime(
 		UUID actorId, ActivityCriterion criterion, LocalDateTime start, LocalDateTime end
 	) {
-		return criterion.domainId() != null
+		return criterion.getDomainId() != null
 			? memberActivityRepository.existsByActorIdAndSourceTypeAndSourceIdAndTypeAndCreatedAtBetween(
-				actorId, criterion.domainType(), criterion.domainId(), criterion.activityType(), start, end
+				actorId, criterion.getDomainType(), criterion.getDomainId(), criterion.getActivityType(), start, end
 			)
 			: memberActivityRepository.existsByActorIdAndSourceTypeAndSourceIdIsNullAndTypeAndCreatedAtBetween(
-				actorId, criterion.domainType(), criterion.activityType(), start, end
+				actorId, criterion.getDomainType(), criterion.getActivityType(), start, end
 		);
 	}
 
@@ -160,29 +160,29 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 
 	@Override
 	public int countCriterionAtTime(UUID actorId, ActivityCriterion criterion, LocalDateTime start, LocalDateTime end) {
-		return criterion.domainId() != null
+		return criterion.getDomainId() != null
 			? memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdAndTypeAndCreatedAtBetween(
-				actorId, criterion.domainType(), criterion.domainId(), criterion.activityType(), start, end
+				actorId, criterion.getDomainType(), criterion.getDomainId(), criterion.getActivityType(), start, end
 			)
 			: memberActivityRepository.countByActorIdAndSourceTypeAndTypeAndCreatedAtBetween(
-				actorId, criterion.domainType(), criterion.activityType(), start, end
+				actorId, criterion.getDomainType(), criterion.getActivityType(), start, end
 		);
 	}
 
 	@Override
 	public int countConsecutiveCount(UUID actorId, ActivityCriterion criterion, TermType termType, int num) {
-		List<java.sql.Date> activitiesDates = criterion.domainId() == null
+		List<java.sql.Date> activitiesDates = criterion.getDomainId() == null
 			? memberActivityRepository.findActivityDatesByCriterion(
 				actorId,
-				criterion.domainType().name(),
-				criterion.activityType().name(),
+				criterion.getDomainType().name(),
+				criterion.getActivityType().name(),
 				num
 			)
 			:  memberActivityRepository.findActivityDatesByCriterion(
 				actorId,
-				criterion.domainType().name(),
-				criterion.domainId(),
-				criterion.activityType().name(),
+				criterion.getDomainType().name(),
+				criterion.getDomainId(),
+				criterion.getActivityType().name(),
 				num
 			);
 
@@ -194,14 +194,14 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 
 	@Override
 	public int countConsecutiveCount(UUID actorId, ActivityCriterion criterion, TermType termType, ContentType contentType, int num) {
-		if (criterion.domainId() != null) {
+		if (criterion.getDomainId() != null) {
 			return countConsecutiveCount(actorId, criterion, termType, num);
 		}
 
 		List<LocalDate> activitiesDates = memberActivityRepository.findActivityDatesByCriterion(
 			actorId,
 			contentType,
-			criterion.activityType(),
+			criterion.getActivityType(),
 			num
 		);
 
@@ -210,17 +210,17 @@ public class MemberActivityServiceImpl implements MemberActivityService {
 
 	@Override
 	public int countByCriterion(UUID actorId, ActivityCriterion criterion) {
-		return criterion.domainId() == null
+		return criterion.getDomainId() == null
 			? memberActivityRepository.countByActorIdAndSourceTypeAndType(
 				actorId,
-				criterion.domainType(),
-				criterion.activityType()
+				criterion.getDomainType(),
+				criterion.getActivityType()
 			)
 			: memberActivityRepository.countByActorIdAndSourceTypeAndSourceIdAndType(
 				actorId,
-				criterion.domainType(),
-				criterion.domainId(),
-				criterion.activityType()
+				criterion.getDomainType(),
+				criterion.getDomainId(),
+				criterion.getActivityType()
 			);
 	}
 

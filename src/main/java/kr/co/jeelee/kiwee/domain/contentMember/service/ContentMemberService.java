@@ -22,7 +22,7 @@ public interface ContentMemberService {
 
 	ContentMemberDetailResponse getContentMember(UUID contentId, UUID memberId);
 
-	PagedResponse<ContentMemberSimpleResponse> getContentMembersByContentId(UUID contentId, Pageable pageable);
+	PagedResponse<ContentMemberSimpleResponse> getContentMembersByContentId(UUID contentId, boolean includeChild, Pageable pageable);
 
 	PagedResponse<ContentMemberSimpleResponse> getContentMembersByMemberId(UUID memberId, Set<ContentType> contentTypes, Pageable pageable);
 

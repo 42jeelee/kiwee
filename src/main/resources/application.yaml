@@ -4,8 +4,8 @@ spring:
 
   config:
     import:
-      - classpath:application-database.yaml
-      - classpath:application-oauth.yaml
+      - optional:classpath:application-database.yaml
+      - optional:classpath:application-oauth.yaml
 
   web:
     resources:
@@ -21,4 +21,4 @@ server:
     include-exception: true
 
 frontend:
-  base-url: ${FRONTEND_BASE_URL}
+  base-url: ${FRONTEND_BASE_URL:"localhost:3000"}

@@ -132,7 +132,7 @@ public class PledgeMember extends BaseTimeEntity {
 				}
 				int count = this.progress.getOrDefault(r.getCriterion(), 0);
 
-				return r.getCriterion().activityCount() <= count;
+				return r.getCriterion().getActivityCount() <= count;
 			});
 	}
 
