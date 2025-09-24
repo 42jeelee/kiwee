@@ -27,7 +27,7 @@ public interface ContentService {
 
 	PagedResponse<PlatformContentResponse> getPlatformsByContentId(UUID contentId, Pageable pageable);
 
-	PagedResponse<ContentSimpleResponse> getContents(Set<ContentType> contentTypes, Set<Long> genreIds, Pageable pageable);
+	PagedResponse<ContentSimpleResponse> getContents(Set<ContentType> contentTypes, Set<Long> genreIds, boolean includeReaction, Pageable pageable);
 
 	PagedResponse<ContentSimpleResponse> getContentsByParentId(UUID parentId, Pageable pageable);
 
@@ -37,7 +37,7 @@ public interface ContentService {
 
 	Content getById(UUID id);
 
-	Content getRootById(UUID id);
+	UUID getRootById(UUID id);
 
 	Content getByPlatform(UUID platformId, String idInPlatform);
 

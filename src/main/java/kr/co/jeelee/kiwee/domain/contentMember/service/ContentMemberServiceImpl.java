@@ -79,6 +79,14 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 
 		contentMember.updateCompleteCount(request.isCompleted());
 
+		createRootContentMember(
+			content,
+			member,
+			request.star(),
+			request.recommended(),
+			request.recommendReason()
+		);
+
 		ContentMember savedContentMember = contentMemberRepository.save(contentMember);
 
 		if (request.isCompleted()) {
@@ -99,11 +107,13 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 	}
 
 	@Override
-	public PagedResponse<ContentMemberSimpleResponse> getContentMembersByContentId(UUID contentId, Pageable pageable) {
+	public PagedResponse<ContentMemberSimpleResponse> getContentMembersByContentId(UUID contentId, boolean includeChild, Pageable pageable) {
 		Content content = contentService.getById(contentId);
 
 		return PagedResponse.of(
-			contentMemberRepository.findByContent(content, pageable),
+			includeChild
+			? contentMemberRepository.findLatestPerMemberIncludingDescendants(contentId, pageable)
+			: contentMemberRepository.findByContent(content, pageable),
 			ContentMemberSimpleResponse::from
 		);
 	}
@@ -224,24 +234,7 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 
 		return contentMemberRepository.findByContentAndMember(content, member)
 			.orElseGet(() -> {
-				Content root = contentService.getRootById(content.getId());
-
-				if (
-					root.getId() != content.getId() &&
-					!contentMemberRepository.existsByMemberIdAndContentId(member.getId(), content.getId())
-				) {
-					contentMemberRepository.save(
-						ContentMember.of(
-							root,
-							member,
-							LocalDateTime.now(),
-							0,
-							null,
-							request.star(),
-							0L
-						)
-					);
-				}
+				createRootContentMember(content, member, request.star(), 0, null);
 
 				return contentMemberRepository.save(
 					ContentMember.of(
@@ -315,12 +308,50 @@ public class ContentMemberServiceImpl implements ContentMemberService {
 	private void updateRecommendedIfChanged(ContentMember contentMember, Integer recommended, String recommendReason) {
 		if (recommended != null && recommendReason != null && !recommendReason.isBlank()) {
 			contentMember.updateRecommended(recommended, recommendReason);
+
+			Content parent = contentMember.getContent().getParent();
+
+			while (parent != null) {
+				ContentMember parentMember = getByContentIdAndMemberId(parent.getId(), contentMember.getMember().getId());
+				if (
+					(parentMember.getRecommended() == null || parentMember.getRecommended().equals(0)) &&
+					(parentMember.getRecommendReason() == null || parentMember.getRecommendReason().isBlank())
+				) {
+					parentMember.updateRecommended(recommended, recommendReason);
+				}
+				parent = parent.getParent();
+			}
 		}
 	}
 
 	private void updateStarIfChanged(ContentMember contentMember, Double star) {
 		if (star != null && !star.equals(contentMember.getStar())) {
 			contentMember.updateStar(star);
+		}
+	}
+
+	private void createRootContentMember(
+		Content content, Member member, Double star, Integer recommended, String recommendReason
+	) {
+		Content parent = content.getParent();
+
+		while (parent != null) {
+			if (contentMemberRepository.existsByMemberIdAndContentId(member.getId(), parent.getId())) {
+				return;
+			}
+
+			contentMemberRepository.save(
+				ContentMember.of(
+					parent,
+					member,
+					LocalDateTime.now(),
+					recommended,
+					recommendReason,
+					star,
+					0L
+				)
+			);
+			parent = parent.getParent();
 		}
 	}
 }

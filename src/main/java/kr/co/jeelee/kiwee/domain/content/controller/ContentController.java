@@ -90,9 +90,10 @@ public class ContentController {
 	public PagedResponse<ContentSimpleResponse> getContents(
 		@RequestParam(name = "contentType", required = false) Set<ContentType> contentTypes,
 		@RequestParam(required = false) Set<Long> genreIds,
+		@RequestParam(required = false, defaultValue = "false") Boolean includeReaction,
 		@PageableDefault Pageable pageable
 	) {
-		return contentService.getContents(contentTypes, genreIds, pageable);
+		return contentService.getContents(contentTypes, genreIds, includeReaction, pageable);
 	}
 
 	@GetMapping(value = "/contents/{contentId}/children")
