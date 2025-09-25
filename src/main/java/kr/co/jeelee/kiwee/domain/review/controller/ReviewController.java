@@ -23,7 +23,6 @@ import kr.co.jeelee.kiwee.domain.auth.oauth.user.CustomOAuth2User;
 import kr.co.jeelee.kiwee.domain.review.dto.request.ReviewCreateRequest;
 import kr.co.jeelee.kiwee.domain.review.dto.request.ReviewUpdateRequest;
 import kr.co.jeelee.kiwee.domain.review.dto.response.ReviewDetailResponse;
-import kr.co.jeelee.kiwee.domain.review.dto.response.ReviewSimpleResponse;
 import kr.co.jeelee.kiwee.domain.review.service.ReviewService;
 import kr.co.jeelee.kiwee.global.dto.response.common.PagedResponse;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +64,7 @@ public class ReviewController {
 	}
 
 	@GetMapping(value = "/contents/{contentId}/reviews/consumeAmounts/{consumeAmount}")
-	public PagedResponse<ReviewSimpleResponse> getReviewsByConsumedAmount(
+	public PagedResponse<ReviewDetailResponse> getReviewsByConsumedAmount(
 		@PathVariable UUID contentId,
 		@PathVariable Long consumeAmount,
 		@PageableDefault Pageable pageable
