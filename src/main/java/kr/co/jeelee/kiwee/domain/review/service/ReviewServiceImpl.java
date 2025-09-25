@@ -14,7 +14,6 @@ import kr.co.jeelee.kiwee.domain.memberActivity.event.MemberActivityEvent;
 import kr.co.jeelee.kiwee.domain.review.dto.request.ReviewCreateRequest;
 import kr.co.jeelee.kiwee.domain.review.dto.request.ReviewUpdateRequest;
 import kr.co.jeelee.kiwee.domain.review.dto.response.ReviewDetailResponse;
-import kr.co.jeelee.kiwee.domain.review.dto.response.ReviewSimpleResponse;
 import kr.co.jeelee.kiwee.domain.review.entity.Review;
 import kr.co.jeelee.kiwee.domain.review.exception.ReviewNotFoundException;
 import kr.co.jeelee.kiwee.domain.review.repository.ReviewRepository;
@@ -116,11 +115,11 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public PagedResponse<ReviewSimpleResponse> getReviewsByConsumedAmount(UUID contentId, Long consumedAmount,
+	public PagedResponse<ReviewDetailResponse> getReviewsByConsumedAmount(UUID contentId, Long consumedAmount,
 		Pageable pageable) {
 		return PagedResponse.of(
 			reviewRepository.findByContentMember_ContentIdAndConsumedAmount(contentId, consumedAmount, pageable),
-			ReviewSimpleResponse::from
+			ReviewDetailResponse::from
 		);
 	}
 
